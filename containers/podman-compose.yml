@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  rust-dev:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.dev
+      args:
+        USER_UID: ${USER_UID:-1000}
+        USER_GID: ${USER_GID:-1000}
+    image: rust-bootcamp:dev
+    container_name: rust-bootcamp-dev
+    hostname: rust-dev
+    volumes:
+      # Mount entire bootcamp directory
+      - ..:/workspace:z
+      # Mount cargo registry cache (reuse between containers)
+      - cargo-registry:/home/rustdev/.cargo/registry
+      # Mount cargo git cache
+      - cargo-git:/home/rustdev/.cargo/git
+      # Mount target directory (optional, for build cache)
+      - target-cache:/workspace/target
+    environment:
+      - RUST_BACKTRACE=1
+      - CARGO_TARGET_DIR=/workspace/target
+    working_dir: /workspace
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    # Development ports (adjust as needed)
+    ports:
+      - "8080:8080"   # Web server
+      - "3000:3000"   # Development server
+      - "9229:9229"   # Debug port
+
+volumes:
+  cargo-registry:
+  cargo-git:
+  target-cache:

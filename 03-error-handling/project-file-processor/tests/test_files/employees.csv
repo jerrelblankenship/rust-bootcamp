@@ -1,0 +1,9 @@
+employee_id,name,department,salary,hire_date,active
+E001,Alice Johnson,Engineering,85000,2020-03-15,true
+E002,Bob Smith,Marketing,65000,2021-07-22,true
+E003,Carol Davis,Sales,72000,2019-11-08,false
+E004,Dave Wilson,Engineering,92000,2018-05-03,true
+E005,Eve Brown,HR,58000,2022-01-10,true
+E006,Frank Miller,Sales,68000,2020-09-17,true
+E007,Grace Chen,Engineering,88000,2019-02-28,true
+E008,Henry Taylor,Marketing,62000,2021-12-05,true

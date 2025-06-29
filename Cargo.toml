@@ -1,0 +1,25 @@
+[workspace]
+members = [
+    "01-foundations/project-calculator",
+    "02-ownership-and-borrowing/project-memory-visualizer",
+    "03-error-handling/project-file-processor",
+    "04-systems-programming/project-system-monitor",
+    "05-concurrency/project-parallel-processor",
+    "06-performance/project-benchmark-suite",
+    "07-cli-tools/project-task-runner",
+    "08-testing/project-test-framework",
+    "09-ecosystem/project-crate-template",
+    "10-advanced-patterns/project-dsl",
+    "final-project",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+
+[workspace.dependencies]
+tokio = { version = "1.35", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+anyhow = "1.0"
+clap = { version = "4.4", features = ["derive"] }

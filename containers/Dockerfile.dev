@@ -1,0 +1,62 @@
+# Multi-stage Dockerfile for Rust development
+FROM rust:1.75 AS base
+
+# Install development dependencies
+RUN apt-get update && apt-get install -y \
+    # Build essentials
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    # Useful tools
+    git \
+    vim \
+    tmux \
+    htop \
+    curl \
+    # Performance tools
+    linux-tools-generic \
+    valgrind \
+    heaptrack \
+    # Clean up
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust tools
+RUN cargo install \
+    cargo-watch \
+    cargo-edit \
+    cargo-expand \
+    cargo-criterion \
+    flamegraph \
+    cargo-bloat \
+    cargo-audit \
+    cargo-outdated
+
+# Create non-root user
+ARG USERNAME=rustdev
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
+# Switch to non-root user
+USER $USERNAME
+WORKDIR /home/$USERNAME
+
+# Set up Rust environment
+ENV CARGO_HOME=/home/$USERNAME/.cargo
+ENV RUSTUP_HOME=/home/$USERNAME/.rustup
+ENV PATH=$CARGO_HOME/bin:$PATH
+
+# Configure cargo for container environment
+RUN mkdir -p $CARGO_HOME && \
+    echo '[build]\njobs = 4\n\n[net]\ngit-fetch-with-cli = true' > $CARGO_HOME/config.toml
+
+# Set up shell
+COPY containers/.bashrc /home/$USERNAME/.bashrc
+
+CMD ["/bin/bash"]

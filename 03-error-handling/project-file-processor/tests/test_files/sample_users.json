@@ -1,0 +1,33 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice Johnson",
+      "email": "alice@example.com",
+      "age": 30,
+      "department": "Engineering",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "Bob Smith",
+      "email": "bob@example.com", 
+      "age": 25,
+      "department": "Marketing",
+      "active": true
+    },
+    {
+      "id": 3,
+      "name": "Carol Davis",
+      "email": "carol@example.com",
+      "age": 35,
+      "department": "Sales",
+      "active": false
+    }
+  ],
+  "metadata": {
+    "total_count": 3,
+    "last_updated": "2023-12-01T10:00:00Z",
+    "version": "1.0"
+  }
+}
