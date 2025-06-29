@@ -1,82 +1,161 @@
 # Module 04: Systems Programming
 
-Dive into low-level programming with Rust, exploring memory management, unsafe code, and foreign function interfaces.
+Master low-level Rust programming through hands-on debugging and real-world problem solving. This module teaches systems concepts by fixing broken code, implementing unsafe abstractions safely, and building high-performance applications.
 
-## 🎯 Learning Objectives
+## 🎯 What You'll Learn
 
-After completing this module, you will:
-- Understand memory layout and representation in Rust
-- Write safe abstractions over unsafe code
-- Interface with C libraries using FFI
-- Make direct system calls
-- Work with raw pointers safely
-- Understand when and how to use unsafe Rust
+By the end of this module, you'll be able to:
 
-## 📚 Module Overview
+- Control memory layout and choose between stack/heap allocation
+- Write safe abstractions over unsafe code blocks  
+- Interface with C libraries using Foreign Function Interface (FFI)
+- Build zero-copy, high-performance data structures
+- Debug memory-related compilation errors with confidence
+- Create system-level applications that rival C/C++ performance
 
-Systems programming is where Rust truly shines. You get the control of C/C++ with the safety guarantees of a high-level language.
+## 📚 Learning Materials
 
-## 📖 Lessons
+### **Concept Lessons**
+Learn systems programming through practical examples and C# comparisons:
 
-1. **[Memory Layout](01-memory-layout.md)** - How Rust represents data in memory
-2. **[Unsafe Rust](02-unsafe-rust.md)** - When and how to use unsafe code
+1. **[Memory Layout and Control](01-memory-layout.md)** - From managed memory to manual control
+2. **[Unsafe Rust](02-unsafe-rust.md)** - Safe abstractions over dangerous operations  
 3. **[Foreign Function Interface](03-ffi.md)** - Calling C from Rust and vice versa
-4. **[Low-Level I/O](04-low-level-io.md)** - Direct system calls and OS interfaces
 
-## 💻 Project: System Resource Monitor
+### **Hands-On Practice**
+Master systems programming by fixing broken code and debugging real errors:
 
-Build a system monitor that:
-- Reads CPU and memory usage directly from `/proc` (Linux) or system APIs
-- Uses unsafe code for performance-critical sections
-- Interfaces with system libraries
-- Provides real-time updates
+- **ex01-memory-layout.rs** - Memory layout bugs and padding errors (broken code to fix)
+- **ex02-unsafe-debugging.rs** - Unsafe code compilation errors (broken code to fix)
+- **ex03-c-interop.rs** - FFI integration problems (broken code to fix)
 
-## 🔄 C# to Rust Systems Programming
+### **Major Project**
+- **System Monitor** - Build a real-time system resource monitor from partially working starter code
 
-| C# Concept | Rust Equivalent | Key Differences |
-|------------|-----------------|-----------------|
-| `unsafe` blocks | `unsafe` blocks | More restricted in Rust |
-| P/Invoke | FFI | More explicit, safer |
-| `fixed` statement | Pin API | Different memory model |
-| `stackalloc` | Arrays, `alloca` | Rust prefers stack allocation |
-| Pointers | Raw pointers | Must be in unsafe blocks |
-| `Marshal` class | `std::mem` | Manual memory management |
+## 🔄 For C# Developers
 
-## 🛡️ Safety First
+Here's how C#'s managed memory model compares to Rust's systems programming:
 
-Remember: Unsafe doesn't mean "turn off all safety checks." It means:
-- Dereferencing raw pointers
-- Calling unsafe functions
-- Accessing mutable statics
-- Implementing unsafe traits
-- Accessing union fields
+| C# Concept | Rust Equivalent | Key Difference |
+|------------|-----------------|----------------|
+| Garbage Collector | Manual memory management | Compile-time ownership |
+| `unsafe` blocks | `unsafe` blocks | More restricted, safer |
+| P/Invoke | FFI | Type-safe by default |
+| `fixed` statement | Raw pointers | Must be in unsafe blocks |
+| `Marshal` class | `std::mem` utilities | Zero-cost abstractions |
+| Memory profilers | Built-in layout control | Compile-time optimization |
 
-The goal is to write minimal unsafe code wrapped in safe abstractions.
+## 🚀 Getting Started
 
-## 📊 Module Structure
+### **Step 1: Read the First Lesson**
+Start with [Memory Layout and Control](01-memory-layout.md) to understand the foundation.
+
+### **Step 2: Fix the Exercises**
+The exercises contain broken code with real compilation errors:
+
+```bash
+cd 04-systems-programming/exercises
+rustc ex01-memory-layout.rs   # This will show memory layout errors
+```
+
+Your job is to fix the errors using Rust's powerful compiler messages.
+
+### **Step 3: Build the System Monitor**
+```bash
+cd project-system-monitor
+cargo build  # This will show compilation errors to fix
+```
+
+Start with basic memory operations and build up to a complete monitoring system.
+
+## 💡 Learning Approach
+
+### **How the Exercises Work**
+- Each exercise contains broken systems programming code
+- Compilation errors guide you to correct memory management patterns
+- Multiple approaches to solving each low-level challenge
+- Real-world scenarios that build practical systems skills
+
+### **How to Succeed**
+1. **Trust the compiler** - Rust's error messages are exceptionally detailed for systems code
+2. **Think about safety** - Even in unsafe blocks, maintain invariants
+3. **Compare with C#** - How would P/Invoke or unsafe code handle this?
+4. **Start simple** - Fix one memory error at a time
+5. **Understand the why** - Every unsafe block should have a clear safety justification
+
+## 📈 Your Learning Path
+
+### **Day 1: Master Memory Layout Through Debugging**
+- Complete the "Memory Layout and Control" lesson
+- Fix compilation errors in exercise 1
+- Understand struct padding and alignment through trial and error
+- Start the system monitor project
+
+### **Day 2: Conquer Unsafe Code Safely**
+- Study "Unsafe Rust" lesson
+- Debug exercises 2 and 3
+- Learn to write safe abstractions over unsafe operations
+- Implement core monitoring functionality
+
+### **Day 3: FFI and Production Systems**
+- Learn "Foreign Function Interface" lesson
+- Complete all exercises with robust error handling
+- Finish the system monitor project
+- Integrate with system libraries for real data
+
+## 🏆 Success Criteria
+
+You've mastered this module when:
+- ✅ All exercises compile and run without errors
+- ✅ You can explain when and why to use unsafe code
+- ✅ Your system monitor displays real CPU and memory data
+- ✅ You understand memory layout optimization techniques
+- ✅ You can safely interface with C libraries
+
+## 📁 Module Structure
 
 ```
 04-systems-programming/
-├── README.md
-├── 01-memory-layout.md
-├── 02-unsafe-rust.md
-├── 03-ffi.md
-├── 04-low-level-io.md
+├── README.md                     # This guide
+├── 01-memory-layout.md           # Memory control fundamentals
+├── 02-unsafe-rust.md             # Safe abstractions over unsafe
+├── 03-ffi.md                     # C interoperability
 ├── exercises/
-│   ├── ex01-memory-exploration.rs
-│   ├── ex02-unsafe-abstractions.rs
-│   ├── ex03-c-interop.rs
-│   └── ex04-syscalls.rs
-└── project-system-monitor/
-    ├── Cargo.toml
+│   ├── ex01-memory-layout.rs     # Memory bugs to fix
+│   ├── ex02-unsafe-debugging.rs  # Unsafe compilation errors
+│   ├── ex03-c-interop.rs         # FFI integration problems
+│   └── hints/
+│       └── README.md            # Help when you're stuck
+└── project-system-monitor/       # Major project
+    ├── Cargo.toml               # Dependencies for system access
     ├── src/
-    │   ├── main.rs
-    │   ├── cpu.rs
-    │   ├── memory.rs
-    │   └── ffi/
-    └── README.md
+    │   ├── main.rs              # Partially working CLI interface
+    │   ├── memory.rs            # Memory monitoring (partially working)
+    │   ├── cpu.rs               # CPU monitoring (partially working)
+    │   └── process.rs           # Process tracking (partially working)
+    ├── tests/                   # Integration tests
+    └── README.md               # Project guide with step-by-step fixes
 ```
+
+## 🆘 When You Get Stuck
+
+1. **Read the error message carefully** - Rust's compiler is incredibly helpful for systems code
+2. **Check the TODO comments** - They contain specific hints about memory safety
+3. **Think about ownership** - Who owns what memory, and when is it freed?
+4. **Review the lesson material** - The concepts build on each other
+5. **Look at the hints** - But only after trying yourself!
+6. **Compare with C#** - How would you solve this with unsafe C# or P/Invoke?
+
+## 🔗 Additional Resources
+
+- [The Rustonomicon](https://doc.rust-lang.org/nomicon/) - The Dark Arts of Unsafe Rust
+- [std::mem documentation](https://doc.rust-lang.org/std/mem/) - Memory utilities
+- [libc crate](https://docs.rs/libc/) - C library bindings
+
+## ➡️ What's Next?
+
+After completing this module, you'll be ready for [Module 05: Concurrency](../05-concurrency/README.md), where you'll apply your systems programming skills to build high-performance concurrent applications!
 
 ---
 
-Ready? Let's explore the depths of systems programming with Rust!
+**Ready to master systems programming?** Begin with [Memory Layout and Control](01-memory-layout.md) and discover the power of manual memory management! 🦀

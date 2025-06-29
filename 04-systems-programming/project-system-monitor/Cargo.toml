@@ -1,0 +1,29 @@
+[package]
+name = "system-monitor"
+version = "0.1.0"
+edition = "2021"
+description = "System resource monitor demonstrating Rust systems programming"
+authors = ["Rust Bootcamp Student"]
+
+[dependencies]
+# No external dependencies - this project demonstrates core Rust systems programming
+# All functionality is implemented using std library only
+
+[dev-dependencies]
+# No test dependencies needed for this educational project
+
+[[bin]]
+name = "system-monitor"
+path = "src/main.rs"
+
+[profile.release]
+# Optimize for performance in release builds
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+# Fast compilation for development
+opt-level = 0
+debug = true
