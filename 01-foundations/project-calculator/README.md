@@ -1,375 +1,227 @@
-# CLI Calculator Project
+# CLI Calculator Project - Fix the Broken Code!
 
-Build a command-line calculator that demonstrates all the concepts learned in Module 01: Foundations.
+🔧 **Your Mission**: Make this calculator compile and work correctly by fixing all the compilation errors and implementing the missing functionality.
+
+## 🎯 Learning Through Discovery
+
+This project demonstrates the **discovery-based learning approach**:
+- ✅ **Start with broken code** that won't compile
+- ✅ **Fix compilation errors** one by one
+- ✅ **Learn from real Rust compiler messages**
+- ✅ **Build understanding through debugging**
+
+## 🚨 Current Status: BROKEN! 
+
+```bash
+cd project-calculator
+cargo build  # ❌ WILL SHOW COMPILATION ERRORS
+```
+
+Your job is to make it work by fixing the broken starter code in `src/main.rs`.
 
 ## 🎯 Project Goals
 
-Create a calculator that:
-- Parses command-line arguments
-- Supports basic arithmetic operations (+, -, *, /)
-- Handles errors gracefully
-- Uses structs for data organization
-- Implements enums for operation types
-- Demonstrates Rust best practices
+Through fixing the broken code, you'll learn to create a calculator that:
+- ✅ Parses command-line arguments correctly
+- ✅ Supports basic arithmetic operations (+, -, *, /)
+- ✅ Handles errors gracefully (no crashes!)
+- ✅ Uses structs for data organization
+- ✅ Implements enums for operation types
+- ✅ Demonstrates Rust best practices
 
-## 📋 Requirements
+## 🔧 How to Approach This Project
 
-### Core Features
-1. **Command-line parsing**: Accept expressions like `calc 5 + 3`
-2. **Operations**: Addition, subtraction, multiplication, division
-3. **Error handling**: Invalid input, division by zero
-4. **Floating-point**: Support decimal numbers
-5. **Help text**: Display usage when requested
-
-### Stretch Goals
-1. **Parentheses**: Support `(5 + 3) * 2`
-2. **Variables**: Store and recall values
-3. **History**: Show previous calculations
-4. **Advanced operations**: Power, square root, modulo
-
-## 🏗️ Project Structure
-
-```
-project-calculator/
-├── Cargo.toml
-├── src/
-│   ├── main.rs         # Entry point
-│   ├── parser.rs       # Input parsing
-│   ├── calculator.rs   # Calculation logic
-│   └── error.rs        # Error types
-└── tests/
-    └── integration.rs  # Integration tests
-```
-
-## 🚀 Implementation Guide
-
-### Step 1: Set Up Project
-
+### **Step 1: Start Simple - Fix Compilation**
 ```bash
-cargo new calculator --bin
-cd calculator
+cargo build  # Read the first error message carefully
 ```
 
-### Step 2: Define Data Types
+The Rust compiler will tell you exactly what's wrong. Start with the first error and fix them one by one.
 
+### **Step 2: Implement TODO Items**
+Look for comments like:
+- `TODO: Add operation variants here`
+- `FIXME: This enum is missing - add the variants!`
+- `todo!("Implement calculation logic")`
+
+### **Step 3: Run Tests Frequently**
+```bash
+cargo test  # See what still needs to be implemented
+```
+
+Tests will guide you to what needs to be implemented next.
+
+### **Step 4: Test Your Implementation**
+```bash
+cargo run -- 5 + 3        # Test basic calculation
+cargo run -- 10 / 0       # Test error handling
+cargo run -- --help       # Test help functionality
+```
+
+## 🧩 What You'll Need to Implement
+
+### **Core Types** (Follow the TODO comments in the code)
+- `Operation` enum with arithmetic variants
+- `Expression` struct to hold calculation data  
+- `CalculatorError` enum for error handling
+- `Calculator` struct for state management
+
+### **Key Methods** (Replace the `todo!()` macros)
+- `Operation::from_str()` - Parse operation from string
+- `Expression::calculate()` - Perform the math
+- `parse_args()` - Handle command-line arguments
+- `parse_number()` - Convert strings to numbers
+
+### **Error Handling** (Critical for Rust!)
+- Division by zero detection
+- Invalid input handling
+- Graceful error messages
+
+## 🎓 Learning Objectives
+
+By fixing this broken code, you'll master:
+
+1. **Enum Definition**: Representing operations as variants
+2. **Struct Implementation**: Organizing calculation data
+3. **Pattern Matching**: Handling different operations with `match`
+4. **Error Handling**: Using `Result<T, E>` properly
+5. **Method vs Function**: Understanding `&self` syntax
+6. **String Parsing**: Converting user input to data types
+7. **Command-Line Args**: Processing `env::args()`
+
+## 🔄 C# Developer Notes
+
+| Concept | C# Way | Rust Way |
+|---------|--------|----------|
+| **Enums** | `enum { Add, Sub }` | `enum Operation { Add, Subtract }` |
+| **Classes** | `class Calculator { }` | `struct Calculator { }` + `impl` block |
+| **Exceptions** | `throw new Exception()` | `Err(CalculatorError::DivisionByZero)` |
+| **Null Checks** | `if (value == null)` | `match result { Some(val) => ..., None => ... }` |
+| **Method Calls** | `obj.Method()` | `obj.method()` (lowercase, snake_case) |
+
+## 🚨 Common Compilation Errors You'll Fix
+
+### **1. Missing Enum Variants**
 ```rust
-// src/main.rs
+// ❌ This will error
+enum Operation {
+    // Empty - add variants here!
+}
 
-#[derive(Debug, Clone, Copy)]
+// ✅ Fix by adding variants  
 enum Operation {
     Add,
     Subtract,
     Multiply,
     Divide,
 }
+```
 
-#[derive(Debug)]
+### **2. Missing Struct Fields**
+```rust
+// ❌ This will error
+struct Expression {
+    // Missing fields!
+}
+
+// ✅ Fix by adding fields
 struct Expression {
     left: f64,
     operation: Operation,
     right: f64,
 }
-
-#[derive(Debug)]
-enum CalculatorError {
-    InvalidInput(String),
-    DivisionByZero,
-    ParseError(String),
-}
-
-type Result<T> = std::result::Result<T, CalculatorError>;
 ```
 
-### Step 3: Implement Parser
-
+### **3. Unimplemented Methods**
 ```rust
-// src/parser.rs
-
-use crate::{Expression, Operation, CalculatorError, Result};
-
-pub fn parse_args(args: &[String]) -> Result<Expression> {
-    if args.len() != 4 {
-        return Err(CalculatorError::InvalidInput(
-            "Usage: calc <number> <operation> <number>".to_string()
-        ));
-    }
-    
-    let left = parse_number(&args[1])?;
-    let operation = parse_operation(&args[2])?;
-    let right = parse_number(&args[3])?;
-    
-    Ok(Expression { left, operation, right })
+// ❌ This will error
+fn calculate(&self) -> Result<f64, CalculatorError> {
+    todo!("Implement calculation logic")
 }
 
-fn parse_number(s: &str) -> Result<f64> {
-    s.parse::<f64>()
-        .map_err(|_| CalculatorError::ParseError(
-            format!("'{}' is not a valid number", s)
-        ))
-}
-
-fn parse_operation(s: &str) -> Result<Operation> {
-    match s {
-        "+" => Ok(Operation::Add),
-        "-" => Ok(Operation::Subtract),
-        "*" | "x" => Ok(Operation::Multiply),
-        "/" => Ok(Operation::Divide),
-        _ => Err(CalculatorError::InvalidInput(
-            format!("'{}' is not a valid operation", s)
-        )),
+// ✅ Fix by implementing logic
+fn calculate(&self) -> Result<f64, CalculatorError> {
+    match self.operation {
+        Operation::Add => Ok(self.left + self.right),
+        // ... more operations
     }
 }
 ```
 
-### Step 4: Implement Calculator
+## 💡 Debugging Tips
 
-```rust
-// src/calculator.rs
-
-use crate::{Expression, Operation, CalculatorError, Result};
-
-pub fn calculate(expr: Expression) -> Result<f64> {
-    match expr.operation {
-        Operation::Add => Ok(expr.left + expr.right),
-        Operation::Subtract => Ok(expr.left - expr.right),
-        Operation::Multiply => Ok(expr.left * expr.right),
-        Operation::Divide => {
-            if expr.right == 0.0 {
-                Err(CalculatorError::DivisionByZero)
-            } else {
-                Ok(expr.left / expr.right)
-            }
-        }
-    }
-}
-
-impl Operation {
-    fn symbol(&self) -> &str {
-        match self {
-            Operation::Add => "+",
-            Operation::Subtract => "-",
-            Operation::Multiply => "*",
-            Operation::Divide => "/",
-        }
-    }
-}
-
-impl Expression {
-    pub fn display(&self) -> String {
-        format!("{} {} {} = ", 
-            self.left, 
-            self.operation.symbol(), 
-            self.right
-        )
-    }
-}
+### **Read Error Messages Carefully**
+Rust's compiler gives excellent hints:
+```
+error[E0412]: cannot find type `Operation` in this scope
+   --> src/main.rs:15:20
+    |
+15  |     operation: Operation,
+    |                ^^^^^^^^^ not found in this scope
 ```
 
-### Step 5: Main Application
+### **Fix One Error at a Time**
+Don't try to fix everything at once. Fix the first error, then run `cargo build` again.
 
-```rust
-// src/main.rs
-
-mod parser;
-mod calculator;
-
-use std::env;
-
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    
-    if args.len() == 2 && (args[1] == "--help" || args[1] == "-h") {
-        print_help();
-        return;
-    }
-    
-    match parser::parse_args(&args) {
-        Ok(expression) => {
-            match calculator::calculate(expression.clone()) {
-                Ok(result) => {
-                    println!("{}{}", expression.display(), result);
-                }
-                Err(e) => {
-                    eprintln!("Calculation error: {:?}", e);
-                    std::process::exit(1);
-                }
-            }
-        }
-        Err(e) => {
-            eprintln!("Error: {:?}", e);
-            eprintln!("\nUse 'calc --help' for usage information");
-            std::process::exit(1);
-        }
-    }
-}
-
-fn print_help() {
-    println!("Calculator - A simple command-line calculator");
-    println!("\nUsage:");
-    println!("  calc <number> <operation> <number>");
-    println!("\nOperations:");
-    println!("  +  Addition");
-    println!("  -  Subtraction");
-    println!("  *  Multiplication (also 'x')");
-    println!("  /  Division");
-    println!("\nExamples:");
-    println!("  calc 5 + 3");
-    println!("  calc 10.5 - 2.5");
-    println!("  calc 4 x 5");
-    println!("  calc 20 / 4");
-}
+### **Use `cargo check` for Faster Feedback**
+```bash
+cargo check  # Faster than full compilation
 ```
 
-### Step 6: Error Display
+### **Ask Yourself: "What Would This Be in C#?"**
+Then translate that concept to Rust patterns.
 
-```rust
-// src/error.rs
+## 🧪 Testing Your Progress
 
-use std::fmt;
-
-impl fmt::Display for CalculatorError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            CalculatorError::InvalidInput(msg) => write!(f, "Invalid input: {}", msg),
-            CalculatorError::DivisionByZero => write!(f, "Division by zero"),
-            CalculatorError::ParseError(msg) => write!(f, "Parse error: {}", msg),
-        }
-    }
-}
-
-impl std::error::Error for CalculatorError {}
-```
-
-## 🧪 Testing
-
-Create integration tests:
-
-```rust
-// tests/integration.rs
-
-use assert_cmd::Command;
-use predicates::prelude::*;
-
-#[test]
-fn test_addition() {
-    let mut cmd = Command::cargo_bin("calculator").unwrap();
-    cmd.args(&["5", "+", "3"])
-        .assert()
-        .success()
-        .stdout(predicate::str::contains("5 + 3 = 8"));
-}
-
-#[test]
-fn test_division_by_zero() {
-    let mut cmd = Command::cargo_bin("calculator").unwrap();
-    cmd.args(&["10", "/", "0"])
-        .assert()
-        .failure()
-        .stderr(predicate::str::contains("Division by zero"));
-}
-
-#[test]
-fn test_help() {
-    let mut cmd = Command::cargo_bin("calculator").unwrap();
-    cmd.arg("--help")
-        .assert()
-        .success()
-        .stdout(predicate::str::contains("Usage:"));
-}
-```
-
-Add to Cargo.toml:
-```toml
-[dev-dependencies]
-assert_cmd = "2.0"
-predicates = "3.0"
-```
-
-## 🚀 Running the Calculator
+The project includes tests that will help guide your implementation:
 
 ```bash
-# Build the project
-cargo build --release
-
-# Run with cargo
-cargo run -- 5 + 3
-
-# Or use the binary directly
-./target/release/calculator 10 / 2
-
-# Get help
-./target/release/calculator --help
+cargo test                    # Run all tests
+cargo test test_operation     # Run specific test
+cargo test -- --nocapture    # See println! output
 ```
 
-## 🌟 Extension Ideas
+Tests start failing and gradually pass as you implement functionality.
 
-### 1. Expression Parser
-Support full expressions: `calc "5 + 3 * 2"`
+## 🏆 Success Criteria
 
-### 2. Interactive Mode
-```bash
-calc -i
-> 5 + 3
-8
-> ans * 2
-16
-> exit
-```
+Your calculator is complete when:
 
-### 3. History Feature
-```rust
-struct Calculator {
-    history: Vec<(Expression, f64)>,
-}
-```
+1. ✅ `cargo build` succeeds (no compilation errors)
+2. ✅ `cargo test` passes (all tests green)  
+3. ✅ `cargo run -- 5 + 3` outputs `5 + 3 = 8`
+4. ✅ `cargo run -- 10 / 0` shows error message (doesn't crash)
+5. ✅ `cargo run -- --help` shows usage information
 
-### 4. Configuration File
-```toml
-# ~/.calc/config.toml
-[display]
-precision = 2
-scientific_notation = false
+## 🆘 When You Get Stuck
 
-[constants]
-pi = 3.14159
-e = 2.71828
-```
+1. **Read the compiler error** - it's usually very helpful
+2. **Look at the TODO comments** - they contain hints
+3. **Check the test cases** - they show expected behavior
+4. **Think in C# first** - then translate to Rust patterns
+5. **Consult the solutions/** directory - but only as a last resort!
 
-### 5. Advanced Operations
-```rust
-enum Operation {
-    Add,
-    Subtract,
-    Multiply,
-    Divide,
-    Power,
-    SquareRoot,
-    Modulo,
-}
-```
+## 🚀 Extension Challenges (After Basic Version Works)
 
-## 📚 What You've Learned
+Once you have the basic calculator working:
 
-Through this project, you've applied:
+1. **Add more operations**: Power (^), modulo (%), square root
+2. **Support parentheses**: `calc "(5 + 3) * 2"`
+3. **Interactive mode**: `calc -i` for REPL interface
+4. **Variable storage**: `calc "x = 5" "x + 3"`
+5. **Calculation history**: Remember previous results
 
-1. **Project Structure**: Organizing code into modules
-2. **Enums**: Representing operations as variants
-3. **Structs**: Organizing expression data
-4. **Error Handling**: Custom error types with Result
-5. **Pattern Matching**: Handling different operations
-6. **Command-Line Parsing**: Working with env::args()
-7. **Testing**: Integration tests for CLI applications
+## 📚 What This Project Teaches
 
-## 🎯 Challenge Yourself
-
-1. Add support for multiple operations: `calc 5 + 3 - 1`
-2. Implement a tokenizer and parser for complex expressions
-3. Add unit conversions: `calc 5 km to miles`
-4. Create a GUI version using a Rust GUI framework
-5. Add mathematical functions: sin, cos, log, etc.
+By the end, you'll understand:
+- How Rust's ownership system prevents common bugs
+- Why explicit error handling is powerful
+- How pattern matching makes code clear and safe
+- The difference between `panic!` and graceful error handling
+- How Rust's type system catches mistakes at compile time
 
 ---
 
-Congratulations! You've built a functional CLI calculator in Rust. This project demonstrates fundamental Rust concepts and provides a foundation for more complex applications.
+**Remember**: Every compilation error you fix teaches you something valuable about Rust's safety guarantees. Embrace the struggle - it's where the learning happens!
 
-Next Module: [02 - Ownership and Borrowing](../../02-ownership-and-borrowing/README.md) →
+**🎯 Ready to start?** Open `src/main.rs` and begin fixing the broken code!

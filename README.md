@@ -215,7 +215,7 @@ Every concept includes direct C# comparisons:
 ## 🛠️ Development Environment
 
 **Fully Configured For:**
-- ✅ **macOS M4 MacBook Pro** with optimized setup
+- ✅ **macOS MacBook Pro** with optimized setup
 - ✅ **Windows 11 Desktop** with complete toolchain
 - ✅ **Podman** containers (alternative to Docker)
 - ✅ **VS Code** with rust-analyzer integration
