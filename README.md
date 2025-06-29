@@ -11,6 +11,7 @@
 ## 🎯 Learning Objectives
 
 By the end of this bootcamp, you will:
+**Learning Philosophy**: **60% Doing, 40% Reading** - Master Rust through guided discovery and real compiler errors.
 
 - ✅ Master Rust's ownership model and understand how it guarantees memory safety without garbage collection
 - ✅ Build high-performance, concurrent applications that rival C/C++ in speed
@@ -20,317 +21,178 @@ By the end of this bootcamp, you will:
 - ✅ Leverage Rust's powerful type system for compile-time correctness
 - ✅ Apply Rust idioms and best practices in real-world projects
 
-## 📚 Prerequisites
+### ✅ **Built for C# Developers**
+- Leverages your existing programming knowledge
+- Direct C# ↔ Rust comparisons throughout
+- Enterprise-focused examples and use cases
 
-- **Professional C# and .NET experience** (any level - from junior to senior) ✓
-- Understanding of object-oriented programming concepts
-- Familiarity with command-line interfaces
-- Git knowledge for version control
-- 2-3 hours daily commitment for 3 weeks
+### ✅ **Learn by Fixing Broken Code**
+- Every exercise starts with compilation errors
+- Rust's excellent compiler messages guide your learning
+- Build intuition through debugging, not reading
 
-**Note**: This bootcamp is designed to leverage your existing C# knowledge regardless of your years of experience. Whether you're a recent bootcamp graduate or a seasoned architect, your understanding of C# concepts will accelerate your Rust learning journey.
+### ✅ **Progressive Skill Building**
+- Each module builds on the previous one
+- Real projects apply concepts immediately
+- Professional debugging and troubleshooting support
 
-## 🚀 Quick Start
+## 📋 **Quick Start Paths**
 
+### **New to Rust? Start Here** (Recommended)
 ```bash
-git clone https://github.com/yourusername/rust-bootcamp.git
-cd rust-bootcamp
-
-# Choose your platform setup
-# macOS: 00-setup/macos-setup.md
-# Windows 11: 00-setup/windows-11-setup.md
-
-# Start with broken code exercises - learn by fixing compilation errors!
 cd 01-foundations/exercises
-rustc ex01-hello-world.rs  # Will show compilation errors to fix!
+rustc ex01-hello-world.rs  # Fix basic syntax errors
+# Follow the compilation errors to learn!
 ```
 
-**Setup Guides:**
-- 🍎 [macOS Setup](00-setup/macos-setup.md)
-- 🪟 [Windows 11 Setup](00-setup/windows-11-setup.md)
-- 🐳 [Container Setup (Optional)](00-setup/container-setup.md)
-- ⚙️ [VS Code Configuration](00-setup/vscode-configuration.md)
+### **Want the Big Picture First?**
+```bash
+# Skim the concepts, then jump to coding
+ls */reference/  # Detailed explanations
+# Then: cd 01-foundations/exercises
+```
 
-## 📚 What You'll Build
+### **Experienced Developer? Jump In**
+```bash
+cd 02-ownership-and-borrowing/exercises
+rustc ex01-ownership.rs  # Challenge yourself!
+```
 
-| Week | Focus | Project |
-|------|-------|---------|
-| **1** | **Foundations** | CLI Calculator with error handling |
-| **1** | **Ownership** | Interactive Memory Visualizer |
-| **1** | **Error Handling** | Robust File Processor |
-| **2** | **Systems Programming** | System Monitor with FFI |
-| **2** | **Concurrency** | Parallel Data Processor |
-| **2** | **Performance** | Benchmark Suite |
-| **3** | **CLI Tools** | Task Runner (Make alternative) |
-| **3** | **Ecosystem** | Reusable Crate Template |
-| **3** | **Advanced** | Domain-Specific Language |
-| **3** | **Final** | High-Performance Web Server |
+## 🗺️ **Learning Journey**
 
-## 🎓 Learning Philosophy
+| Module | Focus | What You'll Build |
+|--------|-------|-------------------|
+| **[01 - Foundations](01-foundations/)** | Syntax & Types | Working Calculator CLI |
+| **[02 - Ownership](02-ownership-and-borrowing/)** | Memory Model | Memory Visualizer Tool |
+| **[03 - Error Handling](03-error-handling/)** | Robust Code | File Processing System |
+| **[04 - Systems Programming](04-systems-programming/)** | Low-Level Control | System Resource Monitor |
 
-### **60% Doing, 40% Reading**
+**Total Time**: 2-3 weeks at your own pace
 
-Unlike traditional tutorials, you learn by **fixing real compilation errors**:
+## 💡 **Learning Approach**
 
+### **The "Broken Code" Method**
+1. **Encounter real compilation errors** - Not artificial examples
+2. **Read Rust's helpful error messages** - Learn to collaborate with the compiler
+3. **Fix one error at a time** - Build understanding incrementally
+4. **Apply concepts immediately** - Reinforce through practice
+
+### **C# Knowledge Leverage**
 ```rust
-// ❌ You start with broken code like this:
-fn calculate(operation: Operation, a: f64, b: f64) -> Result<f64, CalculatorError> {
-    todo!("Implement calculation logic")  // Fix this!
-}
+// You know this in C#:
+public int Add(int a, int b) { return a + b; }
 
-// ✅ You end up with production-quality code:
-fn calculate(operation: Operation, a: f64, b: f64) -> Result<f64, CalculatorError> {
-    match operation {
-        Operation::Add => Ok(a + b),
-        Operation::Subtract => Ok(a - b),
-        Operation::Multiply => Ok(a * b),
-        Operation::Divide => {
-            if b == 0.0 {
-                Err(CalculatorError::DivisionByZero)
-            } else {
-                Ok(a / b)
-            }
-        }
-    }
-}
+// Learn this in Rust:
+fn add(a: i32, b: i32) -> i32 { a + b }
 ```
 
-### **C# Knowledge Accelerator**
-
-Every concept includes direct C# comparisons:
-
-| C# Concept | Rust Equivalent | Key Difference |
-|------------|-----------------|----------------|
-| `class` | `struct` + `impl` | Composition over inheritance |
-| `interface` | `trait` | More powerful, includes default implementations |
-| `null` | `Option<T>` | Explicit null handling, no NullReferenceException |
-| `Exception` | `Result<T, E>` | Errors are values, not exceptions |
-| `using` statement | Ownership + `Drop` | Automatic cleanup without GC |
-| `var` | `let` + type inference | Immutable by default |
-
-## 📅 Detailed Bootcamp Schedule
-
-### **Week 1: Foundations**
-*Core Rust concepts and the ownership model*
-
-#### **Days 1-2: Environment and Fundamentals**
-- Hello Rust, variables, data types, functions
-- Pattern matching and error handling basics
-- **🧮 Project**: CLI Calculator
-
-#### **Days 3-4: Ownership and Borrowing**
-- Understanding ownership, moves, and copies
-- Borrowing rules and lifetimes
-- Smart pointers (Box, Rc, Arc, RefCell)
-- **🧠 Project**: Memory Visualizer
-
-#### **Days 5-7: Error Handling**
-- Result<T, E> and Option<T> types
-- Error propagation and custom errors
-- Unit and integration testing
-- **📁 Project**: Robust File Processor (Complete with CLI)
-
-### **Week 2: Systems Programming**
-*Low-level programming, concurrency, and performance*
-
-#### **Days 8-9: Systems Programming**
-- Memory layout and unsafe Rust
-- Foreign Function Interface (FFI)
-- Direct system calls and safety patterns
-- **🖥️ Project**: System Resource Monitor
-
-#### **Days 10-12: Concurrency and Parallelism**
-- Threading model comparison with C#
-- Message passing with channels
-- Shared state concurrency (Mutex, RwLock, Atomics)
-- Lock-free programming patterns
-- **⚡ Project**: Parallel Data Processor
-
-#### **Days 13-14: Performance Optimization**
-- Profiling with perf and flamegraph
-- Rust-specific optimizations
-- Benchmarking with Criterion
-- **📊 Project**: Performance Benchmark Suite
-
-### **Week 3: Advanced Topics**
-*Real-world applications and advanced patterns*
-
-#### **Days 15-16: CLI Tools Development**
-- Building with Clap
-- Configuration management
-- Terminal UI design
-- **🛠️ Project**: Task Runner (Make alternative)
-
-#### **Days 17-18: Rust Ecosystem**
-- Advanced Cargo usage
-- Popular crates overview
-- Publishing your own crates
-- **📦 Project**: Reusable Crate Template
-
-#### **Days 19-20: Advanced Patterns**
-- Trait patterns and type state
-- Builder pattern and DSLs
-- Interior mutability patterns
-- **🎨 Project**: Domain-Specific Language
-
-#### **Day 21: Final Project**
-- **🌐 High-Performance Web Server**
-- Combining all learned concepts
-- Performance comparison with C# implementation
-
-## 🛠️ Development Environment
-
-**Fully Configured For:**
-- ✅ **macOS MacBook Pro** with optimized setup
-- ✅ **Windows 11 Desktop** with complete toolchain
-- ✅ **Podman** containers (alternative to Docker)
-- ✅ **VS Code** with rust-analyzer integration
-- ✅ **Cross-platform debugging** setup for both platforms
-
-## 🤖 AI-Assisted Development Story
-
-This project showcases **human-AI collaboration** in technical education:
-
-**🧑‍💻 Human Expertise**: Professional C# experience, curriculum design vision, real-world development insights
-
-**🤖 Claude Desktop Assistance**:
-- Structured learning path design based on adult learning principles
-- Comprehensive content creation with pedagogical soundness
-- C#-to-Rust concept mapping and comparison development
-- Quality assurance through multiple review cycles
-- Real-world project design and implementation guidance
-
-**⚡ Collaboration Result**: A bootcamp that systematically transforms C# knowledge into Rust mastery through practical, hands-on learning designed specifically for experienced developers.
-
-*All code has been tested and verified to work correctly on real systems with comprehensive test suites.*
-
-## 🔄 Unique Learning Approach
-
-📊 **Progressive Hints System**
+### **Progressive Hints System**
 - **Level 1**: Gentle nudges in the right direction
 - **Level 2**: Specific guidance with examples
 - **Level 3**: Nearly complete solutions with explanations
-- **Available for every exercise** across all modules
 
-✅ **Checkpoint-Based Learning**
-- **One error at a time** - no overwhelming compilation failures
-- **Visual progress tracking** - see your advancement
-- **Incremental complexity** - each step builds on the last
-- **Celebration moments** - acknowledge every success
+## 🏆 **Success Metrics**
 
-🔧 **Systematic Debugging Support**
-- **Module-specific debugging checklists** for targeted help
-- **C# to Rust error translation** guides
-- **Step-by-step troubleshooting** workflows
-- **Common pattern recognition** training
+You're succeeding when:
+- ✅ **Compilation errors become helpful** - Not frustrating obstacles
+- ✅ **You think in ownership** - Natural mental model for memory safety
+- ✅ **Error handling feels natural** - No more null reference fears
+- ✅ **Systems concepts click** - Understanding low-level control
 
-🏢 **Enterprise Context Integration**
-- **Real-world application examples** for every concept
-- **Production use case scenarios** showing business value
-- **Performance comparison** with C# implementations
-- **Career advancement** relevance clearly explained
+## 🔧 **Prerequisites & Setup**
 
-**How It Works:**
-1. **Start with broken code** → Fix one error at a time
-2. **Get stuck?** → Check progressive hints (Level 1 → 2 → 3)
-3. **Still struggling?** → Use debugging checklist for your module
+### **Required Knowledge**
+- Professional C# experience (any level)
+- Basic command-line familiarity
+- Understanding of programming fundamentals
 
-## 📐 Unique Learning Approach
+### **Setup (5 minutes)**
+1. **Install Rust**: [rustup.rs](https://rustup.rs/)
+2. **VS Code + rust-analyzer** (recommended)
+3. **Clone this repo** and start coding!
 
-This bootcamp uses a proven approach tailored for developers with C# experience:
+**Platform Support**: ✅ macOS • ✅ Windows 11 • ✅ Linux • ✅ Containers
 
-1. **🧠 Comparative Learning**: Each concept introduced with C# comparisons to leverage existing knowledge
-2. **🔧 Discovery-Based Practice**: Learn by fixing broken code instead of reading perfect examples
-3. **📊 Performance-Oriented**: Benchmark and profile your code against C# equivalents
-4. **🔍 Systems Thinking**: Understand what happens "under the hood"
-5. **🛠️ Real-World Applications**: Build tools you'll actually use
+## 🎯 **Real-World Applications**
 
-## 📦 What's Included
+### **Enterprise Use Cases You'll Master**
+- **High-performance APIs** - Zero-cost abstractions
+- **System utilities** - CLI tools and automation
+- **Data processing** - ETL pipelines and analytics
+- **Legacy integration** - C library interoperability
+- **Concurrent services** - Thread-safe shared state
+
+## 🆘 **When You Get Stuck**
+
+### **Built-in Support System**
+1. **Compiler messages first** - Rust's error messages are exceptionally helpful
+2. **Module debugging guides** - Systematic troubleshooting for each topic
+3. **Progressive hints** - Guided discovery without giving away answers
+4. **Reference materials** - Deep dives when you're ready
+
+### **Community Resources**
+- 💬 [Rust Official Discord](https://discord.gg/rust-lang)
+- 📚 [The Rust Book](https://doc.rust-lang.org/book/)
+- 🤝 [Rust Users Forum](https://users.rust-lang.org/)
+
+## 🔍 **What Makes This Different**
+
+### **vs. Traditional Tutorials**
+- ❌ **Traditional**: Read → Example → Exercise
+- ✅ **This Bootcamp**: Fix → Understand → Apply
+
+### **vs. Generic Rust Resources**
+- ❌ **Generic**: Learn Rust syntax and concepts
+- ✅ **This Bootcamp**: Leverage C# knowledge for accelerated learning
+
+### **vs. Theoretical Learning**
+- ❌ **Theoretical**: Study memory management concepts
+- ✅ **This Bootcamp**: Debug real ownership violations
+
+## 📁 **Repository Structure**
 
 ```
 rust-bootcamp/
-├── 📚 5 Complete Learning Modules (3 fully implemented)
-├── 💻 20+ Hands-on Exercises with broken code to fix
-├── 🛠️ 10 Real-world Projects (3 production-ready)
-├── ✅ 100+ Test Cases
-├── 📖 Complete C# vs Rust Comparison Guide
-├── 🔧 Cross-platform Setup Guides (macOS M4 & Windows 11)
-├── 🐛 Comprehensive Troubleshooting Resources
-└── 🤖 AI-assisted curriculum development examples
+├── 01-foundations/           # Syntax, types, functions
+│   ├── exercises/           # Broken code to fix
+│   ├── project-calculator/  # Working calculator CLI
+│   └── reference/          # Detailed explanations
+├── 02-ownership-and-borrowing/
+│   ├── exercises/           # Ownership violation debugging
+│   ├── project-memory-visualizer/
+│   └── reference/
+├── 03-error-handling/       # Option<T> and Result<T,E>
+├── 04-systems-programming/  # Unsafe, FFI, memory layout
+└── setup/                   # Platform-specific setup guides
 ```
 
-## 📖 Recommended Resources
+## 🚀 **Ready to Start?**
 
-- 📚 **The Rust Programming Language** (included in resources)
-- 🦀 **Rust for Rustaceans** by Jon Gjengset
-- 💻 **Programming Rust** by Blandy, Orendorff, and Tindall
-- 🌐 [Rust by Example](https://doc.rust-lang.org/rust-by-example/)
-- ⚡ [The Rust Performance Book](https://nnethercote.github.io/perf-book/)
-- 📋 [Complete Rust vs C# Guide](resources/rust-vs-csharp.md)
+### **🎯 Beginner Path**
+```bash
+cd 01-foundations/
+# Read the 2-minute README, then start fixing code!
+```
 
-## 🎯 Perfect For
+### **🏃 Accelerated Path**
+```bash
+cd 02-ownership-and-borrowing/exercises/
+rustc ex01-ownership.rs  # Jump into ownership debugging
+```
 
-- 👨‍💻 **C# Developers** at any experience level (junior to senior)
-- 🎓 **Bootcamp Graduates** expanding into systems programming
-- 🏢 **Enterprise Engineers** exploring Rust for performance-critical applications
-- 🔄 **Full-Stack Developers** adding Rust to their toolkit
-- 📈 **Anyone** wanting to learn Rust through familiar programming concepts
-
-## 🤝 Community and Support
-
-- 💬 Join the discussion in [Issues](https://github.com/yourusername/rust-bootcamp/issues)
-- 🤝 Share your projects and get feedback from the community
-- 👥 Find study partners for pair programming sessions
-- 🔧 Access the [Troubleshooting Guide](resources/troubleshooting.md) for common issues
-- 📚 Explore additional [Learning Resources](resources/README.md)
-
-## 🚦 Getting Started
-
-**Ready to transform your C# skills into Rust expertise?**
-
-### **For New Learners:**
-1. **📥 Clone this repository**
-2. **⚙️ Complete your platform setup** ([Setup Guide](00-setup/README.md))
-3. **🔧 Start fixing broken code** in [Module 01: Foundations](01-foundations/README.md)
-4. **🧠 Master ownership** with [Module 02: Ownership](02-ownership-and-borrowing/README.md)
-
-### **Quick Navigation:**
-- 🏁 **Start Here**: [Module 00: Setup](00-setup/README.md)
-- 🦀 **Learn Rust Basics**: [Module 01: Foundations](01-foundations/README.md) ✅ **100% Complete**
-- 🧠 **Master Memory Model**: [Module 02: Ownership](02-ownership-and-borrowing/README.md) ✅ **100% Complete**
-- ⚡ **Handle Errors**: [Module 03: Error Handling](03-error-handling/README.md) ✅ **100% Complete**
-
-## 🏆 Success Metrics
-
-**Students completing this bootcamp will:**
-
-- ✅ **Master Ownership**: Understand Rust's unique memory management without GC
-- ✅ **Write Safe Code**: Leverage the type system for compile-time correctness
-- ✅ **Build Real Tools**: Create production-quality CLI applications
-- ✅ **Debug Confidently**: Read and fix Rust compiler errors effectively
-- ✅ **Think in Rust**: Apply Rust idioms and patterns naturally
-- ✅ **Performance Awareness**: Write efficient, systems-level code
-
-## 🎯 Final Project: High-Performance Web Server
-
-The culmination of your learning journey - a production-ready web server featuring:
-
-- ⚡ **Concurrent request handling** with async/await
-- 🚀 **Zero-copy networking** operations
-- 🔧 **Custom protocol** implementation
-- 📊 **Performance metrics** and monitoring
-- 🛡️ **Graceful shutdown** and error recovery
-- 📈 **Benchmarked against C#** to showcase Rust's advantages
+### **📚 Reference-First Path**
+```bash
+ls */reference/  # Skim concepts first
+# Then dive into exercises when ready
+```
 
 ---
 
 <div align="center">
 
-### **🦀 Ready to Level Up Your Systems Programming?**
+### **🦀 Transform Your C# Skills into Rust Mastery**
 
-**[🚀 Start Learning Now →](01-foundations/README.md)**
-
-*Built with Rust • Enhanced by AI • Designed for C# Developers*
+**[🚀 Start Learning Now](01-foundations/) • [📖 Browse Concepts](01-foundations/reference/) • [🔧 Setup Guide](00-setup/)**
 
 **⭐ Star this repo if it helps you learn Rust!**
 
@@ -338,6 +200,4 @@ The culmination of your learning journey - a production-ready web server featuri
 
 ---
 
-*"In Rust, the compiler is your friend, not your enemy. It catches at compile-time what other languages catch at runtime (or not at all)."*
-
-**Remember**: Rust has a learning curve, but your C# experience gives you a significant advantage. Whether you're coming from years in enterprise development or fresh from learning C#, you already understand many programming concepts that will accelerate your Rust journey. Embrace the compiler as your ally—it's there to help you write correct, performant code!
+*"The best way to learn Rust is to write Rust. The best way to write Rust is to fix broken Rust code and let the compiler teach you."*

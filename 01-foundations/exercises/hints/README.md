@@ -16,6 +16,7 @@ This directory contains progressive hints for each exercise. Use them when you'r
 - [Exercise 2: Types](ex02-level1.md) - Type system and variable declarations  
 - [Exercise 3: Functions](ex03-level1.md) - Functions and control flow
 - [Exercise 4: Structs](ex04-level1.md) - Custom types and methods
+- [Exercise 5: Advanced Patterns](ex05-level1.md) - Complex pattern matching and real-world techniques
 - [Calculator Project](calculator-level1.md) - CLI calculator implementation
 
 ## 🤝 Learning Philosophy
