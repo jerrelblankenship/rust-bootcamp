@@ -8,7 +8,7 @@ This directory contains progressive hints for systems programming exercises. The
 2. **Level 1 hints** - Gentle guidance on systems programming concepts
 3. **Level 2 hints** - More specific solutions with safety explanations
 4. **Level 3 hints** - Nearly complete implementations with detailed safety comments
-5. **Ask instructor** - If you're still stuck after Level 3 hints
+5. **Research safety patterns** - Look up established unsafe code patterns when stuck
 
 ## 📚 Available Hints
 

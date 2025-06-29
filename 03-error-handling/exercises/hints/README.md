@@ -8,7 +8,7 @@ This directory contains progressive hints for error handling exercises. Rust's e
 2. **Level 1 hints** - Gentle guidance on Result/Option patterns  
 3. **Level 2 hints** - More specific solutions with examples
 4. **Level 3 hints** - Nearly complete implementations with explanations
-5. **Ask instructor** - If you're still stuck after Level 3 hints
+5. **Try a different approach** - Sometimes stepping back helps clarify the pattern
 
 ## 📚 Available Hints
 

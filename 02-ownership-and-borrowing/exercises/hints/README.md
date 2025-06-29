@@ -8,7 +8,7 @@ This directory contains progressive hints for ownership and borrowing exercises.
 2. **Level 1 hints** - Gentle guidance on ownership concepts
 3. **Level 2 hints** - More specific solutions with examples
 4. **Level 3 hints** - Nearly complete implementations with explanations
-5. **Ask instructor** - If you're still stuck after Level 3 hints
+5. **Take a break and return** - Fresh perspective often helps with ownership concepts
 
 ## 📚 Available Hints
 

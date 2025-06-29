@@ -10,7 +10,7 @@
 2. **Check Level 1 hints** in `/hints/ex01-level1.md` - Gentle nudges
 3. **Check Level 2 hints** in `/hints/ex01-level2.md` - More specific guidance  
 4. **Check Level 3 hints** in `/hints/ex01-level3.md` - Nearly complete solutions
-5. **Ask for help** - If you're still stuck after all hint levels
+5. **Take a break and return** - Fresh perspective often helps!
 
 **Why this approach?** Productive struggle is where learning happens! The hints guide your discovery process rather than giving away answers.
 
@@ -217,7 +217,7 @@ cargo run -- 5 + 3  # Should calculate correctly
 2. **Check Level 1 hints** for gentle guidance
 3. **Check Level 2 hints** for more specific help
 4. **Check Level 3 hints** for nearly complete solutions
-5. **Ask instructor** if still stuck after all hint levels
+5. **Take a break and come back** - Fresh perspective often helps
 
 **Remember**: The struggle is where learning happens! Use hints to guide discovery, not to skip the thinking process.
 

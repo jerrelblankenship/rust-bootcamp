@@ -8,7 +8,7 @@ This directory contains progressive hints for each exercise. Use them when you'r
 2. **Level 1 hints** - Gentle nudges in the right direction
 3. **Level 2 hints** - More specific guidance with Rust concepts
 4. **Level 3 hints** - Nearly complete solutions with explanations
-5. **Ask instructor** - If you're still stuck after Level 3 hints
+5. **Check solutions when truly stuck** - Last resort after working through all hint levels
 
 ## 📚 Available Hints
 
