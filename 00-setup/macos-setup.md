@@ -1,6 +1,6 @@
-# macOS M4 Setup Guide
+# macOS Setup Guide
 
-This guide provides detailed instructions for setting up Rust on your M4 MacBook Pro, with optimizations specific to Apple Silicon.
+This guide provides detailed instructions for setting up Rust on macOS, with optimizations for Apple Silicon Macs.
 
 ## 🍎 Prerequisites
 
@@ -34,17 +34,19 @@ This guide provides detailed instructions for setting up Rust on your M4 MacBook
 
 ## ⚡ Apple Silicon Optimizations
 
+For Apple Silicon Macs (M1, M2, M3, M4):
+
 1. **Ensure native ARM64 compilation**
    ```bash
    rustup default stable-aarch64-apple-darwin
    ```
 
-2. **Configure Cargo for M4 performance**
+2. **Configure Cargo for optimal performance**
    Create/edit `~/.cargo/config.toml`:
    ```toml
    [build]
-   # Use all available cores
-   jobs = 8  # Adjust based on your M4 core count
+   # Use all available cores (adjust based on your Mac's core count)
+   jobs = 0  # 0 = auto-detect available cores
    
    [target.aarch64-apple-darwin]
    # Use Apple's native linker for better performance
@@ -54,6 +56,11 @@ This guide provides detailed instructions for setting up Rust on your M4 MacBook
    [profile.release]
    lto = "thin"  # Link-time optimization
    codegen-units = 1  # Better optimization at cost of compile time
+   ```
+
+3. **For Intel Macs**, use the default x86_64 toolchain:
+   ```bash
+   rustup default stable-x86_64-apple-darwin
    ```
 
 ## 🛠️ Additional Tools
@@ -118,8 +125,9 @@ brew install hyperfine        # Command-line benchmarking
    brew install podman-desktop
    ```
 
-2. **Initialize Podman machine for M4**
+2. **Initialize Podman machine**
    ```bash
+   # Configure based on your Mac's capabilities
    podman machine init --cpus=4 --memory=8192 --disk-size=50
    podman machine start
    ```
@@ -134,7 +142,7 @@ brew install hyperfine        # Command-line benchmarking
 
 See [VS Code Configuration](vscode-configuration.md) for detailed IDE setup.
 
-Key extensions for M4:
+Key extensions for macOS development:
 - rust-analyzer
 - CodeLLDB (for debugging)
 - Error Lens
@@ -169,10 +177,10 @@ cargo run --release
 echo "\n🎉 Setup complete!"
 ```
 
-## 🚀 Performance Tips for M4
+## 🚀 Performance Tips for Apple Silicon
 
 1. **Use unified memory efficiently**
-   - M4's unified memory architecture benefits from fewer allocations
+   - Apple Silicon's unified memory architecture benefits from fewer allocations
    - Prefer stack allocation over heap when possible
 
 2. **Leverage SIMD instructions**
@@ -191,6 +199,15 @@ echo "\n🎉 Setup complete!"
    RUSTFLAGS="-Cprofile-use=/tmp/pgo-data" cargo build --release
    ```
 
+4. **Compilation optimization**
+   ```bash
+   # Enable parallel LLVM backend
+   export RUSTFLAGS="-C codegen-units=16"
+   
+   # Use LLD linker (faster linking)
+   export RUSTFLAGS="-C link-arg=-fuse-ld=lld"
+   ```
+
 ## 🆘 Troubleshooting
 
 ### Common Issues
@@ -205,21 +222,40 @@ echo "\n🎉 Setup complete!"
    - Enable sccache: `cargo install sccache`
    - Set `RUSTC_WRAPPER=sccache` in environment
 
-### M4-Specific Issues
+### Apple Silicon Specific Issues
 
 1. **Binary compatibility warnings**
    - Ensure you're using ARM64 versions of all tools
    - Check with: `file $(which rustc)`
 
 2. **Rosetta 2 translation overhead**
-   - Avoid x86_64 dependencies
+   - Avoid x86_64 dependencies when possible
    - Use native ARM64 crates when available
+
+3. **Mixed architecture builds**
+   - Explicitly target the correct architecture:
+     ```bash
+     cargo build --target aarch64-apple-darwin  # For Apple Silicon
+     cargo build --target x86_64-apple-darwin   # For Intel Macs
+     ```
+
+### Intel Mac Considerations
+
+1. **Ensure correct toolchain**
+   ```bash
+   rustup default stable-x86_64-apple-darwin
+   ```
+
+2. **Homebrew architecture**
+   - Intel Macs use `/usr/local/bin`
+   - Apple Silicon Macs use `/opt/homebrew/bin`
 
 ## 📚 Additional Resources
 
 - [Rust on Apple Silicon](https://github.com/rust-lang/rust/issues/73908)
 - [Optimizing for Apple Silicon](https://developer.apple.com/documentation/apple-silicon/optimizing-your-code-for-apple-silicon)
 - [Cargo Configuration](https://doc.rust-lang.org/cargo/reference/config.html)
+- [Apple Developer Documentation](https://developer.apple.com/documentation/)
 
 ---
 
