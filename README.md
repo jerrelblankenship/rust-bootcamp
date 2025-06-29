@@ -1,6 +1,6 @@
 # Rust Bootcamp for C# Developers
 
-Welcome to an intensive 3-week Rust bootcamp designed specifically for experienced C# developers! This curriculum leverages your existing programming expertise while introducing you to Rust's unique approach to systems programming, memory safety, and performance.
+Welcome to an intensive 3-week Rust bootcamp designed specifically for C# developers! This curriculum leverages your existing programming expertise while introducing you to Rust's unique approach to systems programming, memory safety, and performance.
 
 ## 🎯 Learning Objectives
 
@@ -16,10 +16,13 @@ By the end of this bootcamp, you will:
 
 ## 📚 Prerequisites
 
-- 20 years of C# and .NET experience ✓
+- **Professional C# and .NET experience** (any level - from junior to senior) ✓
+- Understanding of object-oriented programming concepts
 - Familiarity with command-line interfaces
 - Git knowledge for version control
 - 2-3 hours daily commitment for 3 weeks
+
+**Note**: This bootcamp is designed to leverage your existing C# knowledge regardless of your years of experience. Whether you're a recent bootcamp graduate or a seasoned architect, your understanding of C# concepts will accelerate your Rust learning journey.
 
 ## 🚀 Quick Start
 
@@ -109,7 +112,7 @@ By the end of this bootcamp, you will:
 
 ## 🔄 Learning Approach
 
-This bootcamp uses a unique approach tailored for C# developers:
+This bootcamp uses a unique approach tailored for developers with C# experience:
 
 1. **Comparative Learning**: Each concept is introduced with C# comparisons to leverage your existing knowledge
 2. **Hands-On Focus**: Every module includes practical exercises and projects
@@ -189,7 +192,7 @@ Ready to begin your Rust journey? Start with [Module 00: Setup](00-setup/README.
 1. **[Module 01: Foundations](01-foundations/README.md)** - Master Rust basics with hands-on exercises
 2. **[Module 02: Ownership](02-ownership-and-borrowing/README.md)** - Understand Rust's unique memory model
 
-Remember: Rust has a learning curve, but your C# expertise gives you a significant advantage. Embrace the compiler as your ally—it's there to help you write correct, performant code!
+Remember: Rust has a learning curve, but your C# experience gives you a significant advantage. Whether you're coming from years in enterprise development or fresh from learning C#, you already understand many programming concepts that will accelerate your Rust journey. Embrace the compiler as your ally—it's there to help you write correct, performant code!
 
 ---
 
