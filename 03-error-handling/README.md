@@ -141,15 +141,28 @@ You've mastered this module when:
 
 ## 🆘 When You Get Stuck
 
-1. **Read the error message carefully** - Rust's compiler explains what's wrong
-2. **Check the TODO comments** - They contain specific hints
-3. **Think about the error cases** - What can go wrong in this operation?
-4. **Review the lesson material** - The concepts build on each other
-5. **Look at the solutions** - But only after trying yourself!
-6. **Compare with exceptions** - How would C# handle this with try-catch?
+**Follow this systematic approach:**
+
+1. **Read the error message carefully** - Rust's compiler explains error handling issues clearly
+2. **Check the [Debugging Checklist](DEBUGGING_CHECKLIST.md)** - Error handling troubleshooting guide
+3. **Use the progressive hints system** - Check `exercises/hints/` directory
+   - Level 1: Gentle Option/Result concept guidance
+   - Level 2: Specific error propagation solutions
+   - Level 3: Complete error handling pattern examples
+4. **Think about the error cases** - What can go wrong in this operation?
+5. **Review the lesson material** - Error handling concepts build on each other
+6. **Ask for help** - After working through error handling patterns
+
+**Remember:** Rust's error handling prevents runtime crashes. Learning to think of errors as data is revolutionary!
 
 ## 🔗 Additional Resources
 
+### **Built-in Learning Support:**
+- [Debugging Checklist](DEBUGGING_CHECKLIST.md) - Error handling troubleshooting
+- [Progressive Hints](exercises/hints/README.md) - Guided error handling discovery
+- [Exercise Solutions](exercises/instructor-only/README.md) - For instructors only
+
+### **External Resources:**
 - [Rust Book - Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handling.html)
 - [Rust by Example - Error Handling](https://doc.rust-lang.org/rust-by-example/error.html)
 - [anyhow crate](https://docs.rs/anyhow/) - Flexible error handling
