@@ -206,6 +206,37 @@ This project showcases **human-AI collaboration** in technical education:
 
 ## 🔄 Unique Learning Approach
 
+📊 **Progressive Hints System**
+- **Level 1**: Gentle nudges in the right direction
+- **Level 2**: Specific guidance with examples
+- **Level 3**: Nearly complete solutions with explanations
+- **Available for every exercise** across all modules
+
+✅ **Checkpoint-Based Learning**
+- **One error at a time** - no overwhelming compilation failures
+- **Visual progress tracking** - see your advancement
+- **Incremental complexity** - each step builds on the last
+- **Celebration moments** - acknowledge every success
+
+🔧 **Systematic Debugging Support**
+- **Module-specific debugging checklists** for targeted help
+- **C# to Rust error translation** guides
+- **Step-by-step troubleshooting** workflows
+- **Common pattern recognition** training
+
+🏢 **Enterprise Context Integration**
+- **Real-world application examples** for every concept
+- **Production use case scenarios** showing business value
+- **Performance comparison** with C# implementations
+- **Career advancement** relevance clearly explained
+
+**How It Works:**
+1. **Start with broken code** → Fix one error at a time
+2. **Get stuck?** → Check progressive hints (Level 1 → 2 → 3)
+3. **Still struggling?** → Use debugging checklist for your module
+
+## 📐 Unique Learning Approach
+
 This bootcamp uses a proven approach tailored for developers with C# experience:
 
 1. **🧠 Comparative Learning**: Each concept introduced with C# comparisons to leverage existing knowledge
