@@ -138,14 +138,27 @@ You've mastered this module when:
 
 ## 🆘 When You Get Stuck
 
-1. **Read the error message** - Rust's compiler is very helpful
-2. **Check the TODO comments** - They contain hints
-3. **Review the lesson material** - Make sure you understand the concepts
-4. **Look at the solutions** - But only after trying yourself!
-5. **Remember your C# knowledge** - Think about how you'd solve it in C# first
+**Follow this systematic approach:**
+
+1. **Read the error message carefully** - Rust's compiler is exceptionally helpful
+2. **Check the [Debugging Checklist](DEBUGGING_CHECKLIST.md)** - Systematic troubleshooting guide
+3. **Use the progressive hints system** - Check `exercises/hints/` directory
+   - Level 1: Gentle nudges in the right direction
+   - Level 2: More specific guidance with examples  
+   - Level 3: Nearly complete solutions with explanations
+4. **Review the lesson material** - Make sure you understand the concepts
+5. **Ask for help** - After working through the hints system
+
+**Remember:** The struggle is where learning happens! Use resources to guide discovery, not skip thinking.
 
 ## 🔗 Additional Resources
 
+### **Built-in Learning Support:**
+- [Debugging Checklist](DEBUGGING_CHECKLIST.md) - Systematic error troubleshooting
+- [Progressive Hints](exercises/hints/README.md) - Guided discovery system
+- [Exercise Solutions](exercises/instructor-only/README.md) - For instructors only
+
+### **External Resources:**
 - [The Rust Book](https://doc.rust-lang.org/book/) - Official Rust guide
 - [Rust by Example](https://doc.rust-lang.org/rust-by-example/) - Learn through examples
 - [Rust Playground](https://play.rust-lang.org/) - Try code online

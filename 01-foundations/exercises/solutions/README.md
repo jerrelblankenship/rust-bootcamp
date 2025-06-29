@@ -1,21 +1,35 @@
-# Exercise Solutions - Module 01: Foundations
+# Exercise Help - Module 01: Foundations
 
-🎯 **Important**: Use this guide only **after** attempting the exercises yourself! The learning happens when you struggle with compilation errors and discover the solutions.
+🎯 **New Approach**: We now use a **progressive hints system** instead of direct solutions! This helps you learn through guided discovery.
 
-## 📚 How to Approach These Exercises
+## 🔄 How to Get Help
 
-1. **Try First**: Attempt each exercise completely before looking here
-2. **Debug Systematically**: Fix one compilation error at a time
-3. **Read Compiler Messages**: Rust's error messages are your best teacher
-4. **Learn from Mistakes**: Each error teaches you something about Rust's safety
+**Instead of looking for complete solutions, follow this progression:**
 
-## 🔧 General Solution Strategies
+1. **Try the exercise first** - Use compiler error messages as your guide
+2. **Check Level 1 hints** in `/hints/ex01-level1.md` - Gentle nudges
+3. **Check Level 2 hints** in `/hints/ex01-level2.md` - More specific guidance  
+4. **Check Level 3 hints** in `/hints/ex01-level3.md` - Nearly complete solutions
+5. **Ask for help** - If you're still stuck after all hint levels
+
+**Why this approach?** Productive struggle is where learning happens! The hints guide your discovery process rather than giving away answers.
+
+## 📚 Progressive Learning Approach
+
+1. **Attempt First**: Try to fix compilation errors using the compiler messages
+2. **One Error at a Time**: Don't try to fix everything at once
+3. **Use Hints Progressively**: Start with Level 1, only move up if needed
+4. **Understand the Why**: Focus on concepts, not just making it compile
+5. **Relate to C#**: Think about how you'd solve this in C# first
+
+## 🔧 General Problem-Solving Strategies
 
 ### **For All Exercises**
-- Start by making the code compile (fix syntax errors first)
-- Then make the code work correctly (implement the logic)
-- Use `rustc filename.rs` to compile and test
-- Read every TODO and FIXME comment carefully
+- **Read the error message completely** - Rust's compiler is very helpful
+- **Fix one error at a time** - Compile after each fix
+- **Check TODO/FIXME comments** - They contain important hints
+- **Use hints when stuck** - But try first!
+- **Compile frequently** - `rustc filename.rs`
 
 ## 🎯 Exercise-by-Exercise Guidance
 
@@ -27,12 +41,14 @@
 - Function definition with `fn` keyword
 - Expression-based returns (no `return` needed)
 
-**Common Fixes You'll Make:**
-- Add missing `!` to `println("Hello")` → `println!("Hello")`
-- Declare variables: `let name = "Your Name";`
-- Use correct format specifiers for complex data types
-- Implement the `print_initials()` function
-- Add parameter types to functions
+**Learning Focus:**
+- Macro syntax with `!` 
+- Variable declaration with `let`
+- Debug formatting patterns
+- Function implementation
+- Parameter type annotations
+
+**If you're stuck**: Check [Exercise 1 Hints](../hints/ex01-level1.md)
 
 ### **Exercise 2: Variables and Types**
 **Key Concepts to Master:**
@@ -43,13 +59,14 @@
 - Array slicing with `&array[start..end]`
 - String vs &str differences
 
-**Common Fixes You'll Make:**
-- Add `let` before variable declarations
-- Add `mut` for variables that change: `let mut counter = 0;`
-- Use type annotations when compiler can't infer
-- Convert between numeric types: `x as i64`
-- Access tuples with `.0` not `[0]`
-- Create slices with `&data[1..4]` not `data[1:4]`
+**Learning Focus:**
+- Mutability with `let` vs `let mut`
+- Type annotations and inference
+- Type conversions with `as`
+- Tuple and array access patterns
+- Slicing syntax
+
+**If you're stuck**: Check [Exercise 2 Hints](../hints/ex02-level1.md)
 
 ### **Exercise 3: Functions and Control Flow**
 **Key Concepts to Master:**
@@ -60,12 +77,14 @@
 - Early returns and error handling
 - Expression vs statement differences
 
-**Common Fixes You'll Make:**
-- Add parameter types: `fn greet(name: &str, age: i32)`
-- Add return types: `fn calculate() -> i32`
-- Use `match` instead of `if/else` chains for enums
-- Handle `Option` and `Result` types properly
-- Return expressions without semicolons
+**Learning Focus:**
+- Function signatures and types
+- Pattern matching with `match`
+- Option and Result handling
+- Expression-based returns
+- Control flow patterns
+
+**If you're stuck**: Check [Exercise 3 Hints](../hints/ex03-level1.md)
 
 ### **Exercise 4: Structs and Enums**
 **Key Concepts to Master:**
@@ -76,12 +95,14 @@
 - Generic types and trait bounds
 - Builder pattern implementation
 
-**Common Fixes You'll Make:**
-- Define struct fields with types
-- Implement methods with `&self` parameter
-- Create enum variants for different cases
-- Use `::` for associated functions, `.` for methods
-- Handle generic type parameters properly
+**Learning Focus:**
+- Struct definition and instantiation
+- Method vs associated function syntax
+- Enum variants and pattern matching
+- Generic type parameters
+- Implementation blocks
+
+**If you're stuck**: Check [Exercise 4 Hints](../hints/ex04-level1.md)
 
 ## 💡 General Problem-Solving Patterns
 
@@ -188,13 +209,17 @@ cargo run -- 5 + 3  # Should calculate correctly
 - Methods vs functions
 - Generic programming basics
 
-## 🆘 When Completely Stuck
+## 🆘 When You Need Help
 
-1. **Read the error message** - Rust's compiler is very helpful
-2. **Focus on one error** - Don't try to fix everything at once
-3. **Look at the hints** - TODO and FIXME comments contain guidance
-4. **Think C# first** - Then translate the concept to Rust
-5. **Check working solutions** - In the calculator project's solutions/ directory
+**Follow this progression:**
+
+1. **Try for 10-15 minutes** using compiler error messages
+2. **Check Level 1 hints** for gentle guidance
+3. **Check Level 2 hints** for more specific help
+4. **Check Level 3 hints** for nearly complete solutions
+5. **Ask instructor** if still stuck after all hint levels
+
+**Remember**: The struggle is where learning happens! Use hints to guide discovery, not to skip the thinking process.
 
 ## 📖 Additional Resources
 
@@ -215,5 +240,13 @@ You've mastered Module 01 when:
 ---
 
 **Remember**: The goal isn't perfect code on the first try. The goal is understanding Rust's principles through hands-on problem solving. Every error you fix makes you a better Rust developer!
+
+## 📂 Available Hints
+
+- [Exercise 1: Hello World](../hints/ex01-level1.md) - Basic syntax and macros
+- [Exercise 2: Types](../hints/ex02-level1.md) - Type system fundamentals  
+- [Exercise 3: Functions](../hints/ex03-level1.md) - Functions and control flow
+- [Exercise 4: Structs](../hints/ex04-level1.md) - Custom types and methods
+- [Calculator Project](../hints/calculator-level1.md) - Complete CLI application
 
 **🎯 Ready for the next challenge?** Move on to [Module 02: Ownership and Borrowing](../../02-ownership-and-borrowing/README.md) when you've completed all exercises!
