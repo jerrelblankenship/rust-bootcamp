@@ -25,7 +25,7 @@ fi
 if command -v rustc &> /dev/null; then
     RUST_VERSION=$(rustc --version)
     echo "✅ Rust is installed: $RUST_VERSION"
-    
+
     # Check minimum version (1.70.0 or higher recommended)
     RUST_MAJOR=$(echo "$RUST_VERSION" | grep -oE '[0-9]+\.[0-9]+' | head -1)
     if [[ "$(printf '%s\n' "1.70" "$RUST_MAJOR" | sort -V | head -n1)" != "1.70" ]]; then
@@ -72,21 +72,21 @@ echo "🛠️  Would you like to install recommended cargo extensions? (y/n)"
 read -r response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
     echo "Installing cargo extensions..."
-    
+
     # Updated cargo extensions for 2024/2025
     cargo install cargo-watch 2>/dev/null || echo "✅ cargo-watch already installed"
     cargo install cargo-edit 2>/dev/null || echo "✅ cargo-edit already installed"
     cargo install cargo-expand 2>/dev/null || echo "✅ cargo-expand already installed"
     cargo install cargo-clippy 2>/dev/null || echo "✅ cargo-clippy already installed"
     cargo install cargo-fmt 2>/dev/null || echo "✅ cargo-fmt already installed"
-    
+
     echo "✅ Cargo extensions installed"
 fi
 
 # Platform-specific setup
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo ""
-    echo "🍎 Detected macOS. Check 00-setup/macos-m4-setup.md for platform-specific instructions."
+    echo "🍎 Detected macOS. Check 00-setup/macos-setup.md for platform-specific instructions."
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
     echo ""
     echo "🪟 Detected Windows. Check 00-setup/windows-11-setup.md for platform-specific instructions."

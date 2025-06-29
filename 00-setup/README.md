@@ -16,7 +16,7 @@ By the end of this setup, you will have:
 
 Choose the guide for your platform:
 
-1. **[macOS M4 Setup](macos-m4-setup.md)** - Optimized for Apple Silicon
+1. **[macOS Setup](macos-setup.md)** - Optimized for Apple Silicon
 2. **[Windows 11 Setup](windows-11-setup.md)** - PowerShell and native tools
 3. **[VS Code Configuration](vscode-configuration.md)** - Universal IDE setup
 4. **[Container Setup](container-setup.md)** - Podman-based development

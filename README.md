@@ -37,7 +37,7 @@ git clone https://github.com/yourusername/rust-bootcamp.git
 cd rust-bootcamp
 
 # Choose your platform setup
-# macOS M4: 00-setup/macos-m4-setup.md  
+# macOS M4: 00-setup/macos-m4-setup.md
 # Windows 11: 00-setup/windows-11-setup.md
 
 # Start with broken code exercises - learn by fixing compilation errors!
@@ -46,7 +46,7 @@ rustc ex01-hello-world.rs  # Will show compilation errors to fix!
 ```
 
 **Setup Guides:**
-- 🍎 [macOS M4 Setup](00-setup/macos-m4-setup.md)
+- 🍎 [macOS Setup](00-setup/macos-setup.md)
 - 🪟 [Windows 11 Setup](00-setup/windows-11-setup.md)
 - 🐳 [Container Setup (Optional)](00-setup/container-setup.md)
 - ⚙️ [VS Code Configuration](00-setup/vscode-configuration.md)
@@ -118,7 +118,7 @@ Every concept includes direct C# comparisons:
 - Pattern matching and error handling basics
 - **🧮 Project**: CLI Calculator (Complete implementation)
 
-#### **Days 3-4: Ownership and Borrowing** ✅ 
+#### **Days 3-4: Ownership and Borrowing** ✅
 - Understanding ownership, moves, and copies
 - Borrowing rules and lifetimes
 - Smart pointers (Box, Rc, Arc, RefCell)
@@ -182,7 +182,7 @@ Every concept includes direct C# comparisons:
 
 ### ✅ **Fully Complete Modules**
 
-#### **🎯 Module 01: Foundations** 
+#### **🎯 Module 01: Foundations**
 - ✅ 4 comprehensive lessons with C# comparisons
 - ✅ 5 complete exercises (50+ individual problems with compilation errors to fix)
 - ✅ Complete CLI calculator project with advanced features
@@ -216,7 +216,7 @@ Every concept includes direct C# comparisons:
 
 **Fully Configured For:**
 - ✅ **macOS M4 MacBook Pro** with optimized setup
-- ✅ **Windows 11 Desktop** with complete toolchain  
+- ✅ **Windows 11 Desktop** with complete toolchain
 - ✅ **Podman** containers (alternative to Docker)
 - ✅ **VS Code** with rust-analyzer integration
 - ✅ **Cross-platform debugging** setup for both platforms
@@ -227,7 +227,7 @@ This project showcases **human-AI collaboration** in technical education:
 
 **🧑‍💻 Human Expertise**: Professional C# experience, curriculum design vision, real-world development insights
 
-**🤖 Claude Desktop Assistance**: 
+**🤖 Claude Desktop Assistance**:
 - Structured learning path design based on adult learning principles
 - Comprehensive content creation with pedagogical soundness
 - C#-to-Rust concept mapping and comparison development
@@ -308,7 +308,7 @@ rust-bootcamp/
 **Students completing this bootcamp will:**
 
 - ✅ **Master Ownership**: Understand Rust's unique memory management without GC
-- ✅ **Write Safe Code**: Leverage the type system for compile-time correctness  
+- ✅ **Write Safe Code**: Leverage the type system for compile-time correctness
 - ✅ **Build Real Tools**: Create production-quality CLI applications
 - ✅ **Debug Confidently**: Read and fix Rust compiler errors effectively
 - ✅ **Think in Rust**: Apply Rust idioms and patterns naturally
