@@ -139,15 +139,28 @@ You've mastered this module when:
 
 ## 🆘 When You Get Stuck
 
+**Follow this systematic approach:**
+
 1. **Read the error message carefully** - Rust's compiler is incredibly helpful for systems code
-2. **Check the TODO comments** - They contain specific hints about memory safety
-3. **Think about ownership** - Who owns what memory, and when is it freed?
-4. **Review the lesson material** - The concepts build on each other
-5. **Look at the hints** - But only after trying yourself!
-6. **Compare with C#** - How would you solve this with unsafe C# or P/Invoke?
+2. **Check the [Debugging Checklist](DEBUGGING_CHECKLIST.md)** - Systems programming troubleshooting guide
+3. **Use the progressive hints system** - Check `exercises/hints/` directory
+   - Level 1: Gentle systems programming concept guidance
+   - Level 2: Specific unsafe code and FFI solutions
+   - Level 3: Complete systems programming pattern examples
+4. **Think about memory safety** - What are the safety invariants?
+5. **Review the lesson material** - Systems concepts build on each other
+6. **Ask for help** - After working through systems programming patterns
+
+**Remember:** Systems programming requires careful attention to safety. Unsafe code needs extra scrutiny!
 
 ## 🔗 Additional Resources
 
+### **Built-in Learning Support:**
+- [Debugging Checklist](DEBUGGING_CHECKLIST.md) - Systems programming troubleshooting
+- [Progressive Hints](exercises/hints/README.md) - Guided systems programming discovery
+- [Exercise Solutions](exercises/instructor-only/README.md) - For instructors only
+
+### **External Resources:**
 - [The Rustonomicon](https://doc.rust-lang.org/nomicon/) - The Dark Arts of Unsafe Rust
 - [std::mem documentation](https://doc.rust-lang.org/std/mem/) - Memory utilities
 - [libc crate](https://docs.rs/libc/) - C library bindings

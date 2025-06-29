@@ -2,6 +2,18 @@
 
 Take control of memory representation and build high-performance, zero-allocation code. Learn how Rust gives you explicit control over memory layout while maintaining safety.
 
+## 🏢 Why Memory Layout Matters in Enterprise Development
+
+In enterprise C# development, you rarely think about memory layout - the garbage collector handles everything. But when building:
+- **High-frequency trading systems** - Every nanosecond counts, memory layout affects cache performance
+- **Game engines** - Frame rates depend on memory efficiency and data structure organization  
+- **IoT devices** - Memory is extremely constrained, every byte matters
+- **Database engines** - Cache efficiency and row storage determine query performance
+- **Network protocols** - Binary layout must match wire format specifications exactly
+- **Real-time systems** - Predictable memory access patterns prevent GC pauses
+
+Rust gives you the control that C# abstracts away, allowing you to optimize for these demanding scenarios where performance is critical.
+
 ## 🔄 For C# Developers
 
 ### From Managed to Manual Memory
@@ -37,7 +49,9 @@ let boxed_person = Box::new(person);
 
 **Key Insight**: Rust gives you explicit control over where data lives and how it's arranged.
 
-## 📐 Core Concepts
+**Enterprise Impact**: In C#, unpredictable GC pauses can cause issues in real-time systems. Rust's deterministic memory management eliminates these concerns while giving you fine-grained control.
+
+## 📐 Core Concepts (C# Comparison Focus)
 
 ### Struct Padding and Optimization
 ```rust
@@ -65,18 +79,21 @@ let data = [0u8; 1024];  // 1KB on stack
 let data = vec![0u8; 1024];  // 1KB on heap
 ```
 
-### Zero-Copy Operations
+### Zero-Copy Operations (Critical for Performance)
 ```rust
 use std::borrow::Cow;
 
-// Allocate only when needed
+// Allocate only when needed - like C#'s ReadOnlySpan but more powerful
 fn process_string(input: &str) -> Cow<str> {
     if input.chars().any(|c| c.is_lowercase()) {
-        Cow::Owned(input.to_uppercase())  // Allocate
+        Cow::Owned(input.to_uppercase())  // Allocate when transformation needed
     } else {
-        Cow::Borrowed(input)              // Zero-copy
+        Cow::Borrowed(input)              // Zero-copy when possible
     }
 }
+
+// C# equivalent would require manual optimization
+// ReadOnlySpan<char> helps but Rust's ownership makes it automatic
 ```
 
 ## 🎯 Key Takeaways

@@ -2,6 +2,19 @@
 
 Safely bridge Rust and C code for maximum interoperability. Learn to interface with C libraries from Rust and export Rust functions for C consumption with better type safety than P/Invoke.
 
+## 🏢 Enterprise FFI Use Cases
+
+Enterprise systems often need to integrate with existing C/C++ libraries. Rust's FFI provides safer alternatives to C# P/Invoke:
+- **Legacy system integration** - Banking systems with decades-old C code
+- **Hardware device drivers** - Industrial control systems and embedded devices
+- **High-performance libraries** - OpenSSL, graphics libraries, scientific computing
+- **Operating system APIs** - Direct Windows/Linux system calls
+- **Database drivers** - Native database connectors without managed overhead
+- **Cryptographic modules** - Hardware security modules (HSMs) with C interfaces
+- **Real-time protocols** - CAN bus, Modbus, and other industrial protocols
+
+Rust's FFI provides better memory safety guarantees than C# P/Invoke while maintaining similar performance.
+
 ## 🔄 For C# Developers
 
 ### P/Invoke vs Rust FFI
@@ -28,6 +41,8 @@ unsafe {
 ```
 
 **Key Insight**: Rust FFI is more explicit about safety but gives you finer control over data marshaling.
+
+**Enterprise Advantage**: Unlike C# P/Invoke where marshaling errors cause runtime crashes, Rust's FFI makes safety explicit through unsafe blocks and type-safe pointer handling.
 
 ## 📞 Essential Patterns
 
