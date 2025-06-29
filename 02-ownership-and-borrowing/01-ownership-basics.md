@@ -1,19 +1,20 @@
 # Lesson 01: Ownership Basics
 
+Welcome to Rust's most revolutionary feature! Ownership is what makes Rust unique among programming languages, providing memory safety without garbage collection. Let's explore how it works and why it matters.
+
 ## 🎯 Learning Objectives
 
-By the end of this lesson, you will:
-- Understand Rust's three rules of ownership
+- Understand Rust's three fundamental ownership rules
 - Distinguish between move and copy semantics
-- Recognize how ownership differs from C#'s reference model
-- Write functions that transfer ownership
-- Debug common ownership errors
+- Recognize how ownership prevents memory bugs that plague C#
+- Write functions that properly transfer ownership
+- Debug common ownership errors using compiler messages
 
 ## 📚 Introduction
 
-Coming from C#, you're used to the garbage collector managing memory behind the scenes. Objects live on the heap, references are freely copied, and the GC cleans up when objects are no longer reachable. This model has served you well, but it comes with costs: GC pauses, memory overhead, and unpredictable performance.
+Coming from C#, you're accustomed to the garbage collector managing memory automatically. Objects live on the heap, references can be copied freely, and the GC eventually reclaims unused memory. This approach is convenient but comes with costs: unpredictable GC pauses, memory overhead, and potential memory leaks.
 
-Rust takes a fundamentally different approach: **ownership**.
+Rust takes a fundamentally different approach with **ownership** - a compile-time memory management system that guarantees safety without any runtime overhead.
 
 ## 🔑 The Three Rules of Ownership
 
@@ -23,266 +24,251 @@ Rust's entire memory management system is built on three simple rules:
 2. **There can only be one owner at a time**
 3. **When the owner goes out of scope, the value is dropped**
 
-Let's see what this means in practice.
+These rules prevent use-after-free bugs, double-free errors, and memory leaks at compile time.
 
-## 🔄 Ownership vs References: C# and Rust
+## 🔄 Move vs Copy Semantics
 
-### C# Reference Semantics
-
-```csharp
-public class Person {
-    public string Name { get; set; }
-    public int Age { get; set; }
-}
-
-// In C#
-var alice = new Person { Name = "Alice", Age = 30 };
-var bob = alice;  // Both variables reference the same object
-bob.Age = 31;
-Console.WriteLine(alice.Age);  // Prints 31 - alice was modified!
-```
-
-In C#, `alice` and `bob` are references pointing to the same object on the heap.
-
-### Rust Ownership Semantics
+### Copy Types (Stack)
 
 ```rust
-struct Person {
-    name: String,
-    age: u32,
-}
+// Simple types implement Copy trait
+let x = 5;          // i32 stored on stack
+let y = x;          // x is COPIED to y
+println!("{}", x);  // Still works! x wasn't moved
 
-// In Rust
-let alice = Person {
-    name: String::from("Alice"),
-    age: 30,
-};
-
-let bob = alice;  // Ownership MOVES from alice to bob
-// println!("{}", alice.age);  // ERROR: alice no longer owns the value!
-println!("{}", bob.age);  // This works - bob is now the owner
+// Other Copy types
+let a = 3.14;       // f64
+let b = true;       // bool  
+let c = 'R';        // char
+let point = (3, 4); // Tuple of Copy types
 ```
 
-This is the key difference: **assignment transfers ownership** in Rust.
-
-## 📦 Stack vs Heap: Where Data Lives
-
-### Simple Types (Stack)
+### Move Types (Heap)
 
 ```rust
-// These types implement Copy and live on the stack
-let x = 42;          // i32
-let y = x;           // x is COPIED to y
-println!("{}", x);   // Still works!
-
-let a = 3.14;        // f64
-let b = a;           // Copied
-let c = true;        // bool
-let d = c;           // Copied
-let e = 'R';         // char
-let f = e;           // Copied
-```
-
-Types that implement the `Copy` trait are duplicated on assignment. These include:
-- All integer types (`i8`, `i16`, `i32`, `i64`, `i128`, `isize`, `u8`, `u16`, etc.)
-- Floating point types (`f32`, `f64`)
-- Boolean (`bool`)
-- Character (`char`)
-- Tuples containing only `Copy` types
-
-### Complex Types (Heap)
-
-```rust
-// String allocates on the heap
+// Complex types are moved, not copied
 let s1 = String::from("Hello");
-let s2 = s1;  // s1 is MOVED to s2
+let s2 = s1;        // s1 is MOVED to s2
 
-// This would error:
+// This would cause a compilation error:
 // println!("{}", s1);  // ERROR: value borrowed after move
 
-// Vec also allocates on the heap
+// Vector example
 let v1 = vec![1, 2, 3];
-let v2 = v1;  // v1 is MOVED to v2
+let v2 = v1;        // v1 is moved to v2
+// println!("{:?}", v1); // ERROR: v1 no longer valid
 ```
 
-## 🎭 The Clone Trait
-
-When you need a deep copy (like C#'s `ICloneable`):
-
-```rust
-let s1 = String::from("Hello");
-let s2 = s1.clone();  // Explicit deep copy
-println!("{}", s1);   // Works! s1 still owns its data
-println!("{}", s2);   // s2 owns a separate copy
-```
-
-## 🔧 Functions and Ownership
+## 🏭 Functions and Ownership Transfer
 
 ### Taking Ownership
 
 ```rust
-fn take_ownership(s: String) {
+fn take_string(s: String) {
     println!("I now own: {}", s);
-} // s goes out of scope and is dropped
+} // s goes out of scope and is dropped here
 
 fn main() {
     let my_string = String::from("Hello");
-    take_ownership(my_string);
-    // println!("{}", my_string);  // ERROR: my_string was moved
+    take_string(my_string);
+    // println!("{}", my_string); // ERROR: my_string was moved
 }
 ```
 
-### Giving Ownership
+### Returning Ownership
 
 ```rust
-fn give_ownership() -> String {
-    let s = String::from("Created inside");
-    s  // Ownership is transferred to caller
+fn give_string() -> String {
+    let s = String::from("Created inside function");
+    s  // Ownership transferred to caller
 }
 
-fn main() {
-    let my_string = give_ownership();
-    println!("{}", my_string);  // We own it now
-}
-```
-
-### Taking and Giving Back
-
-```rust
 fn take_and_give_back(s: String) -> String {
     println!("Processing: {}", s);
     s  // Return ownership to caller
 }
 
 fn main() {
-    let s1 = String::from("Hello");
+    let s1 = give_string();
     let s2 = take_and_give_back(s1);
-    println!("Got back: {}", s2);
+    println!("Final string: {}", s2);
 }
 ```
 
-## 🐛 Common Ownership Errors
+## 🛡️ Memory Safety Through Ownership
 
-### Error 1: Use After Move
-
-```rust
-let s1 = String::from("Hello");
-let s2 = s1;
-println!("{}", s1);  // ERROR: borrow of moved value: `s1`
-```
-
-**Fix**: Clone if you need both:
-```rust
-let s1 = String::from("Hello");
-let s2 = s1.clone();
-println!("{} {}", s1, s2);  // Both work!
-```
-
-### Error 2: Moving in a Loop
+### Preventing Use-After-Free
 
 ```rust
-let data = vec![1, 2, 3];
-for _ in 0..3 {
-    do_something(data);  // ERROR: use of moved value: `data`
-}
-```
-
-**Fix**: Clone or borrow (we'll cover borrowing next):
-```rust
-let data = vec![1, 2, 3];
-for _ in 0..3 {
-    do_something(data.clone());
-}
-```
-
-## 💡 Understanding Drop
-
-When a value goes out of scope, Rust calls its destructor (the `Drop` trait):
-
-```rust
-{
+fn main() {
     let s = String::from("Hello");
-    // s is valid here
-}   // s goes out of scope, memory is freed
-
-// This is like C#'s IDisposable, but automatic:
-// No need for 'using' statements!
+    {
+        let s2 = s;  // s moved to s2
+        println!("{}", s2);
+    } // s2 dropped here
+    
+    // println!("{}", s); // ERROR: s was moved, can't use it
+}
 ```
 
-## 🎯 Practical Example: Building a Stack
-
-Let's build a simple stack to see ownership in action:
+### Preventing Double-Free
 
 ```rust
-struct Stack {
-    items: Vec<String>,
+// This is impossible in Rust due to ownership rules
+let s1 = String::from("Hello");
+let s2 = s1;  // s1 moved to s2
+
+// Only s2 will be dropped - no double-free possible
+```
+
+## 🎨 The Clone Trait
+
+When you need a deep copy (similar to C#'s `ICloneable`):
+
+```rust
+let s1 = String::from("Hello");
+let s2 = s1.clone();  // Explicit deep copy
+
+println!("{}", s1);   // Works! s1 still owns its data
+println!("{}", s2);   // s2 owns a separate copy
+
+// Clone is expensive - use when necessary
+let expensive_data = vec![1; 1_000_000];
+let copy = expensive_data.clone(); // Creates new 1M element vector
+```
+
+## 🔄 Comparison with C#
+
+| C# Memory Model | Rust Ownership | Key Difference |
+|-----------------|----------------|----------------|
+| Garbage Collector | Compile-time ownership | When safety is ensured |
+| Multiple references to objects | Single owner at a time | Prevents data races |
+| Automatic memory management | Explicit ownership transfer | Who controls lifetime |
+| Runtime memory errors possible | Compile-time memory safety | When errors are caught |
+| `ICloneable` for deep copies | `Clone` trait | Both explicit |
+| `using` statement for disposal | Automatic Drop | Resource cleanup |
+
+## 💻 Practice Exercises
+
+### Exercise 1: Understanding Move vs Copy
+
+```rust
+fn main() {
+    // Fix this code to make it compile
+    let x = vec![1, 2, 3];
+    let y = x;
+    println!("x: {:?}", x);  // How can we make this work?
+    println!("y: {:?}", y);
+    
+    // Try the same with an integer
+    let a = 42;
+    let b = a;
+    println!("a: {}", a);  // Does this work? Why?
+    println!("b: {}", b);
+}
+```
+
+### Exercise 2: Function Ownership
+
+```rust
+fn process_string(s: String) -> String {
+    let processed = format!("Processed: {}", s);
+    processed
 }
 
-impl Stack {
+fn main() {
+    let my_string = String::from("Hello");
+    let result = process_string(my_string);
+    
+    // Can we use my_string here? Why or why not?
+    // println!("Original: {}", my_string);
+    println!("Result: {}", result);
+}
+```
+
+### Exercise 3: Scope and Drop
+
+```rust
+fn main() {
+    println!("Starting program");
+    
+    {
+        let s = String::from("Inner scope");
+        println!("Created: {}", s);
+    } // What happens to s here?
+    
+    println!("Back in outer scope");
+    // Can we access s here?
+}
+```
+
+## 🚀 Mini-Project: Simple Stack
+
+Build a stack data structure to practice ownership:
+
+```rust
+struct Stack<T> {
+    items: Vec<T>,
+}
+
+impl<T> Stack<T> {
     fn new() -> Self {
         Stack { items: Vec::new() }
     }
     
     // This method takes ownership of the item
-    fn push(&mut self, item: String) {
+    fn push(&mut self, item: T) {
         self.items.push(item);
     }
     
     // This method gives ownership to the caller
-    fn pop(&mut self) -> Option<String> {
+    fn pop(&mut self) -> Option<T> {
         self.items.pop()
+    }
+    
+    fn is_empty(&self) -> bool {
+        self.items.is_empty()
     }
 }
 
 fn main() {
     let mut stack = Stack::new();
     
-    let item1 = String::from("First");
-    stack.push(item1);
-    // println!("{}", item1);  // ERROR: item1 was moved
+    // Test your stack
+    stack.push(String::from("First"));
+    stack.push(String::from("Second"));
     
-    if let Some(popped) = stack.pop() {
-        println!("Popped: {}", popped);  // We own popped
+    while let Some(item) = stack.pop() {
+        println!("Popped: {}", item);
     }
 }
 ```
 
-## 🤔 Ownership Philosophy
+## 🔑 Key Takeaways
 
-Why does Rust do this? Three main benefits:
+1. **Single Ownership Rule**: Each value has exactly one owner at any time
+2. **Move Semantics**: Assignment transfers ownership for non-Copy types
+3. **Automatic Cleanup**: Values are automatically dropped when their owner goes out of scope
+4. **Compile-Time Safety**: Ownership violations are caught at compile time, not runtime
+5. **No Garbage Collection**: Deterministic destruction without GC overhead
+6. **Explicit Cloning**: Deep copies must be requested explicitly with `.clone()`
 
-1. **Memory Safety**: No use-after-free bugs
-2. **Thread Safety**: No data races (we'll see this later)
-3. **Performance**: No GC overhead, predictable performance
+## 📚 Additional Resources
 
-## 📝 Key Takeaways
+- [Rust Book - Understanding Ownership](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html)
+- [Rust by Example - Ownership and Moves](https://doc.rust-lang.org/rust-by-example/scope/move.html)
+- [Memory Management in Programming Languages](https://deepu.tech/memory-management-in-programming/)
 
-1. **One Owner Rule**: Each value has exactly one owner
-2. **Move Semantics**: Assignment moves ownership (for non-Copy types)
-3. **Automatic Cleanup**: Values are dropped when owner goes out of scope
-4. **Explicit Cloning**: Deep copies must be explicit with `.clone()`
-5. **Compile-Time Checks**: Ownership rules enforced at compile time
+## ✅ Checklist
 
-## 🔗 Comparison with C#
-
-| C# Concept | Rust Equivalent | Key Difference |
-|------------|-----------------|----------------|
-| Reference assignment | Move | Ownership transferred |
-| `new` keyword | Various (`new()`, `from()`) | Ownership starts here |
-| Garbage collection | Automatic drop | Deterministic |
-| `ICloneable` | `Clone` trait | Must be explicit |
-| `using` statement | Scope-based drop | Automatic |
-
-## ✏️ Practice Exercises
-
-1. **Ownership Transfer**: Write a function that takes a `Vec<i32>` and returns its length. What happens to the Vec?
-
-2. **Clone vs Move**: Create two functions: one that moves a String and one that clones it. Call each multiple times.
-
-3. **Scope and Drop**: Create nested scopes and observe when values are dropped. Use `println!` to track destruction.
-
-4. **Fix the Errors**: Debug common ownership mistakes in the exercise files.
+Before moving on, ensure you can:
+- [ ] Explain the three rules of ownership in your own words
+- [ ] Identify which types implement Copy vs Move semantics
+- [ ] Write functions that transfer ownership correctly
+- [ ] Debug basic ownership errors using compiler messages
+- [ ] Understand when values are dropped and cleaned up
+- [ ] Compare Rust's ownership with C#'s garbage collection
 
 ---
 
-Next: [Borrowing and References](02-borrowing-rules.md) - Learn how to use values without taking ownership →
+Next: [Borrowing Rules](02-borrowing-rules.md) - Learn how to use values without taking ownership →

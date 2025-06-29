@@ -1,30 +1,32 @@
 # Lesson 04: Smart Pointers
 
+Learn when and how to use Rust's smart pointers to handle complex ownership scenarios. This lesson covers Box, Rc, Arc, RefCell, and how to combine them for powerful data structures.
+
 ## 🎯 Learning Objectives
 
-By the end of this lesson, you will:
-- Understand when and why to use smart pointers
-- Master Box<T> for heap allocation
-- Use Rc<T> and Arc<T> for shared ownership
-- Apply RefCell<T> for interior mutability
-- Build data structures using smart pointers
-- Choose the right smart pointer for your use case
+- Understand when single ownership isn't sufficient
+- Master Box<T> for heap allocation and recursive types
+- Use Rc<T> and Arc<T> for shared ownership scenarios
+- Apply RefCell<T> for interior mutability patterns
+- Combine smart pointers for complex data structures
+- Choose the right smart pointer for your specific use case
+- Avoid common pitfalls like reference cycles
 
 ## 📚 Introduction
 
-So far, we've seen that Rust enforces single ownership. But what if you need multiple owners? Or what if you need to mutate data that's behind an immutable reference? This is where smart pointers come in.
+So far, we've learned that Rust enforces single ownership to ensure memory safety. But real-world programs often need more flexible ownership patterns: multiple owners of the same data, heap allocation for large objects, or interior mutability for certain design patterns.
 
-Smart pointers are data structures that act like pointers but have additional metadata and capabilities. Coming from C#, you might think of them as similar to reference counting or weak references, but with compile-time guarantees.
+Smart pointers are data structures that act like pointers but provide additional metadata and capabilities. Coming from C#, you can think of them as more explicit versions of reference counting or weak references, but with compile-time guarantees.
 
 ## 📦 Box<T> - Heap Allocation
 
-`Box<T>` is the simplest smart pointer. It allocates values on the heap rather than the stack.
+`Box<T>` is the simplest smart pointer. It allocates values on the heap instead of the stack.
 
-### When to Use Box
+### When to Use Box<T>
 
-1. **Recursive types** (unknown size at compile time)
-2. **Large data** you want to move without copying
-3. **Trait objects** (dynamic dispatch)
+1. **Recursive types** with unknown size at compile time
+2. **Large data structures** you want to move without copying
+3. **Trait objects** for dynamic dispatch
 
 ### Basic Usage
 
@@ -34,15 +36,15 @@ fn main() {
     let b = Box::new(5);
     println!("b = {}", b);
     
-    // Dereference like a regular reference
+    // Automatic dereferencing
     let sum = *b + 10;
     println!("sum = {}", sum);
-} // b is dropped, heap memory is freed
+} // b goes out of scope, heap memory is automatically freed
 ```
 
 ### Recursive Types
 
-Without Box, this won't compile:
+This won't compile because the size is infinite:
 
 ```rust
 // ERROR: recursive type has infinite size
@@ -52,8 +54,7 @@ enum List {
 }
 ```
 
-With Box:
-
+**Fix with Box:**
 ```rust
 #[derive(Debug)]
 enum List {
@@ -63,41 +64,43 @@ enum List {
 
 use List::{Cons, Nil};
 
-fn main() {
-    let list = Cons(1, 
-        Box::new(Cons(2, 
-            Box::new(Cons(3, 
-                Box::new(Nil))))));
+impl List {
+    fn new() -> List {
+        Nil
+    }
     
-    println!("list = {:?}", list);
+    fn prepend(self, elem: i32) -> List {
+        Cons(elem, Box::new(self))
+    }
+    
+    fn len(&self) -> usize {
+        match *self {
+            Cons(_, ref tail) => 1 + tail.len(),
+            Nil => 0,
+        }
+    }
 }
-```
 
-### C# Comparison
-
-```csharp
-// C# - all reference types are heap allocated
-class Node {
-    public int Value { get; set; }
-    public Node Next { get; set; }  // Always a heap reference
-}
-
-// Rust - explicit heap allocation
-struct Node {
-    value: i32,
-    next: Option<Box<Node>>,  // Explicitly heap allocated
+fn main() {
+    let mut list = List::new();
+    list = list.prepend(1);
+    list = list.prepend(2);
+    list = list.prepend(3);
+    
+    println!("List: {:?}", list);
+    println!("Length: {}", list.len());
 }
 ```
 
 ## 🔄 Rc<T> - Reference Counting
 
-`Rc<T>` enables multiple ownership through reference counting. It's similar to C#'s reference counting for COM objects, but it's not thread-safe.
+`Rc<T>` (Reference Counted) enables multiple ownership through reference counting. Use it when multiple parts of your program need to read the same data.
 
-### When to Use Rc
+### When to Use Rc<T>
 
-- Multiple parts of your program need to read the same data
+- Multiple parts need to read the same data
 - You can't determine which part will finish using it last
-- Single-threaded scenarios only
+- **Single-threaded scenarios only**
 
 ### Basic Usage
 
@@ -105,57 +108,71 @@ struct Node {
 use std::rc::Rc;
 
 fn main() {
-    let data = Rc::new(vec![1, 2, 3]);
+    let data = Rc::new(vec![1, 2, 3, 4, 5]);
     println!("Initial count: {}", Rc::strong_count(&data));
     
     {
         let data2 = Rc::clone(&data);  // Increment reference count
-        println!("Count after clone: {}", Rc::strong_count(&data));
+        let data3 = Rc::clone(&data);  // Note: Rc::clone, not data.clone()
         
-        let data3 = Rc::clone(&data);
         println!("Count with 3 refs: {}", Rc::strong_count(&data));
+        println!("data2: {:?}", data2);
+        println!("data3: {:?}", data3);
     } // data2 and data3 dropped, count decremented
     
     println!("Final count: {}", Rc::strong_count(&data));
 }
 ```
 
-### Graph Structure Example
+### Graph Structure with Rc
 
 ```rust
 use std::rc::Rc;
+use std::cell::RefCell;
 
 #[derive(Debug)]
 struct Node {
     value: i32,
-    neighbors: Vec<Rc<Node>>,
+    neighbors: RefCell<Vec<Rc<Node>>>,
+}
+
+impl Node {
+    fn new(value: i32) -> Rc<Node> {
+        Rc::new(Node {
+            value,
+            neighbors: RefCell::new(vec![]),
+        })
+    }
+    
+    fn add_neighbor(&self, neighbor: Rc<Node>) {
+        self.neighbors.borrow_mut().push(neighbor);
+    }
 }
 
 fn main() {
-    let node1 = Rc::new(Node {
-        value: 1,
-        neighbors: vec![],
-    });
+    let node1 = Node::new(1);
+    let node2 = Node::new(2);
+    let node3 = Node::new(3);
     
-    let node2 = Rc::new(Node {
-        value: 2,
-        neighbors: vec![Rc::clone(&node1)],
-    });
+    // Create bidirectional connections
+    node1.add_neighbor(Rc::clone(&node2));
+    node1.add_neighbor(Rc::clone(&node3));
+    node2.add_neighbor(Rc::clone(&node1));
+    node3.add_neighbor(Rc::clone(&node1));
     
-    let node3 = Rc::new(Node {
-        value: 3,
-        neighbors: vec![Rc::clone(&node1), Rc::clone(&node2)],
-    });
-    
-    println!("Node 3 has {} neighbors", node3.neighbors.len());
+    println!("Node 1 neighbors: {}", node1.neighbors.borrow().len());
+    println!("Node 1 reference count: {}", Rc::strong_count(&node1));
 }
 ```
 
 ## 🧵 Arc<T> - Atomic Reference Counting
 
-`Arc<T>` is the thread-safe version of `Rc<T>`. Use it when you need to share data between threads.
+`Arc<T>` (Atomically Reference Counted) is the thread-safe version of `Rc<T>`.
 
-### Arc vs Rc
+### When to Use Arc<T>
+
+- Need to share data between multiple threads
+- Want reference counting with thread safety
 
 ```rust
 use std::sync::Arc;
@@ -169,7 +186,7 @@ fn main() {
         let numbers = Arc::clone(&numbers);
         let handle = thread::spawn(move || {
             let sum: i32 = numbers.iter().sum();
-            println!("Thread {} sum: {}", i, sum);
+            println!("Thread {} calculated sum: {}", i, sum);
         });
         handles.push(handle);
     }
@@ -177,18 +194,20 @@ fn main() {
     for handle in handles {
         handle.join().unwrap();
     }
+    
+    println!("Main thread can still use: {:?}", numbers);
 }
 ```
 
 ## 🔐 RefCell<T> - Interior Mutability
 
-`RefCell<T>` enables mutation even when behind an immutable reference. It moves Rust's borrowing rules from compile time to runtime.
+`RefCell<T>` allows mutation of data even when behind an immutable reference by moving borrowing rules from compile-time to runtime.
 
-### When to Use RefCell
+### When to Use RefCell<T>
 
-- You need to mutate data inside an immutable structure
-- Mock objects in tests
-- Implementing certain patterns (like observer)
+- Need to mutate data inside an otherwise immutable structure
+- Implementing mock objects for testing
+- Certain design patterns require interior mutability
 
 ### Basic Usage
 
@@ -198,17 +217,17 @@ use std::cell::RefCell;
 fn main() {
     let data = RefCell::new(5);
     
-    // Borrow immutably
+    // Immutable borrow
     {
         let value = data.borrow();
         println!("Value: {}", *value);
-    } // borrow ends here
+    } // Borrow ends here
     
-    // Borrow mutably
+    // Mutable borrow
     {
         let mut value = data.borrow_mut();
         *value += 10;
-    } // mutable borrow ends here
+    } // Mutable borrow ends here
     
     println!("New value: {}", *data.borrow());
 }
@@ -232,12 +251,13 @@ fn main() {
     drop(r2);
     
     let r3 = data.borrow_mut();  // OK now
+    println!("Mutable access: {}", *r3);
 }
 ```
 
 ## 🎯 Combining Smart Pointers
 
-Often you'll combine smart pointers for complex scenarios:
+Real-world scenarios often require combining smart pointers:
 
 ### Rc<RefCell<T>> - Shared Mutable Data
 
@@ -246,21 +266,35 @@ use std::rc::Rc;
 use std::cell::RefCell;
 
 #[derive(Debug)]
-struct SharedData {
+struct Counter {
     value: i32,
 }
 
+impl Counter {
+    fn new() -> Rc<RefCell<Counter>> {
+        Rc::new(RefCell::new(Counter { value: 0 }))
+    }
+    
+    fn increment(&self) {
+        self.value += 1;
+    }
+    
+    fn get(&self) -> i32 {
+        self.value
+    }
+}
+
 fn main() {
-    let data = Rc::new(RefCell::new(SharedData { value: 0 }));
+    let counter = Counter::new();
+    let counter1 = Rc::clone(&counter);
+    let counter2 = Rc::clone(&counter);
     
-    let data1 = Rc::clone(&data);
-    let data2 = Rc::clone(&data);
+    // Multiple owners can mutate the same data
+    counter1.borrow_mut().increment();
+    counter2.borrow_mut().increment();
+    counter.borrow_mut().increment();
     
-    // Multiple owners can mutate
-    data1.borrow_mut().value += 10;
-    data2.borrow_mut().value += 20;
-    
-    println!("Final value: {}", data.borrow().value);  // 30
+    println!("Final count: {}", counter.borrow().get());
 }
 ```
 
@@ -278,7 +312,7 @@ struct TreeNode {
 }
 
 impl TreeNode {
-    fn new(value: i32) -> Rc<Self> {
+    fn new(value: i32) -> Rc<TreeNode> {
         Rc::new(TreeNode {
             value,
             parent: RefCell::new(Weak::new()),
@@ -286,9 +320,16 @@ impl TreeNode {
         })
     }
     
-    fn add_child(parent: &Rc<Self>, child: Rc<Self>) {
-        child.parent.replace(Rc::downgrade(parent));
+    fn add_child(parent: &Rc<TreeNode>, child: Rc<TreeNode>) {
+        child.parent.borrow_mut().replace(Rc::downgrade(parent));
         parent.children.borrow_mut().push(child);
+    }
+    
+    fn print_tree(&self, depth: usize) {
+        println!("{}{}", "  ".repeat(depth), self.value);
+        for child in self.children.borrow().iter() {
+            child.print_tree(depth + 1);
+        }
     }
 }
 
@@ -296,84 +337,287 @@ fn main() {
     let root = TreeNode::new(0);
     let child1 = TreeNode::new(1);
     let child2 = TreeNode::new(2);
+    let grandchild = TreeNode::new(3);
     
     TreeNode::add_child(&root, child1.clone());
     TreeNode::add_child(&root, child2.clone());
+    TreeNode::add_child(&child1, grandchild);
     
-    println!("Root has {} children", root.children.borrow().len());
+    println!("Tree structure:");
+    root.print_tree(0);
+    
+    // Check parent relationships
+    if let Some(parent) = child1.parent.borrow().upgrade() {
+        println!("Child 1's parent value: {}", parent.value);
+    }
 }
 ```
 
-## 💡 Choosing the Right Smart Pointer
+## 💡 Smart Pointer Selection Guide
 
-| Use Case | Smart Pointer | Why |
-|----------|--------------|-----|
-| Heap allocation | `Box<T>` | Single owner, heap data |
+| Use Case | Smart Pointer | Reason |
+|----------|---------------|---------|
+| Heap allocation | `Box<T>` | Single owner, heap allocation |
+| Recursive types | `Box<T>` | Fixed size on stack |
 | Shared ownership (single-threaded) | `Rc<T>` | Multiple readers |
-| Shared ownership (multi-threaded) | `Arc<T>` | Thread-safe |
-| Interior mutability | `RefCell<T>` | Mutate through & |
-| Shared mutable (single-threaded) | `Rc<RefCell<T>>` | Multiple owners can mutate |
+| Shared ownership (multi-threaded) | `Arc<T>` | Thread-safe sharing |
+| Interior mutability | `RefCell<T>` | Runtime borrow checking |
+| Shared mutable (single-threaded) | `Rc<RefCell<T>>` | Multiple owners, mutation |
 | Shared mutable (multi-threaded) | `Arc<Mutex<T>>` | Thread-safe mutation |
+| Break reference cycles | `Weak<T>` | Prevent memory leaks |
 
-## 🐛 Common Pitfalls
-
-### Reference Cycles
-
-```rust
-use std::rc::Rc;
-use std::cell::RefCell;
-
-// This creates a reference cycle - memory leak!
-struct Node {
-    next: Option<Rc<RefCell<Node>>>,
-}
-
-// Solution: Use Weak<T> for one direction
-struct BetterNode {
-    next: Option<Rc<RefCell<BetterNode>>>,
-    prev: Option<Weak<RefCell<BetterNode>>>,  // Weak reference
-}
-```
-
-### RefCell Panics
-
-```rust
-let data = RefCell::new(5);
-let r1 = data.borrow_mut();
-let r2 = data.borrow_mut();  // PANIC at runtime!
-```
-
-## 📝 Key Takeaways
-
-1. **Box<T>**: Heap allocation with single ownership
-2. **Rc<T>**: Reference counting for shared ownership
-3. **Arc<T>**: Thread-safe reference counting
-4. **RefCell<T>**: Interior mutability with runtime checks
-5. **Weak<T>**: Break reference cycles
-6. **Combine as Needed**: `Rc<RefCell<T>>` for shared mutability
-
-## 🔗 Comparison with C#
+## 🔄 Comparison with C#
 
 | C# Concept | Rust Equivalent | Key Difference |
 |------------|-----------------|----------------|
-| All ref types | `Box<T>` | Explicit heap allocation |
-| Reference counting | `Rc<T>`/`Arc<T>` | Manual, no GC |
-| `lock` statement | `Mutex<T>` | Type-based locking |
-| Weak references | `Weak<T>` | Prevents cycles |
-| Mutable fields | `RefCell<T>` | Runtime borrow checking |
+| All reference types | `Box<T>` | Explicit heap allocation |
+| Object references | `Rc<T>` | Explicit reference counting |
+| Thread-safe sharing | `Arc<T>` | No GC, manual counting |
+| `lock` statement | `Mutex<T>` | Type-level thread safety |
+| Weak references | `Weak<T>` | Prevents reference cycles |
+| Field mutation | `RefCell<T>` | Runtime borrow checking |
 
-## ✏️ Practice Exercises
+## 💻 Practice Exercises
 
-1. **Linked List**: Implement a linked list using `Box<T>`
+### Exercise 1: Binary Tree with Box
 
-2. **Graph Structure**: Build a graph where nodes can have multiple connections using `Rc<T>`
+```rust
+// Implement a binary search tree using Box<T>
+#[derive(Debug)]
+struct TreeNode {
+    value: i32,
+    left: Option<Box<TreeNode>>,
+    right: Option<Box<TreeNode>>,
+}
 
-3. **Mock Object**: Create a mock object for testing using `RefCell<T>`
+impl TreeNode {
+    fn new(value: i32) -> Self {
+        // Implement constructor
+    }
+    
+    fn insert(&mut self, value: i32) {
+        // Implement insertion logic
+    }
+    
+    fn contains(&self, value: i32) -> bool {
+        // Implement search logic
+    }
+}
 
-4. **Thread-Safe Counter**: Implement a counter that can be incremented from multiple threads
+fn main() {
+    let mut root = TreeNode::new(10);
+    root.insert(5);
+    root.insert(15);
+    root.insert(3);
+    root.insert(7);
+    
+    println!("Tree: {:?}", root);
+    println!("Contains 7: {}", root.contains(7));
+    println!("Contains 12: {}", root.contains(12));
+}
+```
+
+### Exercise 2: Shared Cache with Rc
+
+```rust
+use std::rc::Rc;
+use std::collections::HashMap;
+
+// Implement a shared cache that multiple components can read from
+struct Cache {
+    data: HashMap<String, String>,
+}
+
+impl Cache {
+    fn new() -> Rc<Cache> {
+        // Implement constructor
+    }
+    
+    fn get(&self, key: &str) -> Option<&String> {
+        // Implement get method
+    }
+}
+
+// Simulate multiple components using the same cache
+fn component_a(cache: Rc<Cache>) {
+    if let Some(value) = cache.get("config") {
+        println!("Component A found: {}", value);
+    }
+}
+
+fn component_b(cache: Rc<Cache>) {
+    if let Some(value) = cache.get("setting") {
+        println!("Component B found: {}", value);
+    }
+}
+
+fn main() {
+    let cache = Cache::new();
+    
+    component_a(Rc::clone(&cache));
+    component_b(Rc::clone(&cache));
+}
+```
+
+### Exercise 3: Mock Object with RefCell
+
+```rust
+use std::cell::RefCell;
+
+// Create a mock database that tracks method calls
+struct MockDatabase {
+    calls: RefCell<Vec<String>>,
+    responses: RefCell<HashMap<String, String>>,
+}
+
+impl MockDatabase {
+    fn new() -> Self {
+        // Implement constructor
+    }
+    
+    fn set_response(&self, key: String, value: String) {
+        // Add response to mock
+    }
+    
+    fn get(&self, key: &str) -> Option<String> {
+        // Record the call and return mock response
+    }
+    
+    fn get_calls(&self) -> Vec<String> {
+        // Return all recorded calls
+    }
+}
+
+fn main() {
+    let db = MockDatabase::new();
+    db.set_response("user:1".to_string(), "Alice".to_string());
+    
+    // Use the database
+    println!("User: {:?}", db.get("user:1"));
+    println!("User: {:?}", db.get("user:2"));
+    
+    // Check what calls were made
+    println!("Calls made: {:?}", db.get_calls());
+}
+```
+
+## 🚀 Mini-Project: Multi-Owner Graph
+
+Build a graph data structure where nodes can have multiple owners:
+
+```rust
+use std::rc::{Rc, Weak};
+use std::cell::RefCell;
+use std::collections::HashMap;
+
+#[derive(Debug)]
+struct GraphNode {
+    id: usize,
+    value: String,
+    edges: RefCell<Vec<Weak<GraphNode>>>,
+}
+
+struct Graph {
+    nodes: HashMap<usize, Rc<GraphNode>>,
+    next_id: usize,
+}
+
+impl Graph {
+    fn new() -> Self {
+        Graph {
+            nodes: HashMap::new(),
+            next_id: 0,
+        }
+    }
+    
+    fn add_node(&mut self, value: String) -> usize {
+        let id = self.next_id;
+        self.next_id += 1;
+        
+        let node = Rc::new(GraphNode {
+            id,
+            value,
+            edges: RefCell::new(vec![]),
+        });
+        
+        self.nodes.insert(id, node);
+        id
+    }
+    
+    fn add_edge(&mut self, from: usize, to: usize) -> Result<(), &'static str> {
+        let to_node = self.nodes.get(&to)
+            .ok_or("Target node not found")?;
+        
+        if let Some(from_node) = self.nodes.get(&from) {
+            from_node.edges.borrow_mut().push(Rc::downgrade(to_node));
+            Ok(())
+        } else {
+            Err("Source node not found")
+        }
+    }
+    
+    fn print_graph(&self) {
+        for (id, node) in &self.nodes {
+            print!("Node {} ({}): ", id, node.value);
+            
+            let valid_edges: Vec<_> = node.edges.borrow()
+                .iter()
+                .filter_map(|weak_ref| weak_ref.upgrade())
+                .collect();
+            
+            let edge_ids: Vec<_> = valid_edges.iter()
+                .map(|node| node.id)
+                .collect();
+            
+            println!("-> {:?}", edge_ids);
+        }
+    }
+}
+
+fn main() {
+    let mut graph = Graph::new();
+    
+    let a = graph.add_node("A".to_string());
+    let b = graph.add_node("B".to_string());
+    let c = graph.add_node("C".to_string());
+    
+    graph.add_edge(a, b).unwrap();
+    graph.add_edge(a, c).unwrap();
+    graph.add_edge(b, c).unwrap();
+    graph.add_edge(c, a).unwrap();
+    
+    graph.print_graph();
+}
+```
+
+## 🔑 Key Takeaways
+
+1. **Box<T> for heap allocation**: Use when you need owned heap data or recursive types
+2. **Rc<T> for shared ownership**: Multiple owners in single-threaded scenarios
+3. **Arc<T> for thread-safe sharing**: Multiple owners across threads
+4. **RefCell<T> for interior mutability**: Mutate data through immutable references
+5. **Combine as needed**: `Rc<RefCell<T>>` for shared mutable state
+6. **Weak<T> prevents cycles**: Use to break reference cycles and prevent memory leaks
+7. **Choose wisely**: Each smart pointer has specific use cases and trade-offs
+
+## 📚 Additional Resources
+
+- [Rust Book - Smart Pointers](https://doc.rust-lang.org/book/ch15-00-smart-pointers.html)
+- [Rust by Example - Rc](https://doc.rust-lang.org/rust-by-example/std/rc.html)
+- [Understanding Rc and RefCell](https://ricardomartins.cc/2016/06/08/interior-mutability)
+
+## ✅ Checklist
+
+Before moving on, ensure you can:
+- [ ] Choose the appropriate smart pointer for different scenarios
+- [ ] Use Box<T> for heap allocation and recursive types
+- [ ] Share ownership safely with Rc<T> and Arc<T>
+- [ ] Apply interior mutability patterns with RefCell<T>
+- [ ] Combine smart pointers for complex data structures
+- [ ] Avoid reference cycles using Weak<T>
 
 ---
 
-Congratulations! You've completed the Ownership and Borrowing module. These concepts are fundamental to writing safe and efficient Rust code.
+**Congratulations!** You've mastered Rust's ownership system - the foundation that makes Rust both safe and fast. You now understand the concepts that eliminate entire classes of bugs that plague other systems programming languages.
 
-Next Module: [03 - Error Handling](../03-error-handling/README.md) →
+Next Module: [03 - Error Handling](../03-error-handling/README.md) - Learn Rust's approach to handling errors without exceptions →

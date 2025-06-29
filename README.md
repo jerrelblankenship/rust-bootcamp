@@ -37,7 +37,7 @@ git clone https://github.com/yourusername/rust-bootcamp.git
 cd rust-bootcamp
 
 # Choose your platform setup
-# macOS M4: 00-setup/macos-m4-setup.md
+# macOS: 00-setup/macos-setup.md
 # Windows 11: 00-setup/windows-11-setup.md
 
 # Start with broken code exercises - learn by fixing compilation errors!
