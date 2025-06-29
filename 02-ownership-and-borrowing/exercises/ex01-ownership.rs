@@ -1,25 +1,49 @@
 // Exercise 1: Ownership Basics - Fix the broken code!
 //
+// EXERCISE PROGRESS: [░░░░░░░░░░] 0% Complete (8 ownership challenges)
+//
 // Your task: Make all the functions compile and work correctly
 // This exercise demonstrates ownership transfers and the move vs copy semantics
 // 
+// LEARNING STRATEGY:
+// 1. Fix ONE exercise at a time - ownership concepts build on each other
+// 2. Uncomment exercises gradually as you complete each one
+// 3. Read the error messages carefully - Rust's compiler guides ownership learning
+// 4. Think about data ownership: "Who owns this data and when?"
+//
 // INSTRUCTIONS:
-// 1. Read each function and understand what it's trying to do
-// 2. Fix the compilation errors by applying ownership concepts
-// 3. Run `rustc ex01-ownership.rs && ./ex01-ownership` to test
-// 4. All exercises should compile and run successfully when fixed
+// 1. Start with exercise_1_1 (it's already uncommented)
+// 2. Fix compilation errors by applying ownership concepts
+// 3. Uncomment the next exercise only after the current one works
+// 4. Run `rustc ex01-ownership.rs && ./ex01-ownership` to test
+// 5. All exercises should compile and run successfully when fixed
 
 fn main() {
     println!("=== Exercise 1: Ownership Basics (Fix the Code!) ===\n");
     
-    // CHALLENGE: Uncomment each exercise one by one and fix the errors
+    // 📊 PROGRESS: Complete exercises one by one, uncomment as you go
+    // ✅ Exercise 1.1: Move vs Clone patterns
     exercise_1_1();
+    
+    // ❌ Exercise 1.2: Copy vs Move semantics (uncomment when 1.1 works)
     // exercise_1_2();
+    
+    // ❌ Exercise 1.3: Function ownership (uncomment when 1.2 works)
     // exercise_1_3();
+    
+    // ❌ Exercise 1.4: Ownership return patterns (uncomment when 1.3 works)
     // exercise_1_4();
+    
+    // ❌ Exercise 1.5: Clone vs Move decisions (uncomment when 1.4 works)
     // exercise_1_5();
+    
+    // ❌ Exercise 1.6: Collections ownership (uncomment when 1.5 works)
     // exercise_1_6();
+    
+    // ❌ Exercise 1.7: Stack implementation (uncomment when 1.6 works)
     // exercise_1_7();
+    
+    // ❌ Exercise 1.8: Drop and RAII (uncomment when 1.7 works)
     // exercise_1_8();
     
     println!("\n🎉 All exercises completed successfully!");
@@ -27,6 +51,7 @@ fn main() {
 
 // Exercise 1.1: Fix the move error
 // PROBLEM: This code doesn't compile because of ownership rules
+// 🎯 LEARNING FOCUS: Move vs Clone - when to copy vs transfer ownership
 fn exercise_1_1() {
     println!("Exercise 1.1: Fix the move error");
     
@@ -35,9 +60,12 @@ fn exercise_1_1() {
     
     // TODO: Make both of these print statements work
     // HINT: What method creates an independent copy of a String?
+    // THINK: Do I need two independent copies, or can I solve this differently?
     println!("s1 = {}, s2 = {}", s1, s2);  // COMPILE ERROR: Fix this!
     
     println!("✅ Exercise 1.1 complete\n");
+    
+    // 📊 CHECKPOINT: When this compiles, uncomment exercise_1_2() in main()
 }
 
 // Exercise 1.2: Understanding Copy vs Move semantics

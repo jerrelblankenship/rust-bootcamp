@@ -149,15 +149,28 @@ You've mastered this module when:
 
 ## 🆘 When You Get Stuck
 
-1. **Read the error message carefully** - Rust's compiler is incredibly helpful
-2. **Check the TODO comments** - They contain specific hints
-3. **Think about data ownership** - Who owns what, and when?
-4. **Review the lesson material** - The concepts build on each other
-5. **Look at the solutions** - But only after trying yourself!
-6. **Remember C# patterns** - How would you solve this with GC?
+**Follow this systematic approach:**
+
+1. **Read the error message carefully** - Rust's compiler is incredibly helpful for ownership errors
+2. **Check the [Debugging Checklist](DEBUGGING_CHECKLIST.md)** - Ownership-specific troubleshooting guide
+3. **Use the progressive hints system** - Check `exercises/hints/` directory
+   - Level 1: Gentle ownership concept guidance
+   - Level 2: Specific borrowing and lifetime solutions
+   - Level 3: Complete ownership pattern examples
+4. **Think about data ownership** - Who owns what, and when?
+5. **Review the lesson material** - The concepts build on each other
+6. **Ask for help** - After working through ownership concepts
+
+**Remember:** Ownership is Rust's unique superpower. The mental model shift takes time - be patient with yourself!
 
 ## 🔗 Additional Resources
 
+### **Built-in Learning Support:**
+- [Debugging Checklist](DEBUGGING_CHECKLIST.md) - Ownership error troubleshooting
+- [Progressive Hints](exercises/hints/README.md) - Guided ownership discovery
+- [Exercise Solutions](exercises/instructor-only/README.md) - For instructors only
+
+### **External Resources:**
 - [The Rust Book - Chapter 4: Ownership](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html)
 - [Rust by Example - Ownership](https://doc.rust-lang.org/rust-by-example/scope.html)
 - [Visualizing Memory Management in Rust](https://deepu.tech/memory-management-in-rust/)
