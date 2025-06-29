@@ -3,23 +3,41 @@ members = [
     "01-foundations/project-calculator",
     "02-ownership-and-borrowing/project-memory-visualizer",
     "03-error-handling/project-file-processor",
-    "04-systems-programming/project-system-monitor",
-    "05-concurrency/project-parallel-processor",
-    "06-performance/project-benchmark-suite",
-    "07-cli-tools/project-task-runner",
-    "08-testing/project-test-framework",
-    "09-ecosystem/project-crate-template",
-    "10-advanced-patterns/project-dsl",
-    "final-project",
 ]
+resolver = "2"
 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-authors = ["Your Name <your.email@example.com>"]
+authors = ["Jerrel Blankenship <jerrel@jerrelblankenship.com>"]
+description = "A comprehensive Rust bootcamp for C# developers"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/rust-bootcamp"
+keywords = ["rust", "learning", "bootcamp", "csharp", "education"]
+categories = ["development-tools"]
 
 [workspace.dependencies]
+# Core dependencies for async programming
 tokio = { version = "1.35", features = ["full"] }
+
+# Serialization
 serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
 anyhow = "1.0"
+thiserror = "1.0"
+
+# CLI building
 clap = { version = "4.4", features = ["derive"] }
+
+# Testing utilities
+criterion = { version = "0.5", features = ["html_reports"] }
+
+# Development tools
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused_imports = "warn"
