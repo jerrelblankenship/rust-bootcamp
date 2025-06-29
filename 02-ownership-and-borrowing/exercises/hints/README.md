@@ -12,12 +12,35 @@ This directory contains progressive hints for ownership and borrowing exercises.
 
 ## 📚 Available Hints
 
-- [Exercise 1: Ownership Basics](ex01-level1.md) - Move vs copy, ownership transfer
-- [Exercise 2: Borrowing Rules](ex02-level1.md) - References and borrowing violations
-- [Exercise 3: Lifetimes](ex03-level1.md) - Reference validity and lifetime annotations
-- [Exercise 4: Smart Pointers](ex04-level1.md) - Box, Rc, Arc, RefCell usage
-- [Exercise 5: Advanced Patterns](ex05-level1.md) - Real-world ownership patterns
-- [Memory Visualizer Project](memory-visualizer-level1.md) - Complete project guidance
+### Exercise 1: Ownership Basics
+- [Level 1](ex01-level1.md) - Gentle guidance on move vs copy, ownership transfer
+- [Level 2](ex01-level2.md) - Specific solutions with Stack and Droppable implementations  
+- [Level 3](ex01-level3.md) - Complete working implementations with full test coverage
+
+### Exercise 2: Borrowing Rules
+- [Level 1](ex02-level1.md) - Understanding references and borrowing violations
+- [Level 2](ex02-level2.md) - Specific solutions for mutable and immutable borrowing
+- [Level 3](ex02-level3.md) - Complete implementations with Container and borrowing patterns
+
+### Exercise 3: Lifetimes
+- [Level 1](ex03-level1.md) - Reference validity and lifetime annotation concepts
+- [Level 2](ex03-level2.md) - Specific lifetime solutions and struct annotations
+- [Level 3](ex03-level3.md) - Complete Cache and complex lifetime implementations
+
+### Exercise 4: Smart Pointers
+- [Level 1](ex04-level1.md) - When and why to use Box, Rc, Arc, RefCell
+- [Level 2](ex04-level2.md) - Specific smart pointer usage patterns and solutions
+- [Level 3](ex04-level3.md) - Complete implementations with SharedList and complex scenarios
+
+### Exercise 5: Advanced Patterns
+- [Level 1](ex05-level1.md) - Zero-copy, builder pattern, and thread-safe sharing concepts
+- [Level 2](ex05-level2.md) - Specific solutions for COW, command pattern, and memory pools
+- [Level 3](ex05-level3.md) - Complete production-ready implementations with benchmarks
+
+### Memory Visualizer Project
+- [Level 1](memory-visualizer-level1.md) - Project overview and gentle guidance
+- [Level 2](memory-visualizer-level2.md) - Specific implementation solutions for each component
+- [Level 3](memory-visualizer-level3.md) - Complete working project with full CLI implementation
 
 ## 🤝 Ownership Learning Philosophy
 
