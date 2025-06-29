@@ -1,14 +1,21 @@
 # Lesson 03: Custom Error Types
 
-Now you'll learn to create robust, domain-specific error types that make your APIs clear and your error handling precise. This is where Rust's type system really shines for building maintainable applications.
+Learn to create robust, domain-specific error types that make your APIs clear and your error handling precise. This is where Rust's type system truly shines for building maintainable applications.
 
 ## 🎯 Learning Objectives
 
-- Design custom error types for your domain
+- Design custom error types that guide users to solutions
 - Use the `thiserror` crate for cleaner error definitions
-- Implement error hierarchies and error chains
-- Create actionable error types that guide users to solutions
-- Compare with C# custom exception design
+- Implement error hierarchies and error chains for complex applications
+- Create actionable error types with specific context
+- Build error types that integrate seamlessly with the ? operator
+- Compare custom error design with C# exception hierarchies
+
+## 📚 Introduction
+
+Generic error messages like "something went wrong" or "invalid input" are frustrating for users and developers alike. Custom error types let you create precise, actionable errors that guide users to solutions and make debugging straightforward.
+
+In this lesson, you'll learn to design error types that are both user-friendly and developer-friendly.
 
 ## 🏗️ Why Custom Error Types Matter
 
@@ -26,15 +33,23 @@ fn process_user_data(data: &str) -> Result<User, String> {
     }
     
     // Caller can't handle different errors differently!
-    Ok(User { /* ... */ })
+    Ok(User { email: data.to_string() })
+}
+
+#[derive(Debug)]
+struct User {
+    email: String,
 }
 
 // Caller can't distinguish between different error types
-match process_user_data(input) {
-    Ok(user) => println!("Success: {:?}", user),
-    Err(e) => {
-        // What kind of error? How should we respond?
-        eprintln!("Something went wrong: {}", e);
+fn main() {
+    match process_user_data("invalid-data") {
+        Ok(user) => println!("Success: {:?}", user),
+        Err(e) => {
+            // What kind of error? How should we respond?
+            eprintln!("Something went wrong: {}", e);
+            // Can't provide specific help to the user!
+        }
     }
 }
 ```
@@ -51,32 +66,75 @@ enum UserProcessingError {
     InvalidAge { provided: i32, min: i32, max: i32 },
 }
 
-fn process_user_data(data: &str) -> Result<User, UserProcessingError> {
-    if data.is_empty() {
+impl std::fmt::Display for UserProcessingError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            UserProcessingError::EmptyData => {
+                write!(f, "No user data provided")
+            }
+            UserProcessingError::InvalidEmail { provided } => {
+                write!(f, "Invalid email '{}'. Expected format: user@domain.com", provided)
+            }
+            UserProcessingError::MissingRequiredField { field } => {
+                write!(f, "Missing required field: {}", field)
+            }
+            UserProcessingError::InvalidAge { provided, min, max } => {
+                write!(f, "Age {} is invalid. Must be between {} and {}", provided, min, max)
+            }
+        }
+    }
+}
+
+impl std::error::Error for UserProcessingError {}
+
+fn process_user_data_safe(email: &str, age: i32) -> Result<User, UserProcessingError> {
+    if email.is_empty() {
         return Err(UserProcessingError::EmptyData);
     }
     
-    // Now errors carry specific, actionable information
-    let email = extract_email(data)?;
-    let age = extract_age(data)?;
+    if !email.contains('@') {
+        return Err(UserProcessingError::InvalidEmail {
+            provided: email.to_string(),
+        });
+    }
     
-    Ok(User { email, age })
+    if age < 13 || age > 120 {
+        return Err(UserProcessingError::InvalidAge {
+            provided: age,
+            min: 13,
+            max: 120,
+        });
+    }
+    
+    Ok(User { 
+        email: email.to_string(),
+        age,
+    })
 }
 
-// Caller can handle each error type appropriately
-match process_user_data(input) {
-    Ok(user) => println!("Success: {:?}", user),
-    Err(UserProcessingError::EmptyData) => {
-        eprintln!("Please provide user data");
-    }
-    Err(UserProcessingError::InvalidEmail { provided }) => {
-        eprintln!("Invalid email '{}'. Please use format: user@domain.com", provided);
-    }
-    Err(UserProcessingError::InvalidAge { provided, min, max }) => {
-        eprintln!("Age {} is invalid. Must be between {} and {}", provided, min, max);
-    }
-    Err(UserProcessingError::MissingRequiredField { field }) => {
-        eprintln!("Missing required field: {}. Please add it to your data", field);
+#[derive(Debug)]
+struct User {
+    email: String,
+    age: i32,
+}
+
+// Now caller can handle each error type appropriately
+fn main() {
+    match process_user_data_safe("invalid-email", 150) {
+        Ok(user) => println!("Success: {:?}", user),
+        Err(UserProcessingError::EmptyData) => {
+            eprintln!("Please provide user data");
+        }
+        Err(UserProcessingError::InvalidEmail { provided }) => {
+            eprintln!("Fix your email: '{}' -> user@domain.com", provided);
+        }
+        Err(UserProcessingError::InvalidAge { provided, min, max }) => {
+            eprintln!("Age {} is invalid. Please enter age between {} and {}", 
+                     provided, min, max);
+        }
+        Err(UserProcessingError::MissingRequiredField { field }) => {
+            eprintln!("Please provide the missing field: {}", field);
+        }
     }
 }
 ```
@@ -214,7 +272,7 @@ fn process_config_file(path: &str) -> Result<Config, FileProcessingError> {
     Ok(config)
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Debug)]
 struct Config {
     name: String,
     version: String,
@@ -276,7 +334,7 @@ pub enum BusinessError {
     #[error("User not found: {user_id}")]
     UserNotFound { user_id: u32 },
     
-    #[error("Insufficient balance: need {required}, have {available}")]
+    #[error("Insufficient balance: need ${required:.2}, have ${available:.2}")]
     InsufficientBalance { required: f64, available: f64 },
     
     #[error("Order already processed: {order_id}")]
@@ -292,24 +350,16 @@ pub enum BusinessError {
 
 // High-level operation that can fail in multiple ways
 fn process_order(order_id: &str, user_id: u32) -> Result<OrderResult, ApplicationError> {
-    // Load configuration - can fail with ConfigError
-    let config = load_config("app.toml")?;
-    
-    // Authenticate user - can fail with AuthError
-    let user = authenticate_user(user_id, &config.auth_token)?;
-    
-    // Load order from database - can fail with DatabaseError
-    let order = load_order(order_id)?;
-    
-    // Validate business rules - can fail with BusinessError
-    validate_order(&order, &user)?;
-    
-    // Process payment - can fail with various errors
-    let payment_result = process_payment(&order)?;
+    // Each operation can fail with different error types
+    let config = load_config("app.toml")?;              // ConfigError -> ApplicationError
+    let user = authenticate_user(user_id, &config)?;    // AuthError -> ApplicationError
+    let order = load_order(order_id)?;                  // DatabaseError -> ApplicationError
+    validate_order(&order, &user)?;                     // BusinessError -> ApplicationError
+    let payment = process_payment(&order)?;             // Various errors -> ApplicationError
     
     Ok(OrderResult {
         order_id: order_id.to_string(),
-        amount: payment_result.amount,
+        amount: payment.amount,
         status: "completed".to_string(),
     })
 }
@@ -330,12 +380,12 @@ fn handle_order_processing() {
         }
         Err(ApplicationError::Business(BusinessError::InsufficientBalance { required, available })) => {
             eprintln!("Insufficient funds: ${:.2} required, ${:.2} available", required, available);
-            eprintln!("Please add funds to your account and try again.");
+            eprintln!("Please add ${:.2} to your account and try again.", required - available);
         }
         Err(e) => {
             eprintln!("Order processing failed: {}", e);
             
-            // Print the full error chain
+            // Print the full error chain for debugging
             let mut source = e.source();
             while let Some(err) = source {
                 eprintln!("  Caused by: {}", err);
@@ -345,22 +395,26 @@ fn handle_order_processing() {
     }
 }
 
-// Supporting types and functions
+// Supporting types and functions for the example
+#[derive(Debug)]
 struct AppConfig {
     auth_token: String,
 }
 
+#[derive(Debug)]
 struct User {
     id: u32,
     balance: f64,
 }
 
+#[derive(Debug)]
 struct Order {
     id: String,
     amount: f64,
     user_id: u32,
 }
 
+#[derive(Debug)]
 struct OrderResult {
     order_id: String,
     amount: f64,
@@ -372,23 +426,19 @@ struct PaymentResult {
 }
 
 fn load_config(path: &str) -> Result<AppConfig, ConfigError> {
-    // Simulate config loading
-    Ok(AppConfig {
-        auth_token: "secret-token".to_string(),
-    })
+    if path.is_empty() {
+        return Err(ConfigError::FileNotFound { path: path.to_string() });
+    }
+    Ok(AppConfig { auth_token: "secret".to_string() })
 }
 
-fn authenticate_user(user_id: u32, token: &str) -> Result<User, AuthError> {
+fn authenticate_user(user_id: u32, _config: &AppConfig) -> Result<User, AuthError> {
     if user_id == 0 {
         return Err(AuthError::InvalidCredentials {
             username: format!("user-{}", user_id),
         });
     }
-    
-    Ok(User {
-        id: user_id,
-        balance: 100.0,
-    })
+    Ok(User { id: user_id, balance: 100.0 })
 }
 
 fn load_order(order_id: &str) -> Result<Order, DatabaseError> {
@@ -398,12 +448,7 @@ fn load_order(order_id: &str) -> Result<Order, DatabaseError> {
             reason: "Invalid order ID".to_string(),
         });
     }
-    
-    Ok(Order {
-        id: order_id.to_string(),
-        amount: 25.99,
-        user_id: 456,
-    })
+    Ok(Order { id: order_id.to_string(), amount: 25.99, user_id: 456 })
 }
 
 fn validate_order(order: &Order, user: &User) -> Result<(), BusinessError> {
@@ -413,14 +458,11 @@ fn validate_order(order: &Order, user: &User) -> Result<(), BusinessError> {
             available: user.balance,
         });
     }
-    
     Ok(())
 }
 
 fn process_payment(order: &Order) -> Result<PaymentResult, BusinessError> {
-    Ok(PaymentResult {
-        amount: order.amount,
-    })
+    Ok(PaymentResult { amount: order.amount })
 }
 ```
 
@@ -464,7 +506,7 @@ pub enum ApiError {
         url: String,
         status: u16,
         #[source]
-        source: reqwest::Error,
+        source: Box<dyn std::error::Error + Send + Sync>,
     },
     
     #[error("Rate limit exceeded: {requests}/{window_seconds}s (retry after {retry_after}s)")]
@@ -495,8 +537,8 @@ pub enum HttpClientError {
     #[error("DNS resolution failed for {hostname}")]
     DnsError { hostname: String },
     
-    #[error("TLS handshake failed")]
-    TlsError(#[from] rustls::Error),
+    #[error("TLS handshake failed: {reason}")]
+    TlsError { reason: String },
 }
 
 // Mid-level errors (for service layer)
@@ -529,115 +571,21 @@ pub enum AppError {
 }
 ```
 
-## 🔄 Comparing with C# Custom Exceptions
+## 🔄 Comparison with C#
 
-### C# Exception Hierarchy
-```csharp
-public class DataProcessingException : Exception
-{
-    public string FileName { get; }
-    
-    public DataProcessingException(string fileName, string message) 
-        : base(message)
-    {
-        FileName = fileName;
-    }
-    
-    public DataProcessingException(string fileName, string message, Exception innerException) 
-        : base(message, innerException)
-    {
-        FileName = fileName;
-    }
-}
+| C# Exception Design | Rust Error Design | Key Difference |
+|--------------------|-------------------|----------------|
+| Exception inheritance | Error enum variants | Composition over inheritance |
+| Runtime type checking | Compile-time matching | Safety at compile time |
+| `InnerException` | `#[source]` attribute | Explicit error chaining |
+| `Message` property | `Display` implementation | Same concept, different syntax |
+| Stack traces | Error source chains | Manual context building |
+| Uncaught exceptions | Must handle all cases | Compiler enforces handling |
 
-public class ValidationException : DataProcessingException
-{
-    public string Field { get; }
-    public object Value { get; }
-    
-    public ValidationException(string fileName, string field, object value, string message) 
-        : base(fileName, message)
-    {
-        Field = field;
-        Value = value;
-    }
-}
-
-// Usage
-try
-{
-    ProcessDataFile("data.csv");
-}
-catch (ValidationException ex)
-{
-    Console.WriteLine($"Validation error in {ex.FileName}: {ex.Field} = {ex.Value}");
-}
-catch (DataProcessingException ex)
-{
-    Console.WriteLine($"Processing error: {ex.Message}");
-}
-```
-
-### Rust Error Hierarchy
-```rust
-#[derive(Error, Debug)]
-pub enum DataProcessingError {
-    #[error("Validation error in {file_name}: {field} = {value:?} - {message}")]
-    Validation {
-        file_name: String,
-        field: String,
-        value: serde_json::Value,
-        message: String,
-    },
-    
-    #[error("Parsing error in {file_name}: {message}")]
-    Parsing {
-        file_name: String,
-        message: String,
-        #[source]
-        source: Box<dyn std::error::Error + Send + Sync>,
-    },
-    
-    #[error("IO error processing {file_name}: {0}")]
-    Io {
-        file_name: String,
-        #[source]
-        source: std::io::Error,
-    },
-}
-
-// Usage
-match process_data_file("data.csv") {
-    Ok(data) => println!("Success: {:?}", data),
-    Err(DataProcessingError::Validation { file_name, field, value, message }) => {
-        eprintln!("Validation error in {}: {} = {:?} - {}", file_name, field, value, message);
-    }
-    Err(DataProcessingError::Parsing { file_name, message, .. }) => {
-        eprintln!("Parsing error in {}: {}", file_name, message);
-    }
-    Err(e) => {
-        eprintln!("Processing error: {}", e);
-    }
-}
-```
-
-**Key Differences:**
-- **Rust**: Errors are data, exhaustive matching required
-- **C#**: Exceptions are objects, can be ignored (until runtime)
-- **Rust**: Error types are part of the function signature
-- **C#**: Exception types are not visible in method signatures
-
-## 🎯 Key Takeaways
-
-1. **Custom error types** make APIs clearer and error handling more precise
-2. **thiserror crate** eliminates boilerplate for error type definitions
-3. **Error hierarchies** provide appropriate abstraction levels
-4. **Actionable errors** include context and guidance for resolution
-5. **Pattern matching** enables specific handling for specific error types
-
-## 💻 Exercises
+## 💻 Practice Exercises
 
 ### Exercise 1: Design a File Processing Error Type
+
 ```rust
 use thiserror::Error;
 
@@ -658,6 +606,7 @@ pub enum FileProcessorError {
 
 fn process_file(path: &str) -> Result<ProcessedFile, FileProcessorError> {
     // TODO: Implement file processing with appropriate error handling
+    // Use your custom error types for specific failure cases
     todo!()
 }
 
@@ -666,10 +615,28 @@ struct ProcessedFile {
     size: u64,
     content_type: String,
 }
+
+fn main() {
+    match process_file("test.json") {
+        Ok(file) => println!("Processed: {:?}", file),
+        Err(e) => {
+            eprintln!("Processing failed: {}", e);
+            
+            // TODO: Provide specific guidance based on error type
+            match e {
+                // Handle each error variant with specific advice
+                _ => {}
+            }
+        }
+    }
+}
 ```
 
 ### Exercise 2: Create an Error Hierarchy
+
 ```rust
+use thiserror::Error;
+
 // TODO: Create a three-level error hierarchy:
 // 1. Low-level: NetworkError, DatabaseError, FileSystemError
 // 2. Mid-level: ServiceError (wraps low-level errors)
@@ -680,26 +647,51 @@ struct ProcessedFile {
 #[derive(Error, Debug)]
 pub enum NetworkError {
     // TODO: Define network-specific errors
+    // - Connection timeout
+    // - DNS resolution failed
+    // - TLS errors
 }
 
 #[derive(Error, Debug)]
 pub enum ServiceError {
     // TODO: Define service-level errors that wrap NetworkError
+    // - API unavailable
+    // - Authentication failed
+    // - Rate limited
 }
 
 #[derive(Error, Debug)]
 pub enum ApplicationError {
     // TODO: Define application-level errors
+    // - User errors
+    // - Configuration errors
+    // - Service errors
 }
 
 fn perform_complex_operation() -> Result<String, ApplicationError> {
     // TODO: Implement an operation that can fail at multiple levels
+    // Show how errors bubble up through the hierarchy
     todo!()
+}
+
+fn main() {
+    match perform_complex_operation() {
+        Ok(result) => println!("Success: {}", result),
+        Err(e) => {
+            eprintln!("Operation failed: {}", e);
+            
+            // TODO: Handle different error levels appropriately
+            // Show specific user guidance for each error type
+        }
+    }
 }
 ```
 
 ### Exercise 3: Error Recovery Strategies
+
 ```rust
+use thiserror::Error;
+
 // TODO: Implement retry logic with custom error handling
 #[derive(Error, Debug)]
 pub enum RetryableError {
@@ -717,19 +709,251 @@ pub enum RetryableError {
     RateLimited { seconds: u32 },
 }
 
-async fn retry_operation<F, T, E>(
-    operation: F,
+fn retry_operation<F, T, E>(
+    mut operation: F,
     max_attempts: u32,
 ) -> Result<T, RetryableError>
 where
-    F: Fn() -> Result<T, E>,
+    F: FnMut() -> Result<T, E>,
     E: Into<RetryableError>,
 {
     // TODO: Implement retry logic with exponential backoff
-    // Handle different error types appropriately
+    // Handle different error types appropriately:
+    // - Retry temporary errors
+    // - Don't retry permanent errors
+    // - Wait for rate limit to expire
     todo!()
 }
+
+// Example operation that can fail
+fn flaky_network_call() -> Result<String, RetryableError> {
+    use std::time::{SystemTime, UNIX_EPOCH};
+    
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+    
+    match now % 5 {
+        0 => Ok("Success!".to_string()),
+        1 => Err(RetryableError::Temporary {
+            message: "Network timeout".to_string(),
+            attempt: 1,
+            max_attempts: 3,
+        }),
+        2 => Err(RetryableError::RateLimited { seconds: 5 }),
+        _ => Err(RetryableError::Permanent {
+            message: "Invalid API key".to_string(),
+        }),
+    }
+}
+
+fn main() {
+    match retry_operation(|| flaky_network_call(), 3) {
+        Ok(result) => println!("Operation succeeded: {}", result),
+        Err(e) => eprintln!("Operation failed permanently: {}", e),
+    }
+}
 ```
+
+## 🚀 Mini-Project: E-commerce Validation System
+
+Build a comprehensive validation system with custom error types:
+
+```rust
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum OrderValidationError {
+    #[error("Invalid customer: {0}")]
+    Customer(#[from] CustomerError),
+    
+    #[error("Invalid product: {0}")]
+    Product(#[from] ProductError),
+    
+    #[error("Payment error: {0}")]
+    Payment(#[from] PaymentError),
+    
+    #[error("Shipping error: {0}")]
+    Shipping(#[from] ShippingError),
+}
+
+#[derive(Error, Debug)]
+pub enum CustomerError {
+    #[error("Customer not found: {customer_id}")]
+    NotFound { customer_id: String },
+    
+    #[error("Customer account suspended: {customer_id}")]
+    Suspended { customer_id: String },
+    
+    #[error("Invalid email format: {email}")]
+    InvalidEmail { email: String },
+}
+
+#[derive(Error, Debug)]
+pub enum ProductError {
+    #[error("Product not found: {product_id}")]
+    NotFound { product_id: String },
+    
+    #[error("Product out of stock: {product_id} (requested: {requested}, available: {available})")]
+    OutOfStock { product_id: String, requested: u32, available: u32 },
+    
+    #[error("Product discontinued: {product_id}")]
+    Discontinued { product_id: String },
+}
+
+#[derive(Error, Debug)]
+pub enum PaymentError {
+    #[error("Insufficient funds: ${required:.2} required, ${available:.2} available")]
+    InsufficientFunds { required: f64, available: f64 },
+    
+    #[error("Invalid payment method: {method}")]
+    InvalidMethod { method: String },
+    
+    #[error("Payment processing failed: {reason}")]
+    ProcessingFailed { reason: String },
+}
+
+#[derive(Error, Debug)]
+pub enum ShippingError {
+    #[error("Invalid shipping address: {reason}")]
+    InvalidAddress { reason: String },
+    
+    #[error("Shipping not available to: {location}")]
+    UnavailableLocation { location: String },
+    
+    #[error("Package too large: {weight}kg (max: {max_weight}kg)")]
+    OverWeight { weight: f64, max_weight: f64 },
+}
+
+#[derive(Debug)]
+struct Order {
+    customer_id: String,
+    items: Vec<OrderItem>,
+    payment_method: String,
+    shipping_address: String,
+}
+
+#[derive(Debug)]
+struct OrderItem {
+    product_id: String,
+    quantity: u32,
+}
+
+struct OrderValidator;
+
+impl OrderValidator {
+    fn validate_order(&self, order: &Order) -> Result<(), OrderValidationError> {
+        self.validate_customer(&order.customer_id)?;
+        
+        for item in &order.items {
+            self.validate_product(&item.product_id, item.quantity)?;
+        }
+        
+        self.validate_payment(&order.payment_method)?;
+        self.validate_shipping(&order.shipping_address)?;
+        
+        Ok(())
+    }
+    
+    fn validate_customer(&self, customer_id: &str) -> Result<(), CustomerError> {
+        if customer_id.is_empty() {
+            return Err(CustomerError::InvalidEmail {
+                email: "empty".to_string(),
+            });
+        }
+        
+        if customer_id == "suspended_user" {
+            return Err(CustomerError::Suspended {
+                customer_id: customer_id.to_string(),
+            });
+        }
+        
+        Ok(())
+    }
+    
+    fn validate_product(&self, product_id: &str, quantity: u32) -> Result<(), ProductError> {
+        if product_id == "discontinued" {
+            return Err(ProductError::Discontinued {
+                product_id: product_id.to_string(),
+            });
+        }
+        
+        if quantity > 5 {
+            return Err(ProductError::OutOfStock {
+                product_id: product_id.to_string(),
+                requested: quantity,
+                available: 5,
+            });
+        }
+        
+        Ok(())
+    }
+    
+    fn validate_payment(&self, method: &str) -> Result<(), PaymentError> {
+        if method == "invalid_card" {
+            return Err(PaymentError::ProcessingFailed {
+                reason: "Card expired".to_string(),
+            });
+        }
+        
+        Ok(())
+    }
+    
+    fn validate_shipping(&self, address: &str) -> Result<(), ShippingError> {
+        if address.is_empty() {
+            return Err(ShippingError::InvalidAddress {
+                reason: "Address cannot be empty".to_string(),
+            });
+        }
+        
+        Ok(())
+    }
+}
+
+fn main() {
+    let order = Order {
+        customer_id: "suspended_user".to_string(),
+        items: vec![
+            OrderItem { product_id: "laptop".to_string(), quantity: 1 },
+            OrderItem { product_id: "mouse".to_string(), quantity: 10 }, // Too many
+        ],
+        payment_method: "credit_card".to_string(),
+        shipping_address: "123 Main St".to_string(),
+    };
+    
+    let validator = OrderValidator;
+    
+    match validator.validate_order(&order) {
+        Ok(()) => println!("Order is valid!"),
+        Err(e) => {
+            eprintln!("Order validation failed: {}", e);
+            
+            // Provide specific guidance based on error type
+            match &e {
+                OrderValidationError::Customer(CustomerError::Suspended { customer_id }) => {
+                    eprintln!("Please contact support to reactivate account: {}", customer_id);
+                }
+                OrderValidationError::Product(ProductError::OutOfStock { product_id, available, .. }) => {
+                    eprintln!("Please reduce quantity for {} to {} or less", product_id, available);
+                }
+                OrderValidationError::Payment(PaymentError::ProcessingFailed { reason }) => {
+                    eprintln!("Payment issue: {}. Please try a different payment method", reason);
+                }
+                _ => {
+                    eprintln!("Please fix the error and try again");
+                }
+            }
+        }
+    }
+}
+```
+
+## 🔑 Key Takeaways
+
+1. **Custom error types** make APIs clearer and error handling more precise
+2. **thiserror crate** eliminates boilerplate for error type definitions
+3. **Error hierarchies** provide appropriate abstraction levels
+4. **Actionable errors** include context and guidance for resolution
+5. **Pattern matching** enables specific handling for specific error types
+6. **Error chaining** preserves context through multiple abstraction layers
 
 ## 📚 Additional Resources
 
@@ -737,6 +961,18 @@ where
 - [Error Handling in Rust](https://blog.burntsushi.net/rust-error-handling/)
 - [Rust API Guidelines - Error Design](https://rust-lang.github.io/api-guidelines/type-safety.html#error-types-are-meaningful-and-well-behaved-c-good-err)
 
+## ✅ Checklist
+
+Before moving on, ensure you can:
+- [ ] Design custom error types for specific domains
+- [ ] Use thiserror to reduce boilerplate code
+- [ ] Create error hierarchies for complex applications
+- [ ] Write actionable error messages with context
+- [ ] Handle error chains and source errors
+- [ ] Choose appropriate error abstraction levels
+
 ---
 
-Next: [File Processor Project](../project-file-processor/README.md) →
+**Congratulations!** You've mastered Rust's error handling system. You now know how to build applications that handle errors gracefully and guide users to solutions.
+
+Next Module: [04 - Systems Programming](../04-systems-programming/README.md) - Learn low-level Rust programming with the safety guarantees you've mastered →

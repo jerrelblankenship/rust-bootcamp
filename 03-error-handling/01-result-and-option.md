@@ -6,11 +6,18 @@ Welcome to Rust's approach to error handling! As a C# developer, you're used to 
 
 - Master the `Result<T, E>` type for fallible operations
 - Understand `Option<T>` for handling null-like scenarios
-- Learn pattern matching for error handling
+- Learn pattern matching for exhaustive error handling
+- Apply the `?` operator for elegant error propagation
 - Compare Rust's approach with C#'s exception model
-- Use the `?` operator for error propagation
+- Build safe programs that can't crash from null references
 
-## 🚫 The Problem with Exceptions
+## 📚 Introduction
+
+In C#, errors come at you from two directions: null references (causing `NullReferenceException`) and exceptions (disrupting control flow). These can crash your program at runtime, often in production when you least expect it.
+
+Rust eliminates both problems by making errors explicit in the type system. No more surprise crashes, no more forgotten null checks - the compiler ensures you handle every possible failure case.
+
+## 🚫 The Problems with Exceptions and Nulls
 
 ### C# Exception Model
 ```csharp
@@ -42,13 +49,14 @@ public class UserService
     {
         Console.WriteLine($"Not found: {ex.Message}");
     }
+    // What if we forget other exception types?
 }
 ```
 
 **Problems:**
 - Exceptions are "invisible" in method signatures
-- Easy to forget to handle errors
-- Performance overhead of unwinding the stack
+- Easy to forget to handle specific error types
+- Performance overhead of stack unwinding
 - Can interrupt control flow unexpectedly
 
 ## ✅ The Rust Way: Errors as Values
@@ -58,14 +66,7 @@ public class UserService
 `Option<T>` replaces nullable types and eliminates `NullReferenceException`:
 
 ```rust
-// C# nullable approach
-public string GetUserEmail(int userId)
-{
-    var user = GetUser(userId); // Could return null
-    return user?.Email; // Null-conditional operator
-}
-
-// Rust Option approach
+// Rust Option approach - null safety by design
 fn get_user_email(user_id: u32) -> Option<String> {
     let user = get_user(user_id)?; // Returns None if user not found
     Some(user.email)
@@ -81,12 +82,23 @@ fn get_user(user_id: u32) -> Option<User> {
         })
     }
 }
-```
 
-**Key Benefits:**
-- Compiler forces you to handle the `None` case
-- No surprise null pointer exceptions
-- Self-documenting API - the return type tells you it might fail
+#[derive(Debug)]
+struct User {
+    id: u32,
+    email: String,
+}
+
+// Compiler forces you to handle both cases
+fn main() {
+    match get_user_email(42) {
+        Some(email) => println!("Email: {}", email),
+        None => println!("User not found"),
+    }
+    
+    // No surprise crashes - all cases handled!
+}
+```
 
 ### Result<T, E> - Explicit Error Handling
 
@@ -96,26 +108,14 @@ fn get_user(user_id: u32) -> Option<User> {
 use std::fs;
 use std::io;
 
-// C# file reading with exceptions
-/*
-public string ReadConfig(string path)
-{
-    try 
-    {
-        return File.ReadAllText(path);
-    }
-    catch (FileNotFoundException)
-    {
-        throw new ConfigException("Config file missing");
-    }
-    catch (UnauthorizedAccessException)
-    {
-        throw new ConfigException("Cannot access config file");
-    }
+#[derive(Debug)]
+enum ConfigError {
+    IoError(io::Error),
+    EmptyFile,
+    InvalidFormat(String),
 }
-*/
 
-// Rust file reading with Result
+// Rust file reading with Result - explicit error handling
 fn read_config(path: &str) -> Result<String, ConfigError> {
     let content = fs::read_to_string(path)
         .map_err(ConfigError::IoError)?;
@@ -124,13 +124,23 @@ fn read_config(path: &str) -> Result<String, ConfigError> {
         return Err(ConfigError::EmptyFile);
     }
     
+    if !content.contains("version") {
+        return Err(ConfigError::InvalidFormat(
+            "Missing version field".to_string()
+        ));
+    }
+    
     Ok(content)
 }
 
-#[derive(Debug)]
-enum ConfigError {
-    IoError(io::Error),
-    EmptyFile,
+// All error cases are visible and must be handled
+fn main() {
+    match read_config("app.conf") {
+        Ok(content) => println!("Config loaded: {} chars", content.len()),
+        Err(ConfigError::IoError(e)) => eprintln!("File error: {}", e),
+        Err(ConfigError::EmptyFile) => eprintln!("Config file is empty!"),
+        Err(ConfigError::InvalidFormat(msg)) => eprintln!("Invalid format: {}", msg),
+    }
 }
 ```
 
@@ -150,6 +160,7 @@ fn process_user_request(user_id: u32) {
             // Handle missing user case
         }
     }
+    // Compiler guarantees all cases are handled!
 }
 
 fn handle_file_operation() {
@@ -162,6 +173,9 @@ fn handle_file_operation() {
         }
         Err(ConfigError::EmptyFile) => {
             eprintln!("Config file is empty!");
+        }
+        Err(ConfigError::InvalidFormat(msg)) => {
+            eprintln!("Invalid config format: {}", msg);
         }
     }
 }
@@ -192,7 +206,6 @@ The `?` operator is Rust's equivalent to exception bubbling, but explicit:
 
 ```rust
 use std::fs;
-use std::io;
 
 // Without ? operator (verbose)
 fn load_user_data_verbose(path: &str) -> Result<UserData, Box<dyn std::error::Error>> {
@@ -209,14 +222,14 @@ fn load_user_data_verbose(path: &str) -> Result<UserData, Box<dyn std::error::Er
     Ok(user_data)
 }
 
-// With ? operator (concise)
+// With ? operator (concise and clear)
 fn load_user_data(path: &str) -> Result<UserData, Box<dyn std::error::Error>> {
     let content = fs::read_to_string(path)?;
     let user_data = serde_json::from_str(&content)?;
     Ok(user_data)
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Debug)]
 struct UserData {
     name: String,
     email: String,
@@ -228,7 +241,7 @@ struct UserData {
 2. If `Result` is `Err(e)`, returns `Err(e)` from the function
 3. Error type must be convertible to the function's error type
 
-## 🔄 C# to Rust Error Handling Comparison
+## 🔄 Comparison with C#
 
 | C# Pattern | Rust Equivalent | Key Differences |
 |------------|-----------------|-----------------|
@@ -239,315 +252,198 @@ struct UserData {
 | `using` | RAII | Deterministic resource cleanup |
 | Exception propagation | `?` operator | Explicit in code |
 
-## 💻 Practical Examples
-
-### Example 1: API Response Handler
-
-```rust
-use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Deserialize)]
-struct ApiResponse {
-    status: String,
-    data: Option<User>,
-    error: Option<String>,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-struct User {
-    id: u32,
-    name: String,
-    email: String,
-}
-
-fn parse_api_response(json: &str) -> Result<User, ApiError> {
-    let response: ApiResponse = serde_json::from_str(json)
-        .map_err(ApiError::ParseError)?;
-    
-    if response.status != "success" {
-        return Err(ApiError::ApiFailure(
-            response.error.unwrap_or_else(|| "Unknown error".to_string())
-        ));
-    }
-    
-    response.data.ok_or(ApiError::MissingData)
-}
-
-#[derive(Debug)]
-enum ApiError {
-    ParseError(serde_json::Error),
-    ApiFailure(String),
-    MissingData,
-}
-
-impl std::fmt::Display for ApiError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ApiError::ParseError(e) => write!(f, "Failed to parse JSON: {}", e),
-            ApiError::ApiFailure(msg) => write!(f, "API error: {}", msg),
-            ApiError::MissingData => write!(f, "Response missing user data"),
-        }
-    }
-}
-
-impl std::error::Error for ApiError {}
-
-// Usage
-fn main() {
-    let good_response = r#"
-    {
-        "status": "success",
-        "data": {
-            "id": 1,
-            "name": "Alice",
-            "email": "alice@example.com"
-        }
-    }"#;
-    
-    let bad_response = r#"
-    {
-        "status": "error",
-        "error": "User not found"
-    }"#;
-    
-    match parse_api_response(good_response) {
-        Ok(user) => println!("Success: {:?}", user),
-        Err(e) => eprintln!("Error: {}", e),
-    }
-    
-    match parse_api_response(bad_response) {
-        Ok(user) => println!("Success: {:?}", user),
-        Err(e) => eprintln!("Error: {}", e),
-    }
-}
-```
-
-### Example 2: Configuration Loader with Multiple Error Types
-
-```rust
-use std::fs;
-use std::num::ParseIntError;
-
-#[derive(Debug)]
-struct Config {
-    host: String,
-    port: u16,
-    timeout_ms: u32,
-}
-
-#[derive(Debug)]
-enum ConfigError {
-    FileNotFound(std::io::Error),
-    InvalidFormat(String),
-    InvalidPort(ParseIntError),
-    InvalidTimeout(ParseIntError),
-}
-
-impl std::fmt::Display for ConfigError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ConfigError::FileNotFound(e) => {
-                write!(f, "Configuration file not found: {}", e)
-            }
-            ConfigError::InvalidFormat(line) => {
-                write!(f, "Invalid configuration format: {}", line)
-            }
-            ConfigError::InvalidPort(e) => {
-                write!(f, "Invalid port number: {}", e)
-            }
-            ConfigError::InvalidTimeout(e) => {
-                write!(f, "Invalid timeout value: {}", e)
-            }
-        }
-    }
-}
-
-impl std::error::Error for ConfigError {}
-
-fn load_config(path: &str) -> Result<Config, ConfigError> {
-    let content = fs::read_to_string(path)
-        .map_err(ConfigError::FileNotFound)?;
-    
-    let mut host = None;
-    let mut port = None;
-    let mut timeout_ms = None;
-    
-    for line in content.lines() {
-        let line = line.trim();
-        if line.is_empty() || line.starts_with('#') {
-            continue;
-        }
-        
-        let parts: Vec<&str> = line.split('=').collect();
-        if parts.len() != 2 {
-            return Err(ConfigError::InvalidFormat(line.to_string()));
-        }
-        
-        let key = parts[0].trim();
-        let value = parts[1].trim();
-        
-        match key {
-            "host" => host = Some(value.to_string()),
-            "port" => {
-                port = Some(value.parse()
-                    .map_err(ConfigError::InvalidPort)?);
-            }
-            "timeout_ms" => {
-                timeout_ms = Some(value.parse()
-                    .map_err(ConfigError::InvalidTimeout)?);
-            }
-            _ => return Err(ConfigError::InvalidFormat(
-                format!("Unknown configuration key: {}", key)
-            )),
-        }
-    }
-    
-    Ok(Config {
-        host: host.ok_or_else(|| {
-            ConfigError::InvalidFormat("Missing 'host' configuration".to_string())
-        })?,
-        port: port.ok_or_else(|| {
-            ConfigError::InvalidFormat("Missing 'port' configuration".to_string())
-        })?,
-        timeout_ms: timeout_ms.ok_or_else(|| {
-            ConfigError::InvalidFormat("Missing 'timeout_ms' configuration".to_string())
-        })?,
-    })
-}
-
-fn main() -> Result<(), ConfigError> {
-    let config = load_config("app.conf")?;
-    println!("Loaded config: {:?}", config);
-    Ok(())
-}
-```
-
-## 💡 Working with Option<T>
-
-### Common Option Methods
-
-```rust
-fn demonstrate_option_methods() {
-    let maybe_user = get_user(42);
-    
-    // Transform the value if present
-    let maybe_email = maybe_user.map(|user| user.email);
-    
-    // Provide a default value
-    let user_or_default = get_user(0).unwrap_or_else(|| User {
-        id: 0,
-        email: "guest@example.com".to_string(),
-    });
-    
-    // Chain operations
-    let email_length = get_user(42)
-        .map(|user| user.email)
-        .map(|email| email.len())
-        .unwrap_or(0);
-    
-    // Convert Option to Result
-    let user_result: Result<User, &str> = get_user(42)
-        .ok_or("User not found");
-    
-    println!("Email length: {}", email_length);
-}
-```
-
-### Option Chaining vs C# Null-Conditional
-
-```csharp
-// C# null-conditional chaining
-var result = user?.Profile?.Email?.Length ?? 0;
-```
-
-```rust
-// Rust Option chaining
-let result = user
-    .and_then(|u| u.profile)
-    .and_then(|p| p.email)
-    .map(|e| e.len())
-    .unwrap_or(0);
-
-// Or with a more functional approach
-let result = user
-    .as_ref()
-    .and_then(|u| u.profile.as_ref())
-    .and_then(|p| p.email.as_ref())
-    .map(|e| e.len())
-    .unwrap_or(0);
-```
-
-## 🎯 Key Takeaways
-
-1. **Explicit Error Handling**: Rust makes errors visible in function signatures
-2. **Compiler Assistance**: The compiler ensures you handle all error cases
-3. **Performance**: No exception overhead - errors are just data
-4. **Composability**: `?` operator makes error handling ergonomic
-5. **Type Safety**: Different error types are distinct and explicit
-
-## 🔨 Exercises
+## 💻 Practice Exercises
 
 ### Exercise 1: Basic Option Handling
+
 ```rust
-// Fix this function to handle the Option properly
-fn get_user_name(user_id: u32) -> String {
-    let user = find_user(user_id); // Returns Option<User>
-    // TODO: Return the user's name or "Unknown" if not found
-    todo!()
+fn main() {
+    // Fix this function to handle the Option properly
+    let user_name = get_user_name(42);
+    // TODO: Print the user's name or "Unknown" if not found
+    // Hint: Use pattern matching or unwrap_or
 }
 
-fn find_user(id: u32) -> Option<User> {
-    if id > 0 && id <= 100 {
-        Some(User {
-            id,
-            email: format!("user{}@example.com", id),
-        })
+fn get_user_name(user_id: u32) -> Option<String> {
+    if user_id > 0 && user_id <= 100 {
+        Some(format!("User{}", user_id))
     } else {
         None
     }
 }
 ```
 
-### Exercise 2: Result Propagation
+### Exercise 2: Result Error Handling
+
 ```rust
-// Complete this function using the ? operator
-fn calculate_total_score(scores: &[&str]) -> Result<u32, std::num::ParseIntError> {
-    let mut total = 0;
+fn main() {
+    // Fix this to handle all possible errors
+    let result = divide_numbers("10", "2");
+    // TODO: Handle both success and error cases
+    // Print the result or an appropriate error message
+}
+
+fn divide_numbers(a_str: &str, b_str: &str) -> Result<f64, String> {
+    let a = a_str.parse::<f64>().map_err(|_| "Invalid first number")?;
+    let b = b_str.parse::<f64>().map_err(|_| "Invalid second number")?;
     
-    for score_str in scores {
-        // TODO: Parse each score and add to total
-        // Use ? operator for error propagation
+    if b == 0.0 {
+        return Err("Division by zero".to_string());
     }
     
-    Ok(total)
+    Ok(a / b)
 }
 ```
 
-### Exercise 3: Custom Error Types
+### Exercise 3: Option Chaining
+
 ```rust
-// Create a custom error type for a simple calculator
 #[derive(Debug)]
-enum CalcError {
-    // TODO: Define error variants for:
-    // - Division by zero
-    // - Invalid operation
-    // - Number parsing error
+struct User {
+    id: u32,
+    profile: Option<Profile>,
 }
 
-// TODO: Implement Display and Error traits for CalcError
+#[derive(Debug)]
+struct Profile {
+    email: Option<String>,
+}
 
-fn safe_divide(a: f64, b: f64) -> Result<f64, CalcError> {
-    // TODO: Implement safe division
-    todo!()
+fn main() {
+    let user = User {
+        id: 1,
+        profile: Some(Profile {
+            email: Some("user@example.com".to_string()),
+        }),
+    };
+    
+    // TODO: Extract the email using Option chaining
+    // If any step fails, print "No email found"
+    // Hint: Use .and_then() or pattern matching
 }
 ```
+
+## 🚀 Mini-Project: Configuration Validator
+
+Build a configuration validator that demonstrates comprehensive error handling:
+
+```rust
+use std::collections::HashMap;
+
+#[derive(Debug)]
+struct Config {
+    database_url: String,
+    port: u16,
+    debug_mode: bool,
+}
+
+#[derive(Debug)]
+enum ConfigError {
+    MissingField(String),
+    InvalidPort(String),
+    InvalidBool(String),
+}
+
+impl std::fmt::Display for ConfigError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ConfigError::MissingField(field) => write!(f, "Missing required field: {}", field),
+            ConfigError::InvalidPort(value) => write!(f, "Invalid port number: {}", value),
+            ConfigError::InvalidBool(value) => write!(f, "Invalid boolean value: {}", value),
+        }
+    }
+}
+
+impl std::error::Error for ConfigError {}
+
+fn parse_config(input: &str) -> Result<Config, ConfigError> {
+    let mut fields = HashMap::new();
+    
+    // Parse key=value pairs
+    for line in input.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        
+        if let Some((key, value)) = line.split_once('=') {
+            fields.insert(key.trim(), value.trim());
+        }
+    }
+    
+    // Extract required fields
+    let database_url = fields.get("database_url")
+        .ok_or_else(|| ConfigError::MissingField("database_url".to_string()))?
+        .to_string();
+    
+    let port_str = fields.get("port")
+        .ok_or_else(|| ConfigError::MissingField("port".to_string()))?;
+    
+    let port = port_str.parse::<u16>()
+        .map_err(|_| ConfigError::InvalidPort(port_str.to_string()))?;
+    
+    let debug_str = fields.get("debug_mode")
+        .ok_or_else(|| ConfigError::MissingField("debug_mode".to_string()))?;
+    
+    let debug_mode = match debug_str.to_lowercase().as_str() {
+        "true" | "yes" | "1" => true,
+        "false" | "no" | "0" => false,
+        _ => return Err(ConfigError::InvalidBool(debug_str.to_string())),
+    };
+    
+    Ok(Config {
+        database_url,
+        port,
+        debug_mode,
+    })
+}
+
+fn main() {
+    let config_text = r#"
+        database_url=postgresql://localhost/myapp
+        port=8080
+        debug_mode=true
+    "#;
+    
+    match parse_config(config_text) {
+        Ok(config) => {
+            println!("Configuration loaded successfully:");
+            println!("  Database: {}", config.database_url);
+            println!("  Port: {}", config.port);
+            println!("  Debug: {}", config.debug_mode);
+        }
+        Err(e) => {
+            eprintln!("Configuration error: {}", e);
+        }
+    }
+}
+```
+
+## 🔑 Key Takeaways
+
+1. **Explicit Error Handling**: Rust makes errors visible in function signatures
+2. **Compiler Assistance**: The compiler ensures you handle all error cases
+3. **No Runtime Surprises**: Null pointer exceptions are impossible
+4. **Zero Overhead**: Error handling is just data flow, no exceptions
+5. **Pattern Matching**: Exhaustive handling prevents forgotten error cases
+6. **Composability**: `?` operator makes error handling ergonomic
 
 ## 📚 Additional Resources
 
 - [Rust Book - Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handling.html)
 - [Rust by Example - Error Handling](https://doc.rust-lang.org/rust-by-example/error.html)
-- [The anyhow crate](https://docs.rs/anyhow/) - Flexible error handling
+- [Option and Result API Documentation](https://doc.rust-lang.org/std/option/)
+
+## ✅ Checklist
+
+Before moving on, ensure you can:
+- [ ] Use Option<T> to handle potentially missing values
+- [ ] Create and handle Result<T, E> for operations that can fail
+- [ ] Apply pattern matching to handle all error cases
+- [ ] Use the ? operator for error propagation
+- [ ] Explain why Rust's approach prevents runtime crashes
+- [ ] Compare Rust's error handling with C#'s exception model
 
 ---
 
-Next: [Error Propagation](02-error-propagation.md) →
+Next: [Error Propagation](02-error-propagation.md) - Learn elegant error flow with the ? operator →

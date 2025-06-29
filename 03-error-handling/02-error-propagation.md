@@ -1,26 +1,28 @@
-# Lesson 02: Error Propagation and the ? Operator
+# Lesson 02: Error Propagation
 
-Now that you understand `Result<T, E>` and `Option<T>`, let's master error propagation - how errors flow through your application. This is where Rust's approach really shines compared to C#'s exception handling.
+Master the art of flowing errors through your application with Rust's ? operator. Learn how to build robust error handling chains that are both safe and elegant.
 
 ## 🎯 Learning Objectives
 
 - Master the `?` operator for concise error propagation
 - Understand error type conversion and the `From` trait
-- Learn to chain operations safely
-- Use the `anyhow` crate for flexible error handling
-- Compare with C#'s exception bubbling
+- Learn to chain operations safely without nested error handling
+- Use the `anyhow` crate for flexible error handling in applications
+- Build error handling chains that are both safe and performant
+- Compare Rust's explicit propagation with C#'s exception bubbling
 
-## 🌊 Error Propagation Patterns
+## 📚 Introduction
 
-### The Problem: Nested Error Handling
+In the previous lesson, we learned about `Result<T, E>` and `Option<T>`. Now let's master how errors flow through your application. This is where Rust's approach really shines compared to C#'s exception handling - errors are explicit, visible, and efficient.
 
-Without proper tools, error handling becomes verbose quickly:
+## 🌊 The Problem: Nested Error Handling
+
+Without proper tools, error handling becomes verbose and error-prone:
 
 ```rust
 use std::fs;
-use serde_json;
 
-// Verbose nested error handling
+// Verbose nested error handling - don't do this!
 fn load_user_config_verbose(path: &str) -> Result<UserConfig, ConfigError> {
     let file_contents = match fs::read_to_string(path) {
         Ok(contents) => contents,
@@ -39,9 +41,28 @@ fn load_user_config_verbose(path: &str) -> Result<UserConfig, ConfigError> {
     
     Ok(config)
 }
+
+#[derive(Debug)]
+enum ConfigError {
+    FileError(std::io::Error),
+    ParseError(serde_json::Error),
+    ValidationError(String),
+}
+
+#[derive(serde::Deserialize, Debug)]
+struct UserConfig {
+    username: String,
+    theme: String,
+    auto_save: bool,
+}
+
+fn validate_config(_value: serde_json::Value) -> Result<UserConfig, String> {
+    // Validation logic here
+    todo!()
+}
 ```
 
-This is repetitive and error-prone. Let's see how Rust makes this elegant.
+This repetitive pattern is exactly what the `?` operator solves!
 
 ## ⚡ The ? Operator: Your Error Handling Superpower
 
@@ -50,19 +71,12 @@ The `?` operator transforms error handling from verbose to elegant:
 ```rust
 use anyhow::Result;
 
-// Elegant error propagation with ?
+// Elegant error propagation with ? - much better!
 fn load_user_config(path: &str) -> Result<UserConfig> {
     let file_contents = fs::read_to_string(path)?;
     let parsed_json: serde_json::Value = serde_json::from_str(&file_contents)?;
     let config = validate_config(parsed_json)?;
     Ok(config)
-}
-
-#[derive(serde::Deserialize, Debug)]
-struct UserConfig {
-    username: String,
-    theme: String,
-    auto_save: bool,
 }
 
 fn validate_config(value: serde_json::Value) -> Result<UserConfig> {
@@ -81,8 +95,8 @@ fn validate_config(value: serde_json::Value) -> Result<UserConfig> {
 ```
 
 **What ? Does:**
-1. **Success case**: Unwraps the `Ok(value)` and continues
-2. **Error case**: Returns `Err(e)` from the current function
+1. **Success case**: Unwraps the `Ok(value)` and continues execution
+2. **Error case**: Returns `Err(e)` from the current function immediately
 3. **Type conversion**: Automatically converts error types when possible
 
 ## 🔄 Comparing with C# Exception Handling
@@ -108,7 +122,7 @@ public class ConfigLoader
         {
             throw new ConfigException("Invalid JSON format", ex);
         }
-        // Other exceptions bubble up uncaught
+        // Other exceptions bubble up uncaught - potential crashes!
     }
     
     private UserConfig ValidateConfig(JsonElement json)
@@ -126,6 +140,8 @@ public class ConfigLoader
 ### Rust Error Propagation
 ```rust
 use anyhow::{Context, Result};
+
+struct ConfigLoader;
 
 impl ConfigLoader {
     fn load_config(&self, path: &str) -> Result<UserConfig> {
@@ -214,7 +230,7 @@ fn process_config_file(path: &str) -> Result<i32, AppError> {
 
 ## 🧰 Using anyhow for Flexible Error Handling
 
-The `anyhow` crate provides a flexible error type that can wrap any error:
+The `anyhow` crate provides a flexible error type perfect for applications:
 
 ```rust
 use anyhow::{anyhow, bail, Context, Result};
@@ -222,7 +238,7 @@ use std::fs;
 
 // anyhow::Result<T> is shorthand for Result<T, anyhow::Error>
 fn complex_operation(config_path: &str, data_path: &str) -> Result<ProcessingResult> {
-    // Load configuration
+    // Load configuration with context
     let config_content = fs::read_to_string(config_path)
         .with_context(|| format!("Failed to load config from {}", config_path))?;
     
@@ -261,7 +277,6 @@ struct ProcessingResult {
 }
 
 fn process_data(data: &str, config: &Config) -> Result<ProcessingResult> {
-    // Simulate complex processing
     if data.is_empty() {
         bail!("Cannot process empty data");
     }
@@ -286,9 +301,9 @@ fn process_data(data: &str, config: &Config) -> Result<ProcessingResult> {
 ### anyhow Benefits
 
 1. **Flexibility**: Can wrap any error type
-2. **Context**: Easy to add contextual information
+2. **Context**: Easy to add contextual information with `.context()`
 3. **Ergonomics**: Convenient macros (`anyhow!`, `bail!`)
-4. **Debugging**: Excellent error message formatting
+4. **Debugging**: Excellent error message formatting with error chains
 
 ## 🔧 Advanced Error Propagation Patterns
 
@@ -298,35 +313,12 @@ fn process_data(data: &str, config: &Config) -> Result<ProcessingResult> {
 use anyhow::Result;
 
 fn process_user_data(user_id: u32) -> Result<ProcessedUser> {
-    // Chain multiple operations together
-    fetch_user(user_id)?
-        .validate()
-        .and_then(|user| enhance_profile(user))
-        .and_then(|user| calculate_score(user))
-        .map(|user| ProcessedUser::from(user))
-}
-
-impl User {
-    fn validate(self) -> Result<User> {
-        if self.email.is_empty() {
-            anyhow::bail!("User email is required");
-        }
-        if self.age < 13 {
-            anyhow::bail!("User must be at least 13 years old");
-        }
-        Ok(self)
-    }
-}
-
-fn enhance_profile(mut user: User) -> Result<User> {
-    user.profile_score = fetch_profile_score(&user.email)
-        .context("Failed to fetch profile score")?;
-    Ok(user)
-}
-
-fn calculate_score(mut user: User) -> Result<User> {
-    user.final_score = user.profile_score * user.activity_multiplier();
-    Ok(user)
+    // Chain multiple operations together elegantly
+    let user = fetch_user(user_id)?;
+    let validated_user = user.validate()?;
+    let enhanced_user = enhance_profile(validated_user)?;
+    let scored_user = calculate_score(enhanced_user)?;
+    Ok(ProcessedUser::from(scored_user))
 }
 
 #[derive(Debug)]
@@ -339,10 +331,31 @@ struct User {
 }
 
 impl User {
+    fn validate(self) -> Result<User> {
+        if self.email.is_empty() {
+            anyhow::bail!("User email is required");
+        }
+        if self.age < 13 {
+            anyhow::bail!("User must be at least 13 years old");
+        }
+        Ok(self)
+    }
+    
     fn activity_multiplier(&self) -> f64 {
         // Simulate complex calculation
         1.5
     }
+}
+
+fn enhance_profile(mut user: User) -> Result<User> {
+    user.profile_score = fetch_profile_score(&user.email)
+        .context("Failed to fetch profile score")?;
+    Ok(user)
+}
+
+fn calculate_score(mut user: User) -> Result<User> {
+    user.final_score = user.profile_score * user.activity_multiplier();
+    Ok(user)
 }
 
 struct ProcessedUser {
@@ -405,179 +418,44 @@ fn process_multiple_users_lenient(user_ids: &[u32]) -> (Vec<ProcessedUser>, Vec<
     
     (successes, failures)
 }
+
+// Note: This requires the itertools crate for partition_map
+// Add to Cargo.toml: itertools = "0.11"
 ```
 
-## 💡 Best Practices for Error Propagation
+## 🔄 Comparison with C#
 
-### 1. Use Specific Error Types for Libraries
+| C# Error Handling | Rust Error Propagation | Key Difference |
+|------------------|------------------------|----------------|
+| `try-catch` blocks | `match` expressions | Explicit in signatures |
+| `throw` statement | `return Err(e)` | Errors are return values |
+| Exception bubbling | `?` operator | Visible and controlled |
+| `finally` blocks | Drop trait | Automatic cleanup |
+| Stack unwinding | Direct returns | No performance overhead |
+| Hidden exceptions | Explicit Result types | Cannot ignore errors |
 
-```rust
-// For libraries, create specific error types
-#[derive(Debug, thiserror::Error)]
-pub enum DatabaseError {
-    #[error("Connection failed: {0}")]
-    ConnectionFailed(String),
-    
-    #[error("Query failed: {query}")]
-    QueryFailed { query: String },
-    
-    #[error("Transaction was rolled back")]
-    TransactionRolledBack,
-    
-    #[error("Validation error: {0}")]
-    ValidationError(String),
-}
-
-pub fn execute_query(query: &str) -> Result<QueryResult, DatabaseError> {
-    if query.trim().is_empty() {
-        return Err(DatabaseError::ValidationError("Query cannot be empty".to_string()));
-    }
-    
-    // Simulate database operation
-    if query.contains("DROP") {
-        return Err(DatabaseError::QueryFailed { 
-            query: query.to_string() 
-        });
-    }
-    
-    Ok(QueryResult { rows_affected: 1 })
-}
-
-struct QueryResult {
-    rows_affected: usize,
-}
-```
-
-### 2. Use anyhow for Applications
-
-```rust
-// For applications, anyhow provides flexibility
-use anyhow::{Context, Result};
-
-fn main() -> Result<()> {
-    let config = load_configuration("app.toml")
-        .context("Failed to load application configuration")?;
-    
-    let database = connect_to_database(&config.db_url)
-        .context("Failed to establish database connection")?;
-    
-    run_application(config, database)
-        .context("Application runtime error")?;
-    
-    println!("Application completed successfully");
-    Ok(())
-}
-
-fn load_configuration(path: &str) -> Result<AppConfig> {
-    let content = std::fs::read_to_string(path)?;
-    let config = toml::from_str(&content)?;
-    Ok(config)
-}
-
-#[derive(serde::Deserialize)]
-struct AppConfig {
-    db_url: String,
-    port: u16,
-}
-
-fn connect_to_database(url: &str) -> Result<Database> {
-    if url.is_empty() {
-        anyhow::bail!("Database URL cannot be empty");
-    }
-    Ok(Database { url: url.to_string() })
-}
-
-struct Database {
-    url: String,
-}
-
-fn run_application(config: AppConfig, database: Database) -> Result<()> {
-    println!("Running application with config: port={}", config.port);
-    println!("Connected to database: {}", database.url);
-    Ok(())
-}
-```
-
-### 3. Add Context at the Right Level
-
-```rust
-use anyhow::{Context, Result};
-
-fn save_user_profile(user_id: u32, profile: &UserProfile) -> Result<()> {
-    let db = get_database_connection()
-        .context("Failed to connect to database")?;
-    
-    let serialized = serialize_profile(profile)
-        .with_context(|| format!("Failed to serialize profile for user {}", user_id))?;
-    
-    db.save(&format!("user:{}", user_id), &serialized)
-        .with_context(|| format!("Failed to save profile for user {}", user_id))?;
-    
-    Ok(())
-}
-
-struct UserProfile {
-    name: String,
-    email: String,
-}
-
-struct Database;
-
-impl Database {
-    fn save(&self, key: &str, data: &[u8]) -> Result<()> {
-        // Simulate database save
-        println!("Saving {} bytes to key: {}", data.len(), key);
-        Ok(())
-    }
-}
-
-fn get_database_connection() -> Result<Database> {
-    Ok(Database)
-}
-
-fn serialize_profile(profile: &UserProfile) -> Result<Vec<u8>> {
-    serde_json::to_vec(profile).map_err(Into::into)
-}
-
-impl serde::Serialize for UserProfile {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeStruct;
-        let mut state = serializer.serialize_struct("UserProfile", 2)?;
-        state.serialize_field("name", &self.name)?;
-        state.serialize_field("email", &self.email)?;
-        state.end()
-    }
-}
-```
-
-## 🎯 Key Takeaways
-
-1. **? operator**: Makes error propagation concise and explicit
-2. **From trait**: Enables automatic error type conversion
-3. **anyhow crate**: Perfect for applications needing flexible error handling
-4. **Context**: Add meaningful information at each level
-5. **Type safety**: Compiler ensures all error paths are handled
-
-## 💻 Exercises
+## 💻 Practice Exercises
 
 ### Exercise 1: Implement Error Propagation
+
 ```rust
+use anyhow::Result;
+
 // Complete this function using the ? operator
-fn calculate_user_score(user_data: &str) -> Result<f64, Box<dyn std::error::Error>> {
-    // Parse JSON
+fn calculate_user_score(user_data: &str) -> Result<f64> {
+    // Parse JSON - add proper error handling
     let value: serde_json::Value = todo!(); // Use ?
     
-    // Extract age
-    let age = value["age"].as_u64().ok_or("Missing age field")?;
+    // Extract age - handle missing field
+    let age = value["age"].as_u64()
+        .ok_or_else(|| anyhow::anyhow!("Missing age field"))?;
     
-    // Extract scores array
-    let scores = value["scores"].as_array().ok_or("Missing scores field")?;
+    // Extract scores array - handle missing field
+    let scores = value["scores"].as_array()
+        .ok_or_else(|| anyhow::anyhow!("Missing scores field"))?;
     
-    // Calculate average score
-    let total: f64 = todo!(); // Sum all scores, handle parse errors with ?
+    // Calculate average score - handle parse errors with ?
+    let total: f64 = todo!(); // Sum all scores, handle conversion errors
     let average = total / scores.len() as f64;
     
     // Apply age multiplier
@@ -585,10 +463,27 @@ fn calculate_user_score(user_data: &str) -> Result<f64, Box<dyn std::error::Erro
     
     Ok(average * age_multiplier)
 }
+
+fn main() {
+    let test_data = r#"
+    {
+        "age": 25,
+        "scores": [85, 92, 78, 90]
+    }
+    "#;
+    
+    match calculate_user_score(test_data) {
+        Ok(score) => println!("User score: {:.2}", score),
+        Err(e) => eprintln!("Error calculating score: {}", e),
+    }
+}
 ```
 
 ### Exercise 2: Create Custom Error with From Implementations
+
 ```rust
+use std::fs;
+
 // Define a custom error type and implement From traits
 #[derive(Debug)]
 enum ProcessingError {
@@ -598,9 +493,17 @@ enum ProcessingError {
     // - Validation errors (with custom message)
 }
 
+impl std::fmt::Display for ProcessingError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // TODO: Implement display formatting
+        todo!()
+    }
+}
+
+impl std::error::Error for ProcessingError {}
+
 // TODO: Implement From<std::io::Error>
 // TODO: Implement From<serde_json::Error>
-// TODO: Implement Display and Error traits
 
 fn process_file(path: &str) -> Result<ProcessedData, ProcessingError> {
     // TODO: Read file, parse JSON, validate, and return ProcessedData
@@ -612,9 +515,17 @@ struct ProcessedData {
     count: usize,
     summary: String,
 }
+
+fn main() {
+    match process_file("data.json") {
+        Ok(data) => println!("Processed {} items: {}", data.count, data.summary),
+        Err(e) => eprintln!("Processing failed: {}", e),
+    }
+}
 ```
 
 ### Exercise 3: Error Context Practice
+
 ```rust
 use anyhow::{Context, Result};
 
@@ -629,15 +540,163 @@ fn backup_user_data(user_id: u32, backup_dir: &str) -> Result<String> {
 }
 
 // Stub functions for the exercise
-fn fetch_user_data(id: u32) -> Result<UserData> { todo!() }
-fn serialize_data(data: &UserData) -> Result<Vec<u8>> { todo!() }
-fn create_backup_file(dir: &str, user_id: u32, data: &[u8]) -> Result<String> { todo!() }
+fn fetch_user_data(id: u32) -> Result<UserData> { 
+    if id == 0 {
+        anyhow::bail!("Invalid user ID");
+    }
+    Ok(UserData { id, name: format!("User{}", id) })
+}
 
+fn serialize_data(data: &UserData) -> Result<Vec<u8>> { 
+    serde_json::to_vec(data).map_err(Into::into)
+}
+
+fn create_backup_file(dir: &str, user_id: u32, data: &[u8]) -> Result<String> { 
+    let path = format!("{}/user_{}_backup.json", dir, user_id);
+    std::fs::write(&path, data)?;
+    Ok(path)
+}
+
+#[derive(serde::Serialize)]
 struct UserData {
     id: u32,
     name: String,
 }
+
+fn main() {
+    match backup_user_data(42, "/tmp/backups") {
+        Ok(path) => println!("Backup created: {}", path),
+        Err(e) => {
+            eprintln!("Backup failed: {}", e);
+            // Print the error chain
+            let mut source = e.source();
+            while let Some(err) = source {
+                eprintln!("  Caused by: {}", err);
+                source = err.source();
+            }
+        }
+    }
+}
 ```
+
+## 🚀 Mini-Project: File Processing Pipeline
+
+Build a robust file processing pipeline that demonstrates error propagation:
+
+```rust
+use anyhow::{Context, Result};
+use std::fs;
+use std::path::Path;
+
+struct FileProcessor {
+    input_dir: String,
+    output_dir: String,
+}
+
+impl FileProcessor {
+    fn new(input_dir: String, output_dir: String) -> Result<Self> {
+        // Validate directories exist
+        if !Path::new(&input_dir).exists() {
+            anyhow::bail!("Input directory does not exist: {}", input_dir);
+        }
+        
+        // Create output directory if it doesn't exist
+        fs::create_dir_all(&output_dir)
+            .with_context(|| format!("Failed to create output directory: {}", output_dir))?;
+        
+        Ok(FileProcessor {
+            input_dir,
+            output_dir,
+        })
+    }
+    
+    fn process_all_files(&self) -> Result<ProcessingSummary> {
+        let entries = fs::read_dir(&self.input_dir)
+            .with_context(|| format!("Failed to read input directory: {}", self.input_dir))?;
+        
+        let mut processed = 0;
+        let mut errors = 0;
+        
+        for entry in entries {
+            let entry = entry.context("Failed to read directory entry")?;
+            let path = entry.path();
+            
+            if path.is_file() {
+                match self.process_single_file(&path) {
+                    Ok(_) => processed += 1,
+                    Err(e) => {
+                        eprintln!("Error processing {}: {}", path.display(), e);
+                        errors += 1;
+                    }
+                }
+            }
+        }
+        
+        Ok(ProcessingSummary { processed, errors })
+    }
+    
+    fn process_single_file(&self, input_path: &Path) -> Result<()> {
+        let content = fs::read_to_string(input_path)
+            .with_context(|| format!("Failed to read file: {}", input_path.display()))?;
+        
+        let processed_content = self.transform_content(&content)
+            .with_context(|| format!("Failed to process content from: {}", input_path.display()))?;
+        
+        let output_filename = input_path.file_name()
+            .ok_or_else(|| anyhow::anyhow!("Invalid filename: {}", input_path.display()))?;
+        
+        let output_path = Path::new(&self.output_dir).join(output_filename);
+        
+        fs::write(&output_path, processed_content)
+            .with_context(|| format!("Failed to write output file: {}", output_path.display()))?;
+        
+        println!("Processed: {} -> {}", input_path.display(), output_path.display());
+        Ok(())
+    }
+    
+    fn transform_content(&self, content: &str) -> Result<String> {
+        if content.is_empty() {
+            anyhow::bail!("Cannot process empty file");
+        }
+        
+        // Simple transformation: add line numbers
+        let lines: Vec<String> = content
+            .lines()
+            .enumerate()
+            .map(|(i, line)| format!("{:3}: {}", i + 1, line))
+            .collect();
+        
+        Ok(lines.join("\n"))
+    }
+}
+
+struct ProcessingSummary {
+    processed: usize,
+    errors: usize,
+}
+
+fn main() -> Result<()> {
+    let processor = FileProcessor::new("./input".to_string(), "./output".to_string())
+        .context("Failed to initialize file processor")?;
+    
+    let summary = processor.process_all_files()
+        .context("File processing failed")?;
+    
+    println!("Processing complete: {} files processed, {} errors", 
+             summary.processed, summary.errors);
+    
+    Ok(())
+}
+```
+
+## 🔑 Key Takeaways
+
+1. **? operator**: Makes error propagation concise and explicit
+2. **From trait**: Enables automatic error type conversion
+3. **anyhow crate**: Perfect for applications needing flexible error handling
+4. **Context**: Add meaningful information at each level of the call stack
+5. **Error chains**: Preserve error history for better debugging
+6. **Type safety**: Compiler ensures all error paths are handled
 
 ## 📚 Additional Resources
 
@@ -645,6 +704,16 @@ struct UserData {
 - [thiserror crate](https://docs.rs/thiserror/) - For deriving error types
 - [Rust Book - Recoverable Errors](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html)
 
+## ✅ Checklist
+
+Before moving on, ensure you can:
+- [ ] Use the ? operator for error propagation
+- [ ] Implement From traits for error type conversion
+- [ ] Add context to errors using anyhow
+- [ ] Chain multiple fallible operations safely
+- [ ] Handle collections of Results appropriately
+- [ ] Debug error chains effectively
+
 ---
 
-Next: [Custom Error Types](03-custom-errors.md) →
+Next: [Custom Error Types](03-custom-errors.md) - Design domain-specific errors that guide users to solutions →
