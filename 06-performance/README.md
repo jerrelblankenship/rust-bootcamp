@@ -1,154 +1,121 @@
 # Module 06: Performance Optimization
 
-Learn to profile, benchmark, and optimize Rust applications for maximum performance.
+Transform slow Rust code into blazingly fast implementations by fixing performance bottlenecks. Learn optimization through hands-on debugging!
 
 ## 🎯 Learning Objectives
 
-After completing this module, you will:
-- Profile Rust applications with various tools
-- Write and interpret benchmarks using Criterion
-- Apply Rust-specific optimization techniques
-- Understand zero-cost abstractions
-- Optimize memory usage and allocations
-- Compare performance with C# implementations
+By fixing performance issues, you will:
+- Master profiling tools by finding real bottlenecks
+- Fix memory allocation problems and cache misses
+- Debug slow iterators and optimize algorithms
+- Repair broken benchmarks and interpret results
+- Convert slow C#-style code to idiomatic fast Rust
+- Build a high-performance image processor
+
+## 🚀 Quick Start
+
+```bash
+# Start with the first exercise
+cd exercises
+cargo build --release  # Always benchmark in release mode!
+cargo run --release --bin ex01-allocation-storm
+
+# When you see terrible performance, that's your cue!
+# Profile, identify bottlenecks, and fix them!
+```
 
 ## 📚 Module Overview
 
-Rust promises "blazingly fast" performance. This module teaches you how to achieve it.
+**Your C# Experience**: You've used BenchmarkDotNet, profilers, and `Span<T>`.
+**What's Different**: Rust gives you precise control over every allocation and CPU cycle. No GC pauses!
 
-## 📖 Lessons
+## 💪 Exercises - Fix These Performance Disasters!
 
-1. **[Profiling Tools](01-profiling-tools.md)** - perf, flamegraph, and more
-2. **[Optimization Patterns](02-optimization-patterns.md)** - Rust-specific techniques
-3. **[Benchmarking](03-benchmarking.md)** - Criterion and micro-benchmarks
-4. **[Zero-Cost Abstractions](04-zero-cost-abstractions.md)** - High-level, fast code
+Each exercise contains working but terribly slow Rust code. Your mission: make it fast!
 
-## 💻 Project: Performance Benchmark Suite
+1. **ex01-allocation-storm.rs** - Fix excessive allocations in loops
+2. **ex02-string-builder.rs** - Optimize string concatenation (10x slower than C#!)
+3. **ex03-cache-misses.rs** - Fix data layout for CPU cache efficiency
+4. **ex04-iterator-chains.rs** - Repair slow iterator usage
+5. **ex05-bounds-checking.rs** - Eliminate unnecessary safety checks
+6. **ex06-parallel-waste.rs** - Fix inefficient parallelization
+7. **ex07-async-blocking.rs** - Remove blocking calls in async code
+8. **ex08-simd-opportunity.rs** - Vectorize computation for 4x speedup
 
-Create a comprehensive benchmark suite that:
-- Compares Rust vs C# implementations
-- Profiles CPU and memory usage
-- Demonstrates optimization techniques
-- Includes before/after measurements
-- Generates performance reports
+## 🏗️ Project: Image Processing Pipeline
 
-## 🔄 C# to Rust Performance
+Fix a catastrophically slow image processor that should:
+- Load and decode images efficiently
+- Apply filters without excessive allocations
+- Use SIMD for pixel operations
+- Process in parallel without overhead
+- Beat equivalent C# implementation by 2x
 
-| Aspect | C# | Rust |
-|--------|-----|------|
-| **Memory Model** | GC with generations | Stack-first, precise heap |
-| **Allocations** | Frequent heap allocs | Minimal allocations |
-| **Collections** | Always heap-allocated | Can be stack-allocated |
-| **Generics** | Runtime specialization | Compile-time monomorphization |
-| **Abstractions** | Some runtime cost | Zero-cost abstractions |
-| **Profiling** | Visual Studio Profiler | perf, valgrind, etc. |
+**Starting State**: Takes 30 seconds to process one image!
+**Your Goal**: Process 100 images per second!
 
-## 📊 Performance Tips
+## 🧰 Debugging Toolkit
 
-### Memory Optimization
-```rust
-// Prefer stack allocation
-let array = [0; 1000]; // Stack
-let vec = vec![0; 1000]; // Heap
+- **[DEBUGGING_CHECKLIST.md](DEBUGGING_CHECKLIST.md)** - Systematic performance debugging
+- **Hint System** - Progressive optimization hints in `exercises/hints/`
+- **Reference Docs** - Deep dives on performance in `reference/`
 
-// Use capacity hints
-let mut vec = Vec::with_capacity(1000);
+## 🎮 Learning Path
 
-// Avoid unnecessary clones
-fn process(data: &[u8]) { } // Borrow instead of clone
-```
+1. **Start here**: `exercises/ex01-allocation-storm.rs`
+2. **Profile first**: Use `cargo flamegraph` or `perf record`
+3. **Stuck?** Wait 15 minutes, then check `hints/ex01-level1.md`
+4. **Benchmark**: Prove your fix with measurements
+5. **All exercises done?** Tackle the image processor!
 
-### Computational Optimization
-```rust
-// Use iterators (often SIMD optimized)
-let sum: i32 = numbers.iter().sum();
+## 🏆 Victory Conditions
 
-// Const functions for compile-time computation
-const fn factorial(n: u32) -> u32 {
-    // Computed at compile time
-}
+You've mastered this module when you can:
+- [ ] Fix all 8 exercises achieving target performance
+- [ ] Complete the image processor project
+- [ ] Explain your optimizations with profiler data
+- [ ] Write efficient Rust code from the start
+- [ ] Identify performance anti-patterns immediately
 
-// Profile-guided optimization
-#[inline(always)] // Force inlining
-fn hot_function() { }
-```
-
-## 🚀 Benchmarking Example
-
-```rust
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-
-fn fibonacci_recursive(n: u64) -> u64 {
-    match n {
-        0 => 0,
-        1 => 1,
-        n => fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2),
-    }
-}
-
-fn fibonacci_iterative(n: u64) -> u64 {
-    let mut a = 0;
-    let mut b = 1;
-    for _ in 0..n {
-        let temp = a;
-        a = b;
-        b = temp + b;
-    }
-    a
-}
-
-fn bench_fibonacci(c: &mut Criterion) {
-    let mut group = c.benchmark_group("fibonacci");
-    
-    group.bench_function("recursive", |b| {
-        b.iter(|| fibonacci_recursive(black_box(20)))
-    });
-    
-    group.bench_function("iterative", |b| {
-        b.iter(|| fibonacci_iterative(black_box(20)))
-    });
-    
-    group.finish();
-}
-
-criterion_group!(benches, bench_fibonacci);
-criterion_main!(benches);
-```
-
-## 📊 Module Structure
+## 📂 Module Structure
 
 ```
 06-performance/
-├── README.md
-├── 01-profiling-tools.md
-├── 02-optimization-patterns.md
-├── 03-benchmarking.md
-├── 04-zero-cost-abstractions.md
+├── README.md                          # You are here!
+├── DEBUGGING_CHECKLIST.md             # Performance debugging guide
 ├── exercises/
-│   ├── ex01-profiling-practice.rs
-│   ├── ex02-memory-optimization.rs
-│   ├── ex03-benchmark-suite.rs
-│   └── ex04-simd-exploration.rs
-└── project-benchmark-suite/
-    ├── Cargo.toml
-    ├── benches/
-    │   ├── collections.rs
-    │   ├── algorithms.rs
-    │   └── string_processing.rs
-    ├── src/
-    │   └── lib.rs
-    └── README.md
+│   ├── ex01-allocation-storm.rs       # Memory allocation issues
+│   ├── ex02-string-builder.rs         # String performance
+│   ├── ex03-cache-misses.rs           # CPU cache optimization
+│   ├── ex04-iterator-chains.rs        # Iterator performance
+│   ├── ex05-bounds-checking.rs        # Safety vs speed
+│   ├── ex06-parallel-waste.rs         # Parallelization issues
+│   ├── ex07-async-blocking.rs         # Async performance
+│   ├── ex08-simd-opportunity.rs       # SIMD vectorization
+│   └── hints/
+│       ├── README.md                  # How to use hints
+│       ├── ex01-level1.md             # Profiling guidance
+│       ├── ex01-level2.md             # Specific bottlenecks
+│       ├── ex01-level3.md             # Solution approach
+│       └── ... (3 levels per exercise)
+├── project-optimization-challenge/
+│   ├── Cargo.toml                     # Dependencies ready
+│   ├── README.md                      # Project instructions
+│   ├── src/
+│   │   ├── main.rs                    # Slow entry point
+│   │   └── lib.rs                     # Inefficient algorithms
+│   ├── benches/
+│   │   └── benchmark.rs               # Performance targets
+│   └── tests/
+│       └── correctness.rs             # Don't break functionality!
+└── reference/
+    ├── README.md                      # Additional resources
+    ├── profiling-guide.md             # Tool tutorials
+    ├── memory-optimization.md         # Allocation strategies
+    ├── cpu-optimization.md            # Cache and SIMD
+    └── csharp-performance.md          # Performance comparison
 ```
-
-## 🎯 Performance Goals
-
-By the end of this module, you'll be able to:
-- Make Rust code 10x faster than naive implementations
-- Match or exceed C performance
-- Understand exactly where time is spent
-- Write cache-friendly code
-- Minimize allocations
 
 ---
 
-Ready to make your Rust code blazingly fast? Let's optimize!
+Ready to make your code blazingly fast? Start profiling `exercises/ex01-allocation-storm.rs`! 🏎️

@@ -1,0 +1,33 @@
+[package]
+name = "web-scraper"
+version = "0.1.0"
+edition = "2021"
+
+# This web scraper is intentionally broken!
+# Your job: Fix the concurrency issues and make it work
+
+[dependencies]
+# HTTP client for fetching URLs
+reqwest = { version = "0.11", features = ["json"] }
+
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+
+# HTML parsing
+scraper = "0.17"
+
+# URL handling
+url = "2.4"
+
+# Error handling
+anyhow = "1.0"
+
+# Channels for communication
+crossbeam = "0.8"
+
+# Progress indication
+indicatif = "0.17"
+
+[[bin]]
+name = "scraper"
+path = "src/main.rs"
