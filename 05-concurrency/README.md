@@ -1,80 +1,90 @@
 # Module 05: Concurrency and Parallelism
 
-Master Rust's fearless concurrency by fixing race conditions, deadlocks, and thread safety issues. Learn by debugging real concurrent code!
-
-## 🎯 Learning Objectives
-
-By fixing broken concurrent code, you will:
-- Master Rust's `Send` and `Sync` traits through compiler errors
-- Fix thread safety issues with `Arc`, `Mutex`, and `RwLock`
-- Debug deadlocks and race conditions
-- Repair broken async/await code
-- Convert C# Task-based code to Rust futures
-- Build a high-performance web scraper
+🎯 **Mission**: Fix broken concurrent code to master fearless concurrency!
 
 ## 🚀 Quick Start
 
-```bash
-# Start with the first exercise
-cd exercises
-rustc ex01-thread-spawn.rs
+1. **Start coding immediately**:
+   ```bash
+   cd 05-concurrency/exercises
+   rustc ex01-threading-basics.rs  # Shows compilation errors to fix!
+   ```
 
-# When you see compilation errors, that's your learning opportunity!
-# Fix them one by one, using hints only after 15+ minutes of trying
+2. **Fix one error at a time** - Let the compiler guide you
+3. **Use hints only when stuck** - Check `hints/` directory
+4. **Build the web scraper** - Apply what you've learned
+
+## 📝 What You'll Master
+
+Through **fixing broken concurrent code**, you'll learn:
+- ✅ Thread spawning and ownership transfer (`move` semantics)
+- ✅ Channel communication patterns (MPSC)
+- ✅ Shared state with `Arc` and `Mutex`
+- ✅ Deadlock identification and prevention
+- ✅ Async/await and Tokio task spawning
+
+## 🔧 Learning Path
+
+### **Step 1: Fix the Exercises**
+```bash
+# Fix compilation errors one by one
+rustc ex01-threading-basics.rs  # Thread spawning & ownership
+rustc ex02-channels.rs          # Producer-consumer patterns
+rustc ex03-shared-state.rs      # Arc/Mutex for shared data
+rustc ex04-deadlock.rs          # Deadlock debugging
+cargo check ex05-async-tokio.rs # Async/await with Tokio
 ```
 
-## 📚 Module Overview
+### **Step 2: Build the Web Scraper**
+```bash
+cd project-web-scraper
+cargo build  # Shows errors to fix
+cargo test   # Verify your implementation
+cargo run -- --urls https://example.com  # Test your scraper!
+```
 
-**Your C# Experience**: You've used `Task<T>`, `async/await`, and `lock` statements.
-**What's Different**: Rust prevents data races at compile time! No more debugging mysterious concurrency bugs in production.
+## 🆘 When You Get Stuck
+
+1. **Read the error message** - Rust prevents data races at compile time!
+2. **Check [Debugging Guide](DEBUGGING_CHECKLIST.md)** - Systematic concurrency troubleshooting
+3. **Use progressive hints** - `hints/ex01-level1.md` → `level2.md` → `level3.md`
+4. **Compare with C#** - `Task.Run()` vs `thread::spawn()`, `lock` vs `Mutex`
+
+## 🏆 Success = Working Concurrent Code
+
+You've mastered this module when:
+- ✅ All exercises compile and run without data races
+- ✅ Web scraper works: `cargo run -- --urls https://example.com`
+- ✅ You can explain why Rust prevents data races at compile time
+- ✅ You can convert C# concurrent code to Rust
+
+## 📚 Need More Detail?
+
+- 📖 **[Detailed Concepts](reference/)** - In-depth explanations
+- 🔄 **[C# vs Rust Guide](reference/csharp-comparison.md)** - Task vs Thread patterns
+- 📋 **[Troubleshooting](DEBUGGING_CHECKLIST.md)** - When concurrent code goes wrong
 
 ## 💪 Exercises - Fix These Broken Programs!
 
 Each exercise contains intentionally broken concurrent code. Your job: make it compile and run correctly!
 
-1. **ex01-thread-spawn.rs** - Fix basic thread spawning errors
-2. **ex02-move-semantics.rs** - Resolve ownership issues with threads  
-3. **ex03-channels-mpsc.rs** - Repair broken channel communication
-4. **ex04-shared-state.rs** - Fix Arc/Mutex compilation errors
-5. **ex05-deadlock.rs** - Identify and fix a deadlock
-6. **ex06-async-basic.rs** - Debug async/await issues
-7. **ex07-tokio-spawn.rs** - Fix tokio runtime errors
-8. **ex08-parallel-iterator.rs** - Repair rayon parallel iterator code
+1. **ex01-threading-basics.rs** - Fix thread spawning and ownership errors (10 checkpoints)
+2. **ex02-channels.rs** - Repair producer-consumer communication (8 checkpoints)  
+3. **ex03-shared-state.rs** - Fix Arc/Mutex compilation errors (8 checkpoints)
+4. **ex04-deadlock.rs** - Identify and fix a real deadlock (6 checkpoints)
+5. **ex05-async-tokio.rs** - Debug async/await and task spawning (10 checkpoints)
 
 ## 🏗️ Project: Multi-threaded Web Scraper
 
 Fix a broken web scraper that should:
 - Spawn multiple threads to fetch URLs concurrently
 - Use channels to distribute work
-- Share results with Arc<Mutex<T>>
+- Share results with `Arc<Mutex<T>>`
 - Implement async I/O with tokio
 - Handle errors gracefully
 
 **Starting State**: Compiles with 15+ errors!
 **Your Goal**: A working concurrent web scraper faster than any C# equivalent!
-
-## 🧰 Debugging Toolkit
-
-- **[DEBUGGING_CHECKLIST.md](DEBUGGING_CHECKLIST.md)** - Systematic approach to concurrency errors
-- **Hint System** - Progressive hints in `exercises/hints/`
-- **Reference Docs** - Detailed explanations in `reference/`
-
-## 🎮 Learning Path
-
-1. **Start here**: `exercises/ex01-thread-spawn.rs`
-2. **Stuck?** Wait 15 minutes, then check `hints/ex01-level1.md`
-3. **Still stuck?** Progress through hint levels
-4. **Success?** Move to the next exercise
-5. **All exercises done?** Tackle the web scraper project!
-
-## 🏆 Victory Conditions
-
-You've mastered this module when you can:
-- [ ] Fix all 8 exercises without Level 3 hints
-- [ ] Complete the web scraper project
-- [ ] Explain why Rust prevents data races
-- [ ] Convert any C# concurrent code to Rust
-- [ ] Debug deadlocks systematically
 
 ## 📂 Module Structure
 
@@ -83,14 +93,11 @@ You've mastered this module when you can:
 ├── README.md                          # You are here!
 ├── DEBUGGING_CHECKLIST.md             # Concurrency debugging guide
 ├── exercises/
-│   ├── ex01-thread-spawn.rs           # Basic thread errors
-│   ├── ex02-move-semantics.rs         # Ownership with threads
-│   ├── ex03-channels-mpsc.rs          # Channel communication
-│   ├── ex04-shared-state.rs           # Arc/Mutex errors
-│   ├── ex05-deadlock.rs               # Deadlock to fix
-│   ├── ex06-async-basic.rs            # Async/await issues
-│   ├── ex07-tokio-spawn.rs            # Runtime errors
-│   ├── ex08-parallel-iterator.rs      # Rayon parallelism
+│   ├── ex01-threading-basics.rs       # Thread spawning & ownership
+│   ├── ex02-channels.rs               # Producer-consumer patterns
+│   ├── ex03-shared-state.rs           # Arc/Mutex shared state
+│   ├── ex04-deadlock.rs               # Deadlock identification/fixing
+│   ├── ex05-async-tokio.rs            # Async/await and Tokio
 │   └── hints/
 │       ├── README.md                  # How to use hints
 │       ├── ex01-level1.md             # Gentle nudges
@@ -114,4 +121,6 @@ You've mastered this module when you can:
 
 ---
 
-Ready to embrace fearless concurrency? Start with `exercises/ex01-thread-spawn.rs`! 🚀
+**Ready?** Start with: `cd exercises && rustc ex01-threading-basics.rs` 🦀
+
+**Next Module**: [06 - Performance](../06-performance/README.md) →

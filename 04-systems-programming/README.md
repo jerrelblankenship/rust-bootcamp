@@ -6,10 +6,22 @@
 
 ```bash
 cd 04-systems-programming/exercises
-rustc ex01-memory-layout.rs  # Fix memory layout errors!
+rustc ex01-memory-layout.rs  # See 6 compilation errors!
+
+# When you see errors like:
+# error[E0133]: dereference of raw pointer is unsafe  
+# That's your learning opportunity! Fix them one by one.
+
+# Then progress through:
+# ex02-unsafe-operations.rs  - Basic unsafe operations
+# ex03-manual-memory.rs      - Memory allocation/deallocation
+# ex04-safe-abstractions.rs  - Building safe APIs
+# ex05-ffi-interop.rs        - C interoperability
 ```
 
 **The Power**: Control memory like C/C++, but with Rust's safety guarantees!
+
+**🎯 Your First Win**: Fix the struct syntax error in 30 seconds, then progress through 6 checkpoints that teach memory layout fundamentals.
 
 ## 💡 The Systems Programming Revolution
 

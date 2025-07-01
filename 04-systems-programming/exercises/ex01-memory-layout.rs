@@ -1,13 +1,18 @@
-// Exercise 1: Memory Layout Problems - IMPROVED SCAFFOLDING
+// Exercise 1: Memory Layout Problems - Fix Broken Code!
 //
-// This exercise teaches memory layout through progressive compilation errors.
-// Fix ONE error at a time, compile, then move to the next function.
+// BROKEN: This code has 6 compilation errors to fix progressively
+// Your mission: Fix each error one by one, following the checkpoints
+//
+// EXERCISE PROGRESS: [░░░░░░░░░░] 0% Complete (6 checkpoints to fix)
 //
 // APPROACH: 
-// - Each function has exactly ONE main error to fix
+// - Fix ONE error at a time following the FIXME comments
 // - Compile after each fix: `rustc ex01-memory-layout.rs`
-// - Don't move to the next function until current one compiles
-// - Use hints only after trying for 15+ minutes
+// - Uncomment next step only after current one compiles
+// - Use hints only after trying for 15+ minutes per checkpoint
+//
+// C# COMPARISON: Like fixing struct layout and memory allocation issues
+// but with compile-time safety guarantees!
 
 use std::mem;
 use std::borrow::Cow;
@@ -26,15 +31,16 @@ fn main() {
     println!("All exercises complete! 🎉");
 }
 
-// STEP 1: Fix the struct syntax error (ONE error only)
+// ✅ CHECKPOINT 1: Fix struct syntax error
 fn step_1_struct_syntax() {
-    println!("Step 1: Fix struct definition");
+    println!("🔧 Checkpoint 1: Fix struct definition");
     
     // FIXME: This struct has a syntax error - fix it!
+    // ERROR: expected `,` found `field3` 
     #[derive(Debug)]
     struct SimpleStruct {
         field1: u8,
-        field2: String  // What's missing here?
+        field2: String  // COMPILE ERROR: What's missing here?
         field3: i32,
     }
     
@@ -45,13 +51,14 @@ fn step_1_struct_syntax() {
         field3: 100,
     };
     
-    println!("✅ Step 1 complete: {:?}", data);
+    println!("✅ Checkpoint 1 complete: {:?}", data);
+    println!("Progress: [██░░░░░░░░] 17% Complete");
     println!("Now uncomment step_2_memory_optimization() in main()\n");
 }
 
-// STEP 2: Optimize memory layout (ONE concept only)
+// ✅ CHECKPOINT 2: Optimize memory layout
 fn step_2_memory_optimization() {
-    println!("Step 2: Optimize struct layout");
+    println!("🔧 Checkpoint 2: Optimize struct layout");
     
     // This struct wastes memory due to padding
     #[derive(Debug)]
@@ -77,13 +84,14 @@ fn step_2_memory_optimization() {
     println!("Wasteful struct size: {} bytes", wasteful_size);
     // println!("Optimized struct size: {} bytes", optimized_size);
     
-    println!("✅ Step 2 complete");
+    println!("✅ Checkpoint 2 complete");
+    println!("Progress: [████░░░░░░] 33% Complete");
     println!("Now uncomment step_3_heap_allocation() in main()\n");
 }
 
-// STEP 3: Fix stack overflow with heap allocation (ONE fix only)
+// ✅ CHECKPOINT 3: Fix stack overflow with heap allocation
 fn step_3_heap_allocation() {
-    println!("Step 3: Fix stack overflow");
+    println!("🔧 Checkpoint 3: Fix stack overflow");
     
     // FIXME: This will cause stack overflow - too big for stack!
     fn create_large_data() -> [u8; 1_000_000] {  // 1MB on stack
@@ -97,7 +105,8 @@ fn step_3_heap_allocation() {
     // let data = create_large_data_fixed();
     // println!("Created {} bytes safely", data.len());
     
-    println!("✅ Step 3 complete");
+    println!("✅ Checkpoint 3 complete");
+    println!("Progress: [██████░░░░] 50% Complete");
     println!("Now uncomment step_4_zero_copy_strings() in main()\n");
 }
 

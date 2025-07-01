@@ -1,13 +1,17 @@
-// Exercise 3: Fix C Interop and FFI Problems
+// Exercise 05: Foreign Function Interface (FFI) - Fix Broken Code!
 //
-// Your task: Debug and fix Foreign Function Interface (FFI) code by resolving
-// compilation errors and implementing safe C interoperability.
+// BROKEN: This code has 6 FFI-related compilation errors
+// Your mission: Fix each error to master C interoperability
 //
-// INSTRUCTIONS:
-// 1. Read each FIXME comment and understand the FFI safety issue
-// 2. Fix compilation errors while maintaining C compatibility
-// 3. Run `rustc ex03-c-interop.rs && ./ex03-c-interop` to test
-// 4. Learn to safely bridge Rust and C code
+// EXERCISE PROGRESS: [░░░░░░░░░░] 0% Complete (6 checkpoints to fix)
+//
+// APPROACH:
+// - Fix ONE FFI error at a time following the FIXME comments
+// - Compile after each fix: `rustc ex05-ffi-interop.rs`
+// - Understand C compatibility requirements
+// - Use hints only after trying for 15+ minutes per checkpoint
+//
+// C# COMPARISON: Like P/Invoke but with explicit memory safety!
 
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int, c_void};
