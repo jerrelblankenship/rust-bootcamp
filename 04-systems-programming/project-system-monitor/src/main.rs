@@ -1,14 +1,12 @@
-// System Monitor - Partially Working with Specific Bugs
+// System Monitor - BROKEN CODE TO FIX!
 //
-// PARTIALLY WORKING CODE - FIX SPECIFIC BUGS!
+// This project is completely broken with multiple bugs:
+// 1. Display methods show wrong information
+// 2. Error handling conversions are missing
+// 3. Update loop refreshes too slowly
+// 4. Memory/CPU parsing has calculation errors
 //
-// This project has a working structure but specific bugs to fix:
-// 1. Display formatting functions are incomplete
-// 2. Error handling needs From trait implementations  
-// 3. Update loop has timing issues
-// 4. Memory/CPU modules have parsing bugs
-//
-// APPROACH: Fix one bug at a time, compile, test, repeat
+// APPROACH: Fix compilation errors first, then logic errors
 
 use std::io::{self, Write};
 use std::thread;
@@ -53,38 +51,33 @@ impl SystemInfo {
         println!("🖥️  System Monitor");
         println!("==================");
         
-        // TODO: Fix these formatting functions - they're incomplete!
-        // self.display_memory();
-        // self.display_cpu();
-        // self.display_processes();
-        // self.display_uptime();
+        self.display_memory();
+        self.display_cpu();
+        self.display_processes();
+        self.display_uptime();
         
         println!("Press Ctrl+C to exit...");
     }
     
     // BUG FIX NEEDED: These display methods need implementation
     fn display_memory(&self) {
-        // TODO: Format memory information nicely
-        // HINT: Use the memory info fields and format_bytes utility
-        todo!("Implement memory display")
+        // FIXME: Shows wrong values - should show used/total in human-readable format
+        println!("Memory: {} bytes", self.memory.total);
     }
     
     fn display_cpu(&self) {
-        // TODO: Format CPU information nicely  
-        // HINT: Show percentage with 1 decimal place
-        todo!("Implement CPU display")
+        // FIXME: Shows raw value instead of percentage
+        println!("CPU: {}", self.cpu.usage_percent);
     }
     
     fn display_processes(&self) {
-        // TODO: Format process count
-        // HINT: Show total number of running processes
-        todo!("Implement process display")
+        // FIXME: Always shows 0 processes
+        println!("Processes: 0");
     }
     
     fn display_uptime(&self) {
-        // TODO: Format uptime in human-readable form
-        // HINT: Convert seconds to hours, minutes, seconds
-        todo!("Implement uptime display")
+        // FIXME: Shows seconds instead of human-readable format
+        println!("Uptime: {} seconds", self.uptime);
     }
     
     // Working method for updates
@@ -146,9 +139,24 @@ impl From<io::Error> for SystemError {
     }
 }
 
-// BUG FIX NEEDED: These From implementations are missing
-// TODO: Add From implementations for memory::MemoryError, cpu::CpuError, process::ProcessError
-// impl From<memory::MemoryError> for SystemError { ... }
+// FIXME: These From implementations are wrong - they all return IoError instead of the correct variant
+impl From<memory::MemoryError> for SystemError {
+    fn from(error: memory::MemoryError) -> Self {
+        SystemError::IoError(io::Error::new(io::ErrorKind::Other, "memory error"))  // FIXME: Should use MemoryError variant
+    }
+}
+
+impl From<cpu::CpuError> for SystemError {
+    fn from(error: cpu::CpuError) -> Self {
+        SystemError::IoError(io::Error::new(io::ErrorKind::Other, "cpu error"))  // FIXME: Should use CpuError variant
+    }
+}
+
+impl From<process::ProcessError> for SystemError {
+    fn from(error: process::ProcessError) -> Self {
+        SystemError::IoError(io::Error::new(io::ErrorKind::Other, "process error"))  // FIXME: Should use ProcessError variant
+    }
+}
 
 // Working configuration structure  
 struct MonitorConfig {
@@ -192,12 +200,11 @@ fn run_monitor(config: MonitorConfig) -> Result<(), SystemError> {
     }
 }
 
-// BUG FIX NEEDED: Screen clearing is incomplete
+// FIXME: Screen clearing doesn't work on all terminals
 fn clear_screen() {
-    // TODO: Implement proper screen clearing
-    // HINT: Use ANSI escape codes or print newlines
+    // FIXME: Missing stdout flush - screen doesn't clear properly
     print!("\x1B[2J\x1B[1;1H");  // ANSI clear screen
-    io::stdout().flush().unwrap();
+    // io::stdout().flush().unwrap();  // FIXME: Uncomment this line!
 }
 
 // Working argument parsing

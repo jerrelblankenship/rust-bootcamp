@@ -11,8 +11,14 @@
 // - Uncomment next step only after current one compiles
 // - Use hints only after trying for 15+ minutes per checkpoint
 //
-// C# COMPARISON: Like fixing struct layout and memory allocation issues
-// but with compile-time safety guarantees!
+// C# COMPARISON: Like fixing [StructLayout], memory allocation, and optimization issues:
+// - C#: [StructLayout(LayoutKind.Sequential)] for interop
+// - Rust: #[repr(C)] for memory layout control
+// - C#: stackalloc for stack allocation
+// - Rust: Arrays and explicit heap allocation with Box
+// - C#: Span<T> for zero-copy string operations  
+// - Rust: Cow<str> for zero-copy when possible
+// But with compile-time safety guarantees instead of runtime validation!
 
 use std::mem;
 use std::borrow::Cow;
@@ -110,9 +116,9 @@ fn step_3_heap_allocation() {
     println!("Now uncomment step_4_zero_copy_strings() in main()\n");
 }
 
-// STEP 4: Implement zero-copy string processing (ONE pattern only)
+// CHECKPOINT 4: Implement zero-copy string processing (ONE pattern only)
 fn step_4_zero_copy_strings() {
-    println!("Step 4: Zero-copy string processing");
+    println!("Checkpoint 4: Zero-copy string processing");
     
     // TODO: Implement this function using Cow<str>
     // Only allocate if the string contains lowercase letters
@@ -120,7 +126,7 @@ fn step_4_zero_copy_strings() {
         // TODO: Check if string has lowercase letters
         // If yes: return Cow::Owned(input.to_uppercase())
         // If no: return Cow::Borrowed(input)
-        todo!("Implement zero-copy string processing")
+        Cow::Borrowed(input)  // FIXME: Always borrows - doesn't check for lowercase!
     }
     
     // Test cases
@@ -132,13 +138,13 @@ fn step_4_zero_copy_strings() {
         // println!("'{}' -> borrowed: {}", case, borrowed);
     }
     
-    println!("✅ Step 4 complete");
+    println!("✅ Checkpoint 4 complete");
     println!("Now uncomment step_5_memory_alignment() in main()\n");
 }
 
-// STEP 5: Fix memory alignment for SIMD (ONE attribute only)
+// CHECKPOINT 5: Fix memory alignment for SIMD (ONE attribute only)
 fn step_5_memory_alignment() {
-    println!("Step 5: Memory alignment");
+    println!("Checkpoint 5: Memory alignment");
     
     // Default alignment (might not be optimal for SIMD)
     #[derive(Debug)]
@@ -159,13 +165,13 @@ fn step_5_memory_alignment() {
     println!("Unaligned alignment: {}", mem::align_of::<UnalignedData>());
     // println!("Aligned alignment: {}", mem::align_of::<AlignedData>());
     
-    println!("✅ Step 5 complete");
+    println!("✅ Checkpoint 5 complete");
     println!("Now uncomment step_6_buffer_reuse() in main()\n");
 }
 
-// STEP 6: Implement buffer reuse pattern (ONE missing method only)
+// CHECKPOINT 6: Implement buffer reuse pattern (ONE missing method only)
 fn step_6_buffer_reuse() {
-    println!("Step 6: Buffer reuse pattern");
+    println!("Checkpoint 6: Buffer reuse pattern");
     
     struct BufferPool {
         buffers: Vec<Vec<u8>>,
@@ -191,7 +197,7 @@ fn step_6_buffer_reuse() {
         fn return_buffer(&mut self, buffer: Vec<u8>) {
             // TODO: Clear the buffer and return it to the pool
             // Only return buffers with the correct capacity
-            todo!("Implement buffer return")
+            self.buffers.push(buffer);  // FIXME: Doesn't clear buffer - memory leak risk!
         }
     }
     
@@ -204,7 +210,7 @@ fn step_6_buffer_reuse() {
     
     // pool.return_buffer(buffer);  // Uncomment when implemented
     
-    println!("✅ Step 6 complete");
+    println!("✅ Checkpoint 6 complete");
 }
 
 // BONUS: Advanced memory analysis (optional)

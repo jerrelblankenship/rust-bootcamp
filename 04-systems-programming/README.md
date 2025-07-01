@@ -1,154 +1,69 @@
 # Module 04: Systems Programming
 
-🎯 **Mission**: Master low-level Rust programming with compile-time safety guarantees!
+🎯 **Mission**: Fix broken systems code to master low-level Rust!
 
-## 🚀 Debug Systems Code Now (2 minutes)
+## 🚀 Quick Start
 
+1. **Start fixing immediately**:
+   ```bash
+   cd 04-systems-programming/exercises
+   rustc ex01-memory-layout.rs  # Shows 6 errors to fix!
+   ```
+
+2. **Fix one error at a time** - Learn memory layout by doing
+3. **Use hints only when stuck** - Check `hints/` directory
+4. **Build the system monitor** - Apply your systems knowledge
+
+## 📝 What You'll Master
+
+Through **fixing broken code**, you'll learn:
+- ✅ Memory layout control (`#[repr(C)]`, alignment, packing)
+- ✅ Safe unsafe code patterns
+- ✅ Manual memory management
+- ✅ Foreign Function Interface (FFI)
+
+## 🔧 Learning Path
+
+### **Step 1: Fix the Exercises**
 ```bash
-cd 04-systems-programming/exercises
-rustc ex01-memory-layout.rs  # See 6 compilation errors!
-
-# When you see errors like:
-# error[E0133]: dereference of raw pointer is unsafe  
-# That's your learning opportunity! Fix them one by one.
-
-# Then progress through:
-# ex02-unsafe-operations.rs  - Basic unsafe operations
-# ex03-manual-memory.rs      - Memory allocation/deallocation
-# ex04-safe-abstractions.rs  - Building safe APIs
-# ex05-ffi-interop.rs        - C interoperability
+# Fix compilation errors to learn systems concepts
+rustc ex01-memory-layout.rs     # Memory representation
+rustc ex02-unsafe-operations.rs # Unsafe blocks & pointers
+rustc ex03-manual-memory.rs     # Allocation/deallocation
+rustc ex04-safe-abstractions.rs # Safe wrappers
+rustc ex05-ffi-interop.rs       # C interoperability
 ```
 
-**The Power**: Control memory like C/C++, but with Rust's safety guarantees!
-
-**🎯 Your First Win**: Fix the struct syntax error in 30 seconds, then progress through 6 checkpoints that teach memory layout fundamentals.
-
-## 💡 The Systems Programming Revolution
-
-**C has speed** - but crashes, buffer overflows, use-after-free  
-**C# has safety** - but garbage collection, slower performance  
-**Rust has both** - Zero-cost abstractions with compile-time safety!
-
-## 🔧 Your Learning Path
-
-### **Step 1: Control Memory Layout** (45 minutes)
-```rust
-// Control exactly how data is arranged in memory
-#[repr(C)]
-struct NetworkPacket {
-    header: u32,    // Exactly 4 bytes  
-    data: [u8; 64], // Exactly 64 bytes
-}
-// Compiler ensures correct alignment and padding!
-```
-
-### **Step 2: Write Safe Unsafe Code** (45 minutes)
-```rust
-// Sometimes you need to break the rules safely:
-unsafe {
-    let raw_ptr = data.as_mut_ptr();
-    // Direct memory manipulation, but contained in unsafe block
-}
-// Rust ensures safety contracts are maintained!
-```
-
-### **Step 3: Interface with C Libraries** (60 minutes)
+### **Step 2: Build the System Monitor**
 ```bash
 cd project-system-monitor
-cargo build  # Fix FFI and systems integration
+cargo build  # Shows errors to fix
+cargo test   # Verify your implementation
 cargo run    # Monitor real system resources!
 ```
 
-## 🔍 Why This Matters in Enterprise
+## 🆘 When You Get Stuck
 
-### **High-Performance Systems**
-- **Trading platforms**: Microsecond latency requirements
-- **Game engines**: 60 FPS with zero garbage collection pauses
-- **Database engines**: Direct memory management for speed
-- **Operating systems**: Hardware-level programming
+1. **Read the error message** - Unsafe errors are precisely located
+2. **Check [Debugging Guide](DEBUGGING_CHECKLIST.md)** - Systems-specific tips
+3. **Use progressive hints** - `hints/ex01-level1.md` → `level2.md` → `level3.md`
+4. **Compare with C#** - Think P/Invoke but more powerful
 
-### **Legacy Integration**
-- **C library integration**: Reuse existing C/C++ code safely
-- **System APIs**: Direct access to OS capabilities
-- **Hardware drivers**: Low-level hardware programming
-- **Embedded systems**: Resource-constrained environments
-
-## 🔄 C# vs Rust Systems Programming
-
-| Capability | C# | Rust |
-|------------|-----|------|
-| **Memory control** | Limited (unsafe context) | Full control with safety |
-| **Performance** | GC overhead | Zero-cost abstractions |
-| **C interop** | P/Invoke marshaling | Direct FFI, zero-copy |
-| **Safety** | Runtime checks | Compile-time guarantees |
-| **Predictability** | GC pauses | Deterministic performance |
-
-## 🛠️ The Systems Toolkit
-
-### **Memory Layout Control**
-```rust
-#[repr(C)]        // C-compatible layout
-#[repr(packed)]   // No padding between fields  
-#[repr(align(16))]// Force 16-byte alignment
-struct MyStruct { /* ... */ }
-```
-
-### **Safe Unsafe Code Patterns**
-```rust
-fn safe_wrapper(data: &mut [u8]) -> Result<(), Error> {
-    // Validate inputs first
-    if data.len() < MIN_SIZE { return Err(Error::TooSmall); }
-    
-    // Unsafe operations in contained blocks
-    unsafe {
-        fast_memory_operation(data.as_mut_ptr(), data.len());
-    }
-    Ok(())
-}
-```
-
-### **Foreign Function Interface (FFI)**
-```rust
-extern "C" {
-    fn system_call(param: i32) -> i32;  // Call C functions
-}
-
-#[no_mangle]
-pub extern "C" fn rust_function(x: i32) -> i32 {
-    x * 2  // Called from C code
-}
-```
-
-## 🏆 Success = Systems Mastery
+## 🏆 Success = Working Systems Code
 
 You've mastered this module when:
-- ✅ You control memory layout for performance and compatibility
-- ✅ You write unsafe code safely within controlled boundaries
-- ✅ Your system monitor interfaces with OS APIs correctly
-- ✅ You understand when and why to use systems programming techniques
+- ✅ All exercises compile and run
+- ✅ System monitor shows CPU, memory, and disk usage
+- ✅ You understand when and why to use unsafe code
 
-## ⚠️ Systems Programming Safety Rules
+## 📚 Need More Detail?
 
-1. **Unsafe code is not unsound** - Maintain safety invariants
-2. **Contain unsafe blocks** - Minimal scope, maximum safety
-3. **Validate everything** - Check bounds, null pointers, invariants
-4. **Document safety contracts** - Explain why unsafe code is safe
-
-## 🆘 When Systems Code Goes Wrong
-
-1. **Read the error carefully** - Memory errors are precisely located
-2. **Use [Debugging Guide](DEBUGGING_CHECKLIST.md)** - Systems-specific troubleshooting
-3. **Check safety invariants** - What assumptions might be violated?
-4. **Validate inputs** - Ensure all preconditions are met
-
-## 📚 Go Deeper When Ready
-
-- 📖 **[Systems Programming Deep Dive](reference/)** - Advanced techniques
-- 🔧 **[The Rustonomicon](https://doc.rust-lang.org/nomicon/)** - Unsafe Rust guide
-- 💡 **[FFI Patterns](reference/ffi-detailed.md)** - C integration best practices
+- 📖 **[Systems Concepts](reference/)** - In-depth explanations
+- 🔄 **[C# Unsafe vs Rust](reference/csharp-comparisons.md)** - Direct comparisons
+- 📋 **[FFI Patterns](reference/ffi-detailed.md)** - C integration guide
 
 ---
 
-**Start now**: `cd exercises && rustc ex01-memory-layout.rs` 🦀
+**Ready?** Start with: `cd exercises && rustc ex01-memory-layout.rs` 🦀
 
 **Next Module**: [05 - Concurrency](../05-concurrency/README.md) →

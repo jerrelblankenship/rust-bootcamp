@@ -16,6 +16,17 @@
 // - Each checkpoint builds on the previous one
 // - Compare with C# async/await patterns you know
 //
+// C# VS RUST ASYNC COMPARISON:
+// C#: public async Task<string> FetchData(string url) { await Task.Delay(1000); }
+// Rust: async fn fetch_data(url: &str) -> String { tokio::time::sleep(Duration::from_secs(1)).await; }
+//
+// KEY DIFFERENCES:
+// - C#: Task<T> return type, Rust: async fn returns impl Future<Output = T>
+// - C#: Task.Run() for spawning, Rust: tokio::spawn() 
+// - C#: Task.Delay() for async sleep, Rust: tokio::time::sleep()
+// - C#: ConfigureAwait(false), Rust: No equivalent needed
+// - C#: SynchronizationContext captures, Rust: Send + Sync traits
+//
 // COMPLETED CONCEPTS:
 // [] Basic async function syntax
 // [] Tokio runtime setup and main function
@@ -263,9 +274,12 @@ fn main() {
 async fn comprehensive_async_test() {
     println!("🧪 Running comprehensive async test...");
     
-    // TODO: Implement this function
-    // Should spawn multiple tasks, handle errors, measure performance
-    todo!("Implement comprehensive async test");
+    // FIXME: This implementation doesn't spawn any tasks or measure performance
+    let results = vec!["Task 1", "Task 2", "Task 3"];
+    for result in results {
+        println!("Result: {}", result);
+    }
+    // FIXME: Should use tokio::spawn, join_all, and time measurement
 }
 
 // ✅ CHECKPOINT 9: Comprehensive test should demonstrate mastery

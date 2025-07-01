@@ -1,27 +1,55 @@
 // Exercise 1: Option<T> Basics - Fix the Broken Code!
 //
+// EXERCISE PROGRESS: [░░░░░░░░░░] 0% Complete (7 exercises to fix)
+//
 // Your mission: Make this code compile and work correctly by fixing
 // all the compilation errors and implementing the missing functionality.
 //
 // INSTRUCTIONS:
-// 1. Read each TODO and FIXME comment carefully
-// 2. Fix the compilation errors one by one  
-// 3. Run `rustc ex01-option-basics.rs` frequently to check progress
-// 4. Understand that Option<T> replaces nullable types from C#
-// 5. Check solutions/ex01-option-basics.rs if you get completely stuck
+// 1. Fix ONE exercise at a time - don't try to fix everything at once!
+// 2. Compile after each fix: `rustc ex01-option-basics.rs`
+// 3. Watch your progress as you uncomment and fix each exercise
+// 4. Use hints in /hints/ directory if you get stuck for 15+ minutes
+//
+// LEARNING STRATEGY:
+// - Start with exercise_1_1 (basic Some/None handling)
+// - Each exercise builds on the previous concept
+// - Compare with C# nullable types you already know
+//
+// COMPLETED CONCEPTS:
+// [] Basic Option pattern matching
+// [] Using .unwrap_or() for defaults
+// [] Chaining with .map() and .and_then()
+// [] Working with Option in collections
+// [] Converting between Option and Result
+// [] Error propagation patterns
+// [] Real-world Option usage patterns
 
 use std::collections::HashMap;
 
 fn main() {
     println!("=== Exercise 1: Option<T> Basics (Fix the Code!) ===\n");
     
-    // CHALLENGE: Uncomment each exercise one by one and fix the errors
+    // 📊 PROGRESS: Complete exercises one by one, uncomment as you go
+    // ✅ Exercise 1.1: Basic Some/None handling (start here)
     exercise_1_1();
+    
+    // ❌ Exercise 1.2: Default values with unwrap_or (uncomment when 1.1 works)
     // exercise_1_2();
+    
+    // ❌ Exercise 1.3: Option chaining with map (uncomment when 1.2 works)
     // exercise_1_3();
+    
+    // ❌ Exercise 1.4: and_then for nested Options (uncomment when 1.3 works)
     // exercise_1_4();
+    
+    // ❌ Exercise 1.5: Working with collections (uncomment when 1.4 works)
     // exercise_1_5();
+    
+    // ❌ Exercise 1.6: Option to Result conversion (uncomment when 1.5 works)
     // exercise_1_6();
+    
+    // ❌ Exercise 1.7: Real-world patterns (uncomment when 1.6 works)
     // exercise_1_7();
     
     println!("\n🎉 All exercises completed successfully!");

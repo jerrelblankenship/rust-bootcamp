@@ -11,8 +11,11 @@
 // - Understand WHY each operation is unsafe
 // - Use hints only after trying for 15+ minutes per checkpoint
 //
-// C# COMPARISON: Like using unsafe blocks and pointers, but with
-// more explicit safety requirements and no GC safety net!
+// C# COMPARISON: Like using C# unsafe blocks:
+// - C#: unsafe { int* ptr = &value; int result = *ptr; }
+// - Rust: unsafe { let ptr = &value as *const i32; let result = *ptr; }
+// Key difference: Rust requires explicit unsafe for EACH operation, 
+// while C# unsafe context covers the whole block.
 
 use std::ptr;
 use std::mem;
@@ -23,8 +26,8 @@ fn main() {
     // Fix these ONE AT A TIME - uncomment as you go
     checkpoint_1_raw_pointers();
     // checkpoint_2_pointer_arithmetic();
-    // checkpoint_3_uninitialized_memory();
-    // checkpoint_4_transmute_operations();
+    // checkpoint_3_unsafe_function_call();
+    // checkpoint_4_type_conversion();
     // checkpoint_5_slice_from_raw();
     
     println!("All checkpoints complete! 🎉");
@@ -68,35 +71,43 @@ fn checkpoint_2_pointer_arithmetic() {
     println!("Now uncomment checkpoint_3_uninitialized_memory() in main()\n");
 }
 
-// ✅ CHECKPOINT 3: Fix uninitialized memory access
-fn checkpoint_3_uninitialized_memory() {
-    println!("🔧 Checkpoint 3: Fix uninitialized memory");
+// ✅ CHECKPOINT 3: Fix function call that requires unsafe
+fn checkpoint_3_unsafe_function_call() {
+    println!("🔧 Checkpoint 3: Fix unsafe function call");
     
-    // FIXME: Using uninitialized memory is unsafe
-    // ERROR: use of possibly-uninitialized variable
-    let mut uninit: i32;
-    uninit = mem::uninitialized();  // COMPILE ERROR: deprecated unsafe!
+    let data = [1u8, 2, 3, 4, 5];
+    let ptr = data.as_ptr();
     
-    println!("Uninitialized value: {}", uninit);
+    // FIXME: offset() function is unsafe
+    // ERROR: call to unsafe function is unsafe
+    let offset_ptr = ptr.offset(2);  // COMPILE ERROR: unsafe operation!
+    let value = *offset_ptr;         // COMPILE ERROR: unsafe dereference!
     
-    // HINT: Use MaybeUninit<T> for safe uninitialized memory
+    println!("Value at offset 2: {}", value);
+    
+    // C# COMPARISON: Like using pointer arithmetic in unsafe context
+    // C#: unsafe { byte* offsetPtr = ptr + 2; byte value = *offsetPtr; }
     
     println!("✅ Checkpoint 3 complete!");
     println!("Progress: [██████░░░░] 60% Complete");
     println!("Now uncomment checkpoint_4_transmute_operations() in main()\n");
 }
 
-// ✅ CHECKPOINT 4: Fix transmute operations
-fn checkpoint_4_transmute_operations() {
-    println!("🔧 Checkpoint 4: Fix transmute operations");
+// ✅ CHECKPOINT 4: Fix simple type conversion (safer than transmute)
+fn checkpoint_4_type_conversion() {
+    println!("🔧 Checkpoint 4: Fix type conversion");
     
-    let bytes = [0x00, 0x00, 0x00, 0x2A]; // 42 in little-endian
+    let bytes = [42u8, 0, 0, 0]; // Simple byte array
     
-    // FIXME: transmute is unsafe
+    // FIXME: Reading bytes as different type requires unsafe
     // ERROR: call to unsafe function is unsafe  
-    let number: i32 = mem::transmute(bytes);  // COMPILE ERROR: unsafe!
+    let ptr = bytes.as_ptr() as *const u32;
+    let number = *ptr;  // COMPILE ERROR: unsafe dereference!
     
-    println!("Transmuted number: {}", number);
+    println!("Number from bytes: {}", number);
+    
+    // C# COMPARISON: Like using BitConverter or unsafe pointer casting
+    // C#: unsafe { fixed(byte* p = bytes) { uint number = *(uint*)p; } }
     
     println!("✅ Checkpoint 4 complete!");
     println!("Progress: [████████░░] 80% Complete");
@@ -117,6 +128,9 @@ fn checkpoint_5_slice_from_raw() {
     
     println!("Slice from raw parts: {:?}", slice);
     
+    // C# COMPARISON: Like creating Span<T> from pointer and length
+    // C#: unsafe { var span = new Span<int>(ptr, length); }
+    
     println!("✅ Checkpoint 5 complete!");
     println!("Progress: [██████████] 100% Complete");
     println!("🎉 Exercise 2A completed! Move to ex02-unsafe-abstractions.rs\n");
@@ -125,8 +139,13 @@ fn checkpoint_5_slice_from_raw() {
 /*
 COMPILATION CHALLENGES:
 1. error[E0133]: dereference of raw pointer is unsafe
-2. error[E0133]: call to unsafe function is unsafe  
-3. error[E0133]: use of deprecated `std::mem::uninitialized`
+2. error[E0133]: call to unsafe function `add` is unsafe  
+3. error[E0133]: call to unsafe function `offset` is unsafe
+4. error[E0133]: dereference of raw pointer is unsafe
+5. error[E0133]: call to unsafe function `from_raw_parts` is unsafe
+
+KEY LEARNING: Every unsafe operation must be explicitly wrapped in unsafe {}
+block, unlike C# where unsafe context covers multiple operations.
 4. error[E0133]: call to unsafe function `transmute` is unsafe
 5. error[E0133]: call to unsafe function `from_raw_parts` is unsafe
 

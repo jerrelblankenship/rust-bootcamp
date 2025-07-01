@@ -1,53 +1,73 @@
 # Exercise 02 - Level 1 Hints 🟢
 
-## Understanding Unsafe Abstractions
+## Basic Unsafe Operations
 
-You're building safe APIs on top of unsafe operations - this is advanced Rust! This is like building a safe C# wrapper around unsafe native code.
+You're learning to use Rust's basic unsafe operations by wrapping them in `unsafe {}` blocks.
 
-## Key Questions to Consider
+### 🎯 What You're Fixing
+Five compilation errors where unsafe operations need to be wrapped:
+1. Raw pointer dereferencing
+2. Pointer arithmetic  
+3. Uninitialized memory handling
+4. Transmute operations
+5. Slice creation from raw parts
 
-1. **What makes code "unsafe"?** Raw pointers, manual memory management, and unchecked operations
+### 💡 Key Concept: The `unsafe` Block
 
-2. **How do we maintain safety?** Through careful API design and invariant checking
+Rust prevents unsafe operations at compile time. When you need them, wrap in `unsafe {}`:
 
-3. **In C#, what's similar?**
-   ```csharp
-   // C# unsafe code
-   unsafe {
-       int* ptr = stackalloc int[10];
-       *ptr = 42;
-   }
-   ```
-   But C# has GC as a safety net. Rust has ownership rules!
+```rust
+// This won't compile:
+let value = *raw_pointer;
 
-## Concepts to Review
+// This will compile:
+unsafe {
+    let value = *raw_pointer;
+}
+```
 
-- **Raw pointers**: `*mut T` and `*const T`
-- **Memory allocation**: Using `std::alloc` for manual memory management
-- **Safety invariants**: Rules that must be maintained
-- **RAII**: Resource Acquisition Is Initialization
+### 🔄 C# Mental Model
 
-## The SafeVec Challenge
+Think of it like C#'s unsafe context:
 
-You're implementing a dynamic array similar to `Vec<T>` but from scratch:
+```csharp
+// C# unsafe context
+unsafe {
+    int* ptr = &value;
+    int result = *ptr;  // Dereference allowed
+}
+```
 
-1. **Manual memory management** with `alloc` and `dealloc`
-2. **Safe public API** that can't be misused
-3. **Proper cleanup** in Drop implementation
-4. **Growth strategy** for dynamic resizing
+```rust
+// Rust unsafe block
+unsafe {
+    let ptr = &value as *const i32;
+    let result = *ptr;  // Dereference allowed
+}
+```
 
-## Common Unsafe Operations
+### 🚨 What Makes These Operations Unsafe?
 
-- Dereferencing raw pointers
-- Calling unsafe functions
-- Accessing mutable static variables
-- Implementing unsafe traits
+1. **Raw pointer dereference** - Might point to invalid memory
+2. **Pointer arithmetic** - Can go out of bounds
+3. **Uninitialized memory** - Contains garbage values
+4. **Transmute** - Reinterprets bits unsafely
+5. **Raw slice creation** - No bounds validation
 
-## Safety Strategy
+### 🎯 Your Approach
 
-1. **Encapsulation**: Keep unsafe code in small, reviewable functions
-2. **Invariants**: Document and maintain what must always be true
-3. **Testing**: Comprehensive tests for edge cases
-4. **Documentation**: Explain safety contracts
+1. **Fix ONE checkpoint at a time**
+2. **Wrap the unsafe operation** in `unsafe {}`
+3. **Understand WHY** it's unsafe
+4. **Compile and test** after each fix
 
-Need more specific guidance? Check Level 2 hints after trying for 15+ more minutes!
+### 💭 Questions to Guide You
+
+- Which specific line is causing the compilation error?
+- What unsafe operation is being performed?
+- How do you wrap just that operation in `unsafe {}`?
+- Why does Rust consider this operation dangerous?
+
+Remember: You're not building complex abstractions yet - just learning basic `unsafe {}` syntax!
+
+Need specific code examples? Check Level 2 hints!

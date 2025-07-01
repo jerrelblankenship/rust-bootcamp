@@ -60,14 +60,25 @@ rustc ex01-ownership.rs  # Challenge yourself!
 
 ## 🗺️ **Learning Journey**
 
+### **Core Modules (Fully Implemented)**
 | Module | Focus | What You'll Build |
 |--------|-------|-------------------|
 | **[01 - Foundations](01-foundations/)** | Syntax & Types | Working Calculator CLI |
 | **[02 - Ownership](02-ownership-and-borrowing/)** | Memory Model | Memory Visualizer Tool |
 | **[03 - Error Handling](03-error-handling/)** | Robust Code | File Processing System |
 | **[04 - Systems Programming](04-systems-programming/)** | Low-Level Control | System Resource Monitor |
+| **[05 - Concurrency](05-concurrency/)** | Fearless Concurrency | Multi-threaded Web Scraper |
 
-**Total Time**: 2-3 weeks at your own pace
+### **Advanced Modules (Coming Soon)**
+| Module | Focus | Status |
+|--------|-------|--------|
+| **06 - Performance** | Profiling & Optimization | In Development |
+| **07 - CLI Tools** | Building Developer Tools | In Development |
+| **08 - Testing** | Comprehensive Testing | In Development |
+| **09 - Ecosystem** | Crates & Libraries | In Development |
+| **10 - Advanced Patterns** | Macros & Meta-programming | In Development |
+
+**Total Time**: 3-4 weeks for all modules at your own pace
 
 ## 💡 **Learning Approach**
 
@@ -153,17 +164,19 @@ You're succeeding when:
 
 ```
 rust-bootcamp/
-├── 01-foundations/           # Syntax, types, functions
-│   ├── exercises/           # Broken code to fix
-│   ├── project-calculator/  # Working calculator CLI
-│   └── reference/          # Detailed explanations
+├── 00-setup/                # Platform-specific setup guides
+├── 01-foundations/          # Syntax, types, functions
+│   ├── exercises/          # Broken code to fix
+│   ├── project-calculator/ # Working calculator CLI
+│   └── reference/         # Detailed explanations
 ├── 02-ownership-and-borrowing/
-│   ├── exercises/           # Ownership violation debugging
+│   ├── exercises/          # Ownership violation debugging
 │   ├── project-memory-visualizer/
 │   └── reference/
-├── 03-error-handling/       # Option<T> and Result<T,E>
-├── 04-systems-programming/  # Unsafe, FFI, memory layout
-└── setup/                   # Platform-specific setup guides
+├── 03-error-handling/      # Option<T> and Result<T,E>
+├── 04-systems-programming/ # Unsafe, FFI, memory layout
+├── 05-concurrency/         # Threads, async/await, channels
+└── 06-10 (advanced)/       # Performance, CLI, testing, etc.
 ```
 
 ## 🚀 **Ready to Start?**
@@ -192,7 +205,7 @@ ls */reference/  # Skim concepts first
 
 ### **🦀 Transform Your C# Skills into Rust Mastery**
 
-**[🚀 Start Learning Now](01-foundations/) • [📖 Browse Concepts](01-foundations/reference/) • [🔧 Setup Guide](00-setup/)**
+**[🚀 Start Learning Now](01-foundations/) • [📖 Browse Concepts](01-foundations/reference/) • [⚡ Performance vs C#](reference/performance-comparisons.md) • [🔧 Setup Guide](00-setup/)**
 
 **⭐ Star this repo if it helps you learn Rust!**
 

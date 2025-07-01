@@ -4,10 +4,12 @@ This directory contains in-depth explanations and reference materials for concur
 
 ## 📖 Deep Dive Topics
 
-- **[01-threads.md](01-threads.md)** - Complete guide to Rust threading
-- **[02-shared-state.md](02-shared-state.md)** - Arc, Mutex, and shared state patterns
-- **[03-async-await.md](03-async-await.md)** - Async programming with Tokio
-- **[csharp-comparisons.md](csharp-comparisons.md)** - Task vs Future detailed comparison
+- **[01-threads.md](01-threads.md)** - Complete guide to Rust threading (supports ex01)
+- **[channels-detailed.md](channels-detailed.md)** - MPSC channels and communication patterns (supports ex02)
+- **[02-shared-state.md](02-shared-state.md)** - Arc, Mutex, and shared state patterns (supports ex03)
+- **[deadlock-prevention.md](deadlock-prevention.md)** - Deadlock detection and prevention strategies (supports ex04)
+- **[03-async-await.md](03-async-await.md)** - Async programming with Tokio (supports ex05)
+- **[csharp-comparisons.md](csharp-comparisons.md)** - Task vs Future detailed comparison (all exercises)
 
 ## 🎯 When to Use These
 

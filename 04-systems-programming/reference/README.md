@@ -5,7 +5,8 @@ This directory contains comprehensive reference materials for systems programmin
 ## 📖 In-Depth Topics
 
 - **[memory-layout-detailed.md](memory-layout-detailed.md)** - Complete guide to memory layout and optimization (supports ex01)
-- **[unsafe-rust-detailed.md](unsafe-rust-detailed.md)** - Safe abstractions over unsafe code patterns (supports ex02-ex04)
+- **[unsafe-rust-detailed.md](unsafe-rust-detailed.md)** - Safe abstractions over unsafe code patterns (supports ex02, ex04)
+- **[manual-memory-detailed.md](manual-memory-detailed.md)** - Manual allocation, deallocation, and memory pools (supports ex03)
 - **[ffi-detailed.md](ffi-detailed.md)** - Foreign Function Interface and C interoperability (supports ex05)
 - **[csharp-comparisons.md](csharp-comparisons.md)** - Systems programming: C# vs Rust approaches (all exercises)
 - **[cross-platform.md](cross-platform.md)** - Cross-platform systems programming patterns

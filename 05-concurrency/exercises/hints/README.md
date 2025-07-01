@@ -33,6 +33,18 @@ Stuck on an exercise? Follow this progression:
 3. **Relate to C# concepts** - Your experience is valuable
 4. **Don't rush to hints** - Struggle builds understanding
 
+## Available Hints
+
+### Exercise Hints
+- **ex01-level[1-3].md** - Threading basics and ownership transfer
+- **ex02-level[1-3].md** - Channel communication patterns  
+- **ex03-level[1-3].md** - Shared state with Arc and Mutex
+- **ex04-level[1-3].md** - Deadlock identification and prevention
+- **ex05-level[1-3].md** - Async/await and Tokio patterns
+
+### Project Hints
+- **web-scraper-level[1-3].md** - Multi-threaded web scraper project
+
 ## Example Hint Progression
 
 **Exercise**: Fix thread safety issue
