@@ -35,6 +35,20 @@ fn main() {
 }
 ```
 
+**Lifetime Scope Visualization:**
+```
+       'r lifetime
+    ├─────────────────┤
+    let r;
+         {    'x lifetime
+              ├───┤
+         let x = 5;
+         r = &x;
+         }    ← x dropped here!
+    
+    println!("{}", r); ← r tries to use dead x ❌
+```
+
 The compiler prevents us from using a reference to freed memory!
 
 ## 📝 Lifetime Annotation Syntax
@@ -63,6 +77,7 @@ fn longest(x: &str, y: &str) -> &str {
 ```
 
 **With lifetime annotations:**
+
 ```rust
 fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
     if x.len() > y.len() {
@@ -71,7 +86,22 @@ fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
         y
     }
 }
+```
 
+**Lifetime Relationship Visualization:**
+```
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str
+           ↑       ↑         ↑             ↑
+           └───────┴─────────┴─────────────┘
+           All share the same lifetime 'a
+
+Meaning: The returned reference will be valid as long as
+         BOTH input references are valid
+```
+
+### Using the Lifetime-Annotated Function:
+
+```rust
 fn main() {
     let string1 = String::from("long string is long");
     let string2 = String::from("xyz");

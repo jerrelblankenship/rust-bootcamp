@@ -1,121 +1,77 @@
 # Module 06: Performance Optimization
 
-Transform slow Rust code into blazingly fast implementations by fixing performance bottlenecks. Learn optimization through hands-on debugging!
-
-## 🎯 Learning Objectives
-
-By fixing performance issues, you will:
-- Master profiling tools by finding real bottlenecks
-- Fix memory allocation problems and cache misses
-- Debug slow iterators and optimize algorithms
-- Repair broken benchmarks and interpret results
-- Convert slow C#-style code to idiomatic fast Rust
-- Build a high-performance image processor
+🎯 **Mission**: Fix broken performance code to master Rust optimization!
 
 ## 🚀 Quick Start
 
+1. **Start fixing immediately**:
+   ```bash
+   cd 06-performance/exercises
+   rustc ex01-allocation-storm.rs && ./ex01-allocation-storm  # Shows terrible performance to fix!
+   ```
+
+2. **Fix one performance issue at a time** - Profile, identify, optimize
+3. **Use hints only when stuck** - Check `hints/` directory
+4. **Build the image processor** - Apply your optimization skills
+
+## 📝 What You'll Master
+
+Through **fixing broken performance code**, you'll learn:
+- ✅ Memory allocation optimization and pool patterns
+- ✅ CPU cache optimization and data layout
+- ✅ Iterator chains and zero-cost abstractions
+- ✅ SIMD vectorization for computation speedup
+- ✅ Parallel processing without overhead
+- ✅ Async performance and avoiding blocking
+- ✅ Bounds checking elimination strategies
+- ✅ String processing optimization techniques
+
+## 🔧 Learning Path
+
+### **Step 1: Fix the Exercises**
 ```bash
-# Start with the first exercise
-cd exercises
-cargo build --release  # Always benchmark in release mode!
-cargo run --release --bin ex01-allocation-storm
-
-# When you see terrible performance, that's your cue!
-# Profile, identify bottlenecks, and fix them!
+# Fix performance disasters one by one
+rustc ex01-allocation-storm.rs && ./ex01-allocation-storm    # Memory allocation issues
+rustc ex02-string-builder.rs && ./ex02-string-builder      # String concatenation hell
+rustc ex03-cache-misses.rs && ./ex03-cache-misses        # CPU cache disasters
+rustc ex04-iterator-chains.rs && ./ex04-iterator-chains     # Slow iterator patterns
+rustc ex05-bounds-checking.rs && ./ex05-bounds-checking     # Safety vs performance
+rustc ex06-parallel-waste.rs && ./ex06-parallel-waste      # Bad threading patterns
+rustc ex07-async-blocking.rs && ./ex07-async-blocking      # Blocking patterns
+rustc ex08-simd-opportunity.rs && ./ex08-simd-opportunity    # Missing vectorization
 ```
 
-## 📚 Module Overview
-
-**Your C# Experience**: You've used BenchmarkDotNet, profilers, and `Span<T>`.
-**What's Different**: Rust gives you precise control over every allocation and CPU cycle. No GC pauses!
-
-## 💪 Exercises - Fix These Performance Disasters!
-
-Each exercise contains working but terribly slow Rust code. Your mission: make it fast!
-
-1. **ex01-allocation-storm.rs** - Fix excessive allocations in loops
-2. **ex02-string-builder.rs** - Optimize string concatenation (10x slower than C#!)
-3. **ex03-cache-misses.rs** - Fix data layout for CPU cache efficiency
-4. **ex04-iterator-chains.rs** - Repair slow iterator usage
-5. **ex05-bounds-checking.rs** - Eliminate unnecessary safety checks
-6. **ex06-parallel-waste.rs** - Fix inefficient parallelization
-7. **ex07-async-blocking.rs** - Remove blocking calls in async code
-8. **ex08-simd-opportunity.rs** - Vectorize computation for 4x speedup
-
-## 🏗️ Project: Image Processing Pipeline
-
-Fix a catastrophically slow image processor that should:
-- Load and decode images efficiently
-- Apply filters without excessive allocations
-- Use SIMD for pixel operations
-- Process in parallel without overhead
-- Beat equivalent C# implementation by 2x
-
-**Starting State**: Takes 30 seconds to process one image!
-**Your Goal**: Process 100 images per second!
-
-## 🧰 Debugging Toolkit
-
-- **[DEBUGGING_CHECKLIST.md](DEBUGGING_CHECKLIST.md)** - Systematic performance debugging
-- **Hint System** - Progressive optimization hints in `exercises/hints/`
-- **Reference Docs** - Deep dives on performance in `reference/`
-
-## 🎮 Learning Path
-
-1. **Start here**: `exercises/ex01-allocation-storm.rs`
-2. **Profile first**: Use `cargo flamegraph` or `perf record`
-3. **Stuck?** Wait 15 minutes, then check `hints/ex01-level1.md`
-4. **Benchmark**: Prove your fix with measurements
-5. **All exercises done?** Tackle the image processor!
-
-## 🏆 Victory Conditions
-
-You've mastered this module when you can:
-- [ ] Fix all 8 exercises achieving target performance
-- [ ] Complete the image processor project
-- [ ] Explain your optimizations with profiler data
-- [ ] Write efficient Rust code from the start
-- [ ] Identify performance anti-patterns immediately
-
-## 📂 Module Structure
-
+### **Step 2: Build the Image Processor**
+```bash
+cd project-optimization-challenge
+cargo bench   # Shows current terrible performance
+cargo test     # Verify correctness while optimizing
+cargo run      # Process images at blazing speed!
 ```
-06-performance/
-├── README.md                          # You are here!
-├── DEBUGGING_CHECKLIST.md             # Performance debugging guide
-├── exercises/
-│   ├── ex01-allocation-storm.rs       # Memory allocation issues
-│   ├── ex02-string-builder.rs         # String performance
-│   ├── ex03-cache-misses.rs           # CPU cache optimization
-│   ├── ex04-iterator-chains.rs        # Iterator performance
-│   ├── ex05-bounds-checking.rs        # Safety vs speed
-│   ├── ex06-parallel-waste.rs         # Parallelization issues
-│   ├── ex07-async-blocking.rs         # Async performance
-│   ├── ex08-simd-opportunity.rs       # SIMD vectorization
-│   └── hints/
-│       ├── README.md                  # How to use hints
-│       ├── ex01-level1.md             # Profiling guidance
-│       ├── ex01-level2.md             # Specific bottlenecks
-│       ├── ex01-level3.md             # Solution approach
-│       └── ... (3 levels per exercise)
-├── project-optimization-challenge/
-│   ├── Cargo.toml                     # Dependencies ready
-│   ├── README.md                      # Project instructions
-│   ├── src/
-│   │   ├── main.rs                    # Slow entry point
-│   │   └── lib.rs                     # Inefficient algorithms
-│   ├── benches/
-│   │   └── benchmark.rs               # Performance targets
-│   └── tests/
-│       └── correctness.rs             # Don't break functionality!
-└── reference/
-    ├── README.md                      # Additional resources
-    ├── profiling-guide.md             # Tool tutorials
-    ├── memory-optimization.md         # Allocation strategies
-    ├── cpu-optimization.md            # Cache and SIMD
-    └── csharp-performance.md          # Performance comparison
-```
+
+## 🆘 When You Get Stuck
+
+1. **Profile first** - Use `cargo flamegraph` or built-in profiling
+2. **Check [Performance Debugging Guide](DEBUGGING_CHECKLIST.md)** - Systematic approach
+3. **Use progressive hints** - `hints/ex01-level1.md` → `level2.md` → `level3.md`
+4. **Compare with C#** - Think about equivalent optimizations you'd make
+
+## 🏆 Success = Blazing Fast Code
+
+You've mastered this module when:
+- ✅ All exercises meet their performance targets (shown in benchmarks)
+- ✅ Image processor handles 100+ images per second
+- ✅ You can identify performance bottlenecks by reading code
+- ✅ You write fast Rust code from the start
+
+## 📚 Need More Detail?
+
+- 📖 **[Performance Concepts](reference/)** - In-depth optimization guides
+- 🔄 **[C# vs Rust Performance](reference/csharp-performance.md)** - Speed comparisons
+- 🔧 **[Profiling Tools Guide](reference/profiling-guide.md)** - How to measure performance
 
 ---
 
-Ready to make your code blazingly fast? Start profiling `exercises/ex01-allocation-storm.rs`! 🏎️
+**Ready?** Start with: `cd exercises && rustc ex01-allocation-storm.rs && ./ex01-allocation-storm` 🦀
+
+**Next Module**: [07 - CLI Tools](../07-cli-tools/README.md) →

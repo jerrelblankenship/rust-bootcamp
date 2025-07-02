@@ -43,6 +43,18 @@ let c = 'R';        // char
 let point = (3, 4); // Tuple of Copy types
 ```
 
+**Stack Memory Visualization:**
+```
+Before copy:              After copy:
+┌─────────┐              ┌─────────┐
+│ x = 5   │              │ x = 5   │
+└─────────┘              └─────────┘
+                         ┌─────────┐
+                         │ y = 5   │
+                         └─────────┘
+Both variables have their own copy!
+```
+
 ### Move Types (Heap)
 
 ```rust
@@ -57,6 +69,19 @@ let s2 = s1;        // s1 is MOVED to s2
 let v1 = vec![1, 2, 3];
 let v2 = v1;        // v1 is moved to v2
 // println!("{:?}", v1); // ERROR: v1 no longer valid
+```
+
+**Heap Memory Visualization - Move Semantics:**
+```
+Before move:                      After move:
+Stack        Heap                Stack        Heap
+┌──────┐    ┌─────────┐         ┌──────┐    ┌─────────┐
+│ s1 ──┼───►│ "Hello" │         │ s1 X │    │ "Hello" │
+└──────┘    └─────────┘         └──────┘    └─────────┘
+                                ┌──────┐          ▲
+                                │ s2 ──┼──────────┘
+                                └──────┘
+s1 is invalidated, only s2 owns the heap data!
 ```
 
 ## 🏭 Functions and Ownership Transfer

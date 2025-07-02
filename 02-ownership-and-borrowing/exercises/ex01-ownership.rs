@@ -58,6 +58,10 @@ fn exercise_1_1() {
     let s1 = String::from("hello");
     let s2 = s1;  // FIXME: s1 is moved here - how can we use both?
     
+    // OWNERSHIP VISUALIZATION:
+    // Before: s1 ──► "hello"    After: s1 ✗ (moved)
+    //                                   s2 ──► "hello"
+    
     // TODO: Make both of these print statements work
     // HINT: What method creates an independent copy of a String?
     // THINK: Do I need two independent copies, or can I solve this differently?
@@ -77,6 +81,11 @@ fn exercise_1_2() {
     let x = 5;
     let y = x;
     println!("x = {}, y = {}", x, y);  // Both work - why?
+    
+    // STACK vs HEAP VISUALIZATION:
+    // Stack (Copy):        Heap (Move):
+    // x = 5               s1 ──► "hello"
+    // y = 5 (copied!)     s2 ──► "hello" (s1 invalid!)
     
     // FIXME: This doesn't compile - make it work
     let s1 = String::from("hello");

@@ -125,3 +125,4 @@ $RECYCLE.BIN/
 # Keep .gitkeep files
 !.gitkeep
 /.claude
+.claude/settings.local.json

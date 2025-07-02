@@ -32,6 +32,12 @@ fn exercise_2_1() {
     
     let data = String::from("borrowed data");
     
+    // BORROWING VISUALIZATION:
+    // Move (current):     Borrow (needed):
+    // data ──► String     data ──► String
+    //    ✗                  ▲
+    // reference ──► String   └── &reference
+    
     // TODO: Create an immutable reference to data
     let reference = data;  // FIXME: This moves data instead of borrowing!
     
@@ -77,6 +83,12 @@ fn exercise_2_3() {
     println!("Exercise 2.3: Borrowing rules");
     
     let mut data = String::from("rules demo");
+    
+    // BORROWING RULES VISUALIZATION:
+    // OK: Many &refs         NOT OK: Multiple &mut    NOT OK: Mixed
+    // data ◄── &r1          data ◄── &mut r1         data ◄── &r1
+    //      ◄── &r2               ◄── &mut r2 ❌            ◄── &mut r2 ❌
+    //      ◄── &r3          (only one allowed!)       (cannot mix!)
     
     // Try 1: Multiple immutable references
     let r1 = &data;

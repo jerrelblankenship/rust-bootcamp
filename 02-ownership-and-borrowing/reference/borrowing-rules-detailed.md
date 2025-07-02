@@ -37,6 +37,20 @@ fn main() {
 
 The `&` symbol creates a reference (borrow) to the value without taking ownership.
 
+**Reference Visualization:**
+```
+Stack        Heap
+┌──────┐    ┌─────────┐
+│ s1 ──┼───►│ "hello" │
+└──────┘    └─────────┘
+     ▲
+┌────┼─┐
+│ &s1  │ (reference points to s1)
+└──────┘
+
+The reference &s1 can read the data but doesn't own it!
+```
+
 ### Mutable References (&mut T)
 
 ```rust
@@ -77,6 +91,22 @@ fn main() {
     r3.push_str(", world");
     println!("{}", r3);
 }
+```
+
+**Borrowing Rules Visualization:**
+```
+Multiple Immutable Borrows (OK):          One Mutable Borrow (OK):
+┌─────┐                                   ┌─────┐
+│  s  │◄────── &s (r1)                   │  s  │◄────── &mut s (r3)
+└─────┘◄────── &s (r2)                   └─────┘
+        ◄────── &s (r3)                   
+        (can have many!)                  (only one allowed!)
+
+NOT ALLOWED - Mixed borrows:
+┌─────┐
+│  s  │◄────── &s (r1)     ❌
+└─────┘◄────── &mut s (r2) ❌
+(Cannot mix immutable and mutable!)
 ```
 
 ### Rule 2: References Must Always Be Valid
