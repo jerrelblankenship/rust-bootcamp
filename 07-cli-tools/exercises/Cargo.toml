@@ -1,0 +1,50 @@
+[package]
+name = "cli-tools-exercises"
+version = "0.1.0"
+edition = "2021"
+
+# Common dependencies for all exercises
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+colored = "2.1"
+indicatif = "0.17"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+directories = "5.0"
+crossterm = "0.27"
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Binary targets for each exercise
+[[bin]]
+name = "ex01-arg-parser"
+path = "ex01-arg-parser.rs"
+
+[[bin]]
+name = "ex02-error-handling"
+path = "ex02-error-handling.rs"
+
+[[bin]]
+name = "ex03-config-files"
+path = "ex03-config-files.rs"
+
+[[bin]]
+name = "ex04-pipe-friendly"
+path = "ex04-pipe-friendly.rs"
+
+[[bin]]
+name = "ex05-progress-bars"
+path = "ex05-progress-bars.rs"
+
+[[bin]]
+name = "ex06-color-output"
+path = "ex06-color-output.rs"
+
+[[bin]]
+name = "ex07-cross-platform"
+path = "ex07-cross-platform.rs"
+
+[[bin]]
+name = "ex08-subcommands"
+path = "ex08-subcommands.rs"

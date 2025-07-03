@@ -12,6 +12,35 @@ By fixing broken CLI tools, you will:
 - Convert C# console apps to idiomatic Rust CLIs
 - Build a powerful developer toolchain
 
+## 📦 New Tool: Cargo (Rust's Package Manager)
+
+**What's Different from Previous Modules?**
+
+In Modules 1-6, you compiled individual files with `rustc`. Starting with Module 7, we're using **Cargo** - Rust's official build tool and package manager. This is a big step forward!
+
+**Why Cargo Now?**
+- **External Dependencies**: CLI tools need crates like `clap` (argument parsing), `colored` (terminal colors), and `indicatif` (progress bars)
+- **Real-World Development**: 99.9% of Rust projects use Cargo, not `rustc` directly
+- **C# Comparison**: Think of Cargo as NuGet + MSBuild combined
+
+**What Cargo Does:**
+```bash
+# Instead of: rustc file.rs
+# You now use: cargo run --bin exercise-name
+
+# Cargo automatically:
+# 1. Downloads dependencies (like NuGet restore)
+# 2. Compiles your code and all dependencies
+# 3. Links everything together
+# 4. Runs the resulting binary
+```
+
+**Key Cargo Commands for This Module:**
+- `cargo build` - Compile without running (like `dotnet build`)
+- `cargo run --bin ex01-arg-parser` - Build and run specific exercise
+- `cargo check` - Fast syntax/type checking without full compilation
+- `cargo test` - Run tests (we'll use this more in Module 8)
+
 ## 🚀 Quick Start
 
 ```bash

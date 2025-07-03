@@ -1,0 +1,79 @@
+[package]
+name = "dev-tools"
+version = "0.1.0"
+edition = "2021"
+description = "A comprehensive developer toolchain CLI - Fix the broken implementation!"
+authors = ["Student <student@example.com>"]
+
+# FIXME: Add missing dependencies for CLI functionality
+[dependencies]
+# Command line parsing - FIXME: Add clap with features
+# clap = { version = "4.0", features = ["derive", "env"] }
+
+# Configuration management - FIXME: Add config handling
+# serde = { version = "1.0", features = ["derive"] }  
+# toml = "0.7"
+
+# Terminal and colors - FIXME: Add terminal libraries
+# colored = "2.0"
+# indicatif = "0.17"  # Progress bars
+
+# File operations - FIXME: Add file handling
+# walkdir = "2.3"
+# glob = "0.3"
+
+# Error handling - FIXME: Add better error types
+# anyhow = "1.0"
+# thiserror = "1.0"
+
+# Cross-platform support - FIXME: Add platform detection
+# directories = "5.0"   # Standard directories
+# which = "4.4"         # Finding executables
+
+# Optional: Better CLI experience
+# ctrlc = "3.2"         # Graceful shutdown
+# terminal_size = "0.2" # Terminal size detection
+
+[dev-dependencies]
+# Testing CLI tools - FIXME: Add testing utilities
+# assert_cmd = "2.0"    # Command testing
+# predicates = "3.0"    # Test assertions
+# tempfile = "3.5"      # Temporary files for tests
+
+# Binary targets - FIXME: Configure binary entry points
+[[bin]]
+name = "dev-tools"
+path = "src/main.rs"
+
+# Exercise binaries for testing individual exercises
+[[bin]]
+name = "ex01-arg-parser" 
+path = "../exercises/ex01-arg-parser.rs"
+
+[[bin]]
+name = "ex02-error-handling"
+path = "../exercises/ex02-error-handling.rs"
+
+[[bin]]
+name = "ex03-config-files"
+path = "../exercises/ex03-config-files.rs"
+
+[[bin]]
+name = "ex04-pipe-friendly"
+path = "../exercises/ex04-pipe-friendly.rs"
+
+[[bin]]
+name = "ex05-progress-bars"
+path = "../exercises/ex05-progress-bars.rs"
+
+[[bin]]
+name = "ex06-color-output"
+path = "../exercises/ex06-color-output.rs"
+
+[[bin]]
+name = "ex07-cross-platform"
+path = "../exercises/ex07-cross-platform.rs"
+
+[[bin]]
+name = "ex08-subcommands"
+path = "../exercises/ex08-subcommands.rs"
