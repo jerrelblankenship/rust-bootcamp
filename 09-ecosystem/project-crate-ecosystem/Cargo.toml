@@ -1,0 +1,54 @@
+[package]
+name = "crate-ecosystem"
+version = "0.1.0"
+edition = "2021"
+
+# This Cargo.toml is INTENTIONALLY BROKEN to teach dependency management!
+# Your mission: Fix all the issues and make it compile
+
+[dependencies]
+# Problem 1: Version conflicts
+serde = "1.0"
+serde_json = "1.0"
+reqwest = "0.11"  # Missing features
+tokio = "1.0"     # Missing features
+clap = "4.0"      # Missing features
+
+# Problem 2: Missing dependencies for features used in code
+# uuid, chrono, anyhow, tracing, etc.
+
+# Problem 3: Database dependencies without proper features
+sqlx = "0.7"      # Missing database and runtime features
+
+# Problem 4: Conflicting versions (some crates may need specific versions)
+hyper = "0.14"    # May conflict with reqwest's hyper version
+
+# Problem 5: Missing dev dependencies for testing
+# criterion, mock libraries, etc.
+
+# Problem 6: Platform-specific dependencies not properly configured
+[target.'cfg(windows)'.dependencies]
+windows = "0.48"  # Missing features
+
+[target.'cfg(unix)'.dependencies]
+nix = "0.26"      # Missing features
+
+# Problem 7: Missing metadata for potential publishing
+# authors, description, license, etc.
+
+# Problem 8: Missing optional features
+[features]
+default = ["json", "database"]
+json = []         # Should enable serde features
+database = []     # Should enable sqlx features
+cli = []          # Should enable clap features
+# Missing feature definitions
+
+# Problem 9: Incorrect dev dependencies
+[dev-dependencies]
+criterion = "0.5"  # Missing features for benchmarking
+mockall = "0.11"   # For testing
+
+# Problem 10: Missing build dependencies that might be needed
+[build-dependencies]
+# If we were to add code generation, we'd need build deps here
