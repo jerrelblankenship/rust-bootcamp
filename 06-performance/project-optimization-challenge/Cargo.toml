@@ -3,8 +3,6 @@ name = "image-processor-optimization"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-
 [[bin]]
 name = "image-processor"
 path = "src/main.rs"

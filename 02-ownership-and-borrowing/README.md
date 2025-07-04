@@ -87,6 +87,8 @@ You've mastered this module when:
 
 ---
 
+**Prerequisites**: Complete [Module 01 - Foundations](../01-foundations/README.md) first - you'll need basic Rust syntax knowledge.
+
 **Start now**: `cd exercises && rustc ex01-ownership.rs` 🦀
 
-**Next Module**: [03 - Error Handling](../03-error-handling/README.md) →
+**Next Module**: [03 - Error Handling](../03-error-handling/README.md) → Learn Rust's revolutionary approach to error handling without exceptions!

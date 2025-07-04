@@ -64,6 +64,8 @@ You've mastered this module when:
 
 ---
 
+**Prerequisites**: Complete [Module 03 - Error Handling](../03-error-handling/README.md) first - systems programming requires solid error handling.
+
 **Ready?** Start with: `cd exercises && rustc ex01-memory-layout.rs` 🦀
 
-**Next Module**: [05 - Concurrency](../05-concurrency/README.md) →
+**Next Module**: [05 - Concurrency](../05-concurrency/README.md) → Master fearless concurrency with threads and async!

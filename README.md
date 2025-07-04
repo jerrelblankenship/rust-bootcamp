@@ -4,14 +4,14 @@
 [![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=flat&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![C#](https://img.shields.io/badge/c%23-%23239120.svg?style=flat&logo=c-sharp&logoColor=white)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 
-> **A comprehensive 3-week intensive curriculum designed specifically for C# developers transitioning to Rust**
+> **A comprehensive curriculum designed specifically for C# developers transitioning to Rust**
 
 **🤖 Built with Claude Desktop** - This bootcamp demonstrates AI-assisted curriculum development, creating a structured learning path that strategically leverages your existing C# knowledge to accelerate Rust mastery.
 
 ## 🎯 Learning Objectives
 
 By the end of this bootcamp, you will:
-**Learning Philosophy**: **60% Doing, 40% Reading** - Master Rust through guided discovery and real compiler errors.
+**Learning Philosophy**: **70% Doing, 30% Teaching** - Master Rust through guided discovery and real compiler errors.
 
 - ✅ Master Rust's ownership model and understand how it guarantees memory safety without garbage collection
 - ✅ Build high-performance, concurrent applications that rival C/C++ in speed
@@ -60,7 +60,6 @@ rustc ex01-ownership.rs  # Challenge yourself!
 
 ## 🗺️ **Learning Journey**
 
-### **Core Modules (Fully Implemented)**
 | Module | Focus | What You'll Build |
 |--------|-------|-------------------|
 | **[01 - Foundations](01-foundations/)** | Syntax & Types | Working Calculator CLI |
@@ -68,17 +67,16 @@ rustc ex01-ownership.rs  # Challenge yourself!
 | **[03 - Error Handling](03-error-handling/)** | Robust Code | File Processing System |
 | **[04 - Systems Programming](04-systems-programming/)** | Low-Level Control | System Resource Monitor |
 | **[05 - Concurrency](05-concurrency/)** | Fearless Concurrency | Multi-threaded Web Scraper |
+| **[06 - Performance](06-performance/)** | Profiling & Optimization | High-Performance Image Processor |
+| **[07 - CLI Tools](07-cli-tools/)** | Building Developer Tools | Professional Dev Toolkit |
+| **[08 - Testing](08-testing/)** | Comprehensive Testing | Custom Testing Framework |
+| **[09 - Ecosystem](09-ecosystem/)** | Crates & Libraries | Published Rust Library |
+| **[10 - Advanced Patterns](10-advanced-patterns/)** | Macros & Meta-programming | Advanced Macro System |
 
-### **Advanced Modules (Coming Soon)**
-| Module | Focus | Status |
-|--------|-------|--------|
-| **06 - Performance** | Profiling & Optimization | In Development |
-| **07 - CLI Tools** | Building Developer Tools | In Development |
-| **08 - Testing** | Comprehensive Testing | In Development |
-| **09 - Ecosystem** | Crates & Libraries | In Development |
-| **10 - Advanced Patterns** | Macros & Meta-programming | In Development |
-
-**Total Time**: 3-4 weeks for all modules at your own pace
+### **Capstone Project**
+| Project | Focus | Challenge Level |
+|---------|-------|-----------------|
+| **[Final Project](final-project/)** | Concurrent Web Server | Integrates All Modules |
 
 ## 💡 **Learning Approach**
 
@@ -122,7 +120,7 @@ You're succeeding when:
 2. **VS Code + rust-analyzer** (recommended)
 3. **Clone this repo** and start coding!
 
-**Platform Support**: ✅ macOS • ✅ Windows 11 • ✅ Linux • ✅ Containers
+**Platform Support**: ✅ macOS • ✅ Windows 11 • ✅ Linux • ✅ [Containers](containers/)
 
 ## 🎯 **Real-World Applications**
 
@@ -145,6 +143,11 @@ You're succeeding when:
 - 💬 [Rust Official Discord](https://discord.gg/rust-lang)
 - 📚 [The Rust Book](https://doc.rust-lang.org/book/)
 - 🤝 [Rust Users Forum](https://users.rust-lang.org/)
+
+### **Additional Learning Resources**
+- 📖 [Books & Courses](resources/) - Curated learning materials
+- 🔧 [Troubleshooting Guide](resources/troubleshooting.md) - Common issues and solutions
+- 🎯 [Project Ideas](resources/README.md#-project-ideas) - Continue learning after the bootcamp
 
 ## 🔍 **What Makes This Different**
 
@@ -176,7 +179,15 @@ rust-bootcamp/
 ├── 03-error-handling/      # Option<T> and Result<T,E>
 ├── 04-systems-programming/ # Unsafe, FFI, memory layout
 ├── 05-concurrency/         # Threads, async/await, channels
-└── 06-10 (advanced)/       # Performance, CLI, testing, etc.
+├── 06-performance/         # Profiling and optimization
+├── 07-cli-tools/           # Building command-line tools
+├── 08-testing/             # Testing strategies
+├── 09-ecosystem/           # Crates and libraries
+├── 10-advanced-patterns/   # Macros and meta-programming
+├── final-project/          # Capstone web server project
+├── containers/             # Docker/Podman setup
+├── reference/              # Performance comparisons
+└── resources/              # Additional learning materials
 ```
 
 ## 🚀 **Ready to Start?**

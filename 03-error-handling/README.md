@@ -127,4 +127,6 @@ fn chain_operations() -> Result<String, Error> {
 
 **Start now**: `cd exercises && rustc ex01-option-basics.rs` 🦀
 
-**Next Module**: [04 - Systems Programming](../04-systems-programming/README.md) →
+**Prerequisites**: Complete [Module 02 - Ownership](../02-ownership-and-borrowing/README.md) first - error handling builds on ownership concepts.
+
+**Next Module**: [04 - Systems Programming](../04-systems-programming/README.md) → Dive into low-level control and unsafe Rust!

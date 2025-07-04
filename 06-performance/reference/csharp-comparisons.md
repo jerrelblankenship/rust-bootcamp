@@ -164,3 +164,81 @@ A comprehensive guide for C# developers learning Rust performance optimization p
 5. **Span<T> → &[T]**: Similar zero-copy slicing concepts
 
 The performance optimization mindset transfers directly from C# to Rust - measure first, optimize systematically, and focus on algorithms before micro-optimizations!
+
+## 🏎️ Real-World Performance Comparisons
+
+### Startup Time and Memory Footprint
+
+| Metric | C# (.NET 8) | Rust | Notes |
+|--------|-------------|------|-------|
+| **Hello World Binary** | ~140 MB | ~200 KB | Rust has no runtime |
+| **Startup Time** | 50-200ms | 1-2ms | No JIT compilation |
+| **Base Memory Usage** | 20-50 MB | 1-3 MB | No GC overhead |
+| **Container Size** | 200+ MB | 10-20 MB | Minimal dependencies |
+
+### Throughput Performance
+
+| Scenario | C# Performance | Rust Performance | Comparison |
+|----------|----------------|------------------|------------|
+| **JSON Parsing** | 100 MB/s | 300-500 MB/s | 3-5x faster |
+| **HTTP Server (RPS)** | 500K req/s | 2M+ req/s | 4x+ throughput |
+| **Regex Matching** | Good | Excellent | 2-10x faster |
+| **Cryptography** | Hardware accelerated | Hardware accelerated | Similar |
+
+### Memory Allocation Performance
+
+| Operation | C# | Rust | Impact |
+|-----------|-----|------|--------|
+| **Object Allocation** | ~20ns + GC pressure | Stack: 0ns, Heap: ~50ns | Predictable |
+| **Collection Resize** | Amortized O(1) + GC | Amortized O(1) | No GC pauses |
+| **String Concatenation** | Creates garbage | Can reuse buffers | Less memory pressure |
+| **Temporary Objects** | GC handles cleanup | Stack allocated | Zero overhead |
+
+### Concurrent Performance
+
+| Pattern | C# | Rust | Advantage |
+|---------|-----|------|-----------|
+| **Thread Creation** | ~1ms | ~50μs | 20x faster |
+| **Lock Contention** | Monitor locks | Parking lot mutexes | 2-5x faster |
+| **Async Overhead** | State machine allocation | Zero-cost futures | Less memory |
+| **Channel Performance** | Concurrent collections | MPSC channels | Similar |
+
+### Common Optimization Wins When Moving from C# to Rust
+
+1. **Zero-Cost Abstractions**
+   - C#: LINQ has allocation overhead
+   - Rust: Iterators compile to optimal loops
+
+2. **Predictable Performance**
+   - C#: GC pauses can cause latency spikes
+   - Rust: Consistent sub-millisecond response times
+
+3. **Memory Efficiency**
+   - C#: Objects have headers, padding, GC overhead
+   - Rust: Exact memory layout control, no overhead
+
+4. **CPU Cache Utilization**
+   - C#: Reference types cause pointer chasing
+   - Rust: Data locality with value types by default
+
+### When C# Might Be Faster
+
+1. **Development Speed**: Faster prototyping and iteration
+2. **Complex Business Logic**: GC simplifies memory management
+3. **Dynamic Scenarios**: Reflection and runtime code generation
+4. **Existing Ecosystem**: Mature libraries and tooling
+
+### Performance Migration Strategy
+
+When converting performance-critical C# code to Rust:
+
+1. **Profile First**: Identify actual bottlenecks in C#
+2. **Port Hot Paths**: Convert only performance-critical sections
+3. **Measure Impact**: Benchmark before celebrating
+4. **Consider Interop**: Use Rust for performance-critical libraries
+
+Remember: Rust's performance advantages come from:
+- No garbage collector (predictable latency)
+- Zero-cost abstractions (no runtime overhead)
+- Memory safety without overhead (compile-time checks)
+- Fine-grained control (when you need it)

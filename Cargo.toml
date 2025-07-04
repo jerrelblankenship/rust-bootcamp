@@ -3,6 +3,15 @@ members = [
     "01-foundations/project-calculator",
     "02-ownership-and-borrowing/project-memory-visualizer",
     "03-error-handling/project-file-processor",
+    "04-systems-programming/project-system-monitor",
+    "05-concurrency/project-web-scraper",
+    "06-performance/project-optimization-challenge",
+    "07-cli-tools/exercises",
+    "07-cli-tools/project-dev-tools",
+    "08-testing/project-testing-suite",
+    "09-ecosystem/project-crate-ecosystem",
+    "10-advanced-patterns/project-advanced-macros",
+    "final-project",
 ]
 resolver = "2"
 
