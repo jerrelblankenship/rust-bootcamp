@@ -1,0 +1,33 @@
+[package]
+name = "rust-web-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+dashmap = "5.5"
+parking_lot = "0.12"
+once_cell = "1.19"
+regex = "1.10"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[dev-dependencies]
+tempfile = "3.8"
+httpmock = "0.7"
+
+[[bench]]
+name = "server_benchmarks"
+harness = false
+
+[[bin]]
+name = "server"
+path = "src/main.rs"
+
+[[bin]]
+name = "loadtest"
+path = "src/bin/loadtest.rs"

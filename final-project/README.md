@@ -1,328 +1,186 @@
-# Final Project: High-Performance Concurrent Web Server
+# Final Project: Concurrent Web Server Capstone
 
 ## 🎯 Project Overview
 
-The culmination of your Rust bootcamp is building a production-grade web server that showcases everything you've learned. This isn't just another "hello world" server—you'll create a high-performance system that can compete with established solutions like Nginx for specific use cases.
+This is the **capstone project** for your Rust bootcamp - a broken web server implementation that you'll debug and fix using **everything you've learned** from modules 1-10.
 
-As a C# developer, you've likely worked with ASP.NET Core and understand web server concepts. This project will demonstrate how Rust's zero-cost abstractions and memory safety enable you to build servers that are both fast and reliable, without the overhead of garbage collection or runtime type checking.
+As a C# developer, you understand web servers from ASP.NET Core. This project demonstrates how Rust's ownership system, zero-cost abstractions, and fearless concurrency enable building high-performance servers without garbage collection overhead.
 
-## 📋 Core Requirements
+**This is NOT a "build from scratch" project** - it's a **"fix the broken code"** challenge that follows the bootcamp's proven pedagogy.
 
-Your web server must implement:
+## 🚨 Current Status: BROKEN
 
-### 1. **Concurrent Request Handling**
-- Async/await with Tokio for handling thousands of concurrent connections
-- Thread pool for CPU-intensive operations
-- Graceful handling of slow clients and connection limits
+The provided web server has **intentional bugs** that prevent it from working:
 
-### 2. **Protocol Implementation**
-- Full HTTP/1.1 support with keep-alive connections
-- Custom protocol parser using nom or manual parsing
-- WebSocket upgrade capability for real-time features
+- ❌ **Major concurrency bug**: Server handles requests sequentially
+- ❌ **Request parsing issues**: Fails on large requests and malformed headers  
+- ❌ **Load tester problems**: Doesn't actually test concurrency
+- ❌ **Integration tests fail**: Multiple test failures due to server bugs
+- ❌ **Memory inefficiencies**: Unnecessary allocations in hot paths
 
-### 3. **Performance Features**
-- Zero-copy response streaming for static files
-- Memory-mapped file serving for large assets
-- Response caching with TTL and invalidation
-- Request routing with O(1) complexity using perfect hashing
+## 📚 Knowledge Prerequisites
 
-### 4. **Reliability and Monitoring**
-- Graceful shutdown with connection draining
-- Health check endpoints
-- Prometheus-compatible metrics export
-- Structured logging with tracing
+This project requires concepts from **all previous modules**:
 
-### 5. **Security**
-- TLS support using rustls
-- Rate limiting per IP address
-- Basic authentication middleware
-- Protection against common attacks (slowloris, etc.)
+- **Module 1**: Structs, enums, error handling basics
+- **Module 2**: Ownership, borrowing, `Arc` for shared state
+- **Module 3**: `Result<T, E>`, error propagation with `?`
+- **Module 4**: Systems programming, unsafe code, memory layout
+- **Module 5**: Async/await, `tokio::spawn`, channels
+- **Module 6**: Performance optimization, allocation reduction
+- **Module 7**: CLI tools, argument parsing, configuration
+- **Module 8**: Testing strategies, mocking, integration tests
+- **Module 9**: Crate ecosystem, dependency management
+- **Module 10**: Advanced patterns, trait objects, macros
 
-## 🏗️ Architecture Design
+## 🔧 Getting Started
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Main Process                          │
-│  ┌─────────────┐  ┌──────────────┐  ┌───────────────┐  │
-│  │   Acceptor  │  │   Router     │  │   Metrics     │  │
-│  │   (Tokio)   │  │  (Trie/Map)  │  │  Collector    │  │
-│  └──────┬──────┘  └──────┬───────┘  └───────┬───────┘  │
-│         │                 │                   │          │
-│  ┌──────▼─────────────────▼───────────────────▼──────┐  │
-│  │            Connection Handler Pool                 │  │
-│  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  │  │
-│  │  │Worker 1│  │Worker 2│  │Worker 3│  │Worker N│  │  │
-│  │  └────────┘  └────────┘  └────────┘  └────────┘  │  │
-│  └────────────────────────────────────────────────────┘  │
-│                           │                              │
-│  ┌────────────────────────▼───────────────────────────┐  │
-│  │              Shared State (Arc<RwLock>)            │  │
-│  │  ┌─────────┐  ┌─────────┐  ┌──────────────────┐  │  │
-│  │  │  Cache  │  │ Config  │  │  Rate Limiter    │  │  │
-│  │  └─────────┘  └─────────┘  └──────────────────┘  │  │
-│  └────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
+### Step 1: Try Running the Server
+```bash
+cd final-project
+cargo run --bin server
 ```
 
-## 🔧 Implementation Phases
-
-### Phase 1: Basic HTTP Server (Days 1-2)
-Start with a minimal TCP server that can handle simple HTTP requests:
-
-```rust
-use tokio::net::{TcpListener, TcpStream};
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let listener = TcpListener::bind("127.0.0.1:8080").await?;
-    println!("Server running on http://127.0.0.1:8080");
-    
-    loop {
-        let (stream, addr) = listener.accept().await?;
-        tokio::spawn(handle_connection(stream));
-    }
-}
-
-async fn handle_connection(mut stream: TcpStream) -> Result<(), Box<dyn std::error::Error>> {
-    let mut buffer = [0; 1024];
-    stream.read(&mut buffer).await?;
-    
-    let response = "HTTP/1.1 200 OK\r\n\r\nHello, Rust!";
-    stream.write_all(response.as_bytes()).await?;
-    
-    Ok(())
-}
+### Step 2: Test Basic Functionality
+```bash
+# In another terminal
+curl http://localhost:8080/
 ```
 
-### Phase 2: Request Parsing and Routing (Days 3-4)
-Implement a proper HTTP parser and router:
+### Step 3: Identify the Problems
+- Does it handle multiple requests concurrently?
+- What happens with large requests?
+- Do the integration tests pass?
 
-```rust
-#[derive(Debug)]
-struct Request {
-    method: Method,
-    path: String,
-    headers: HashMap<String, String>,
-    body: Vec<u8>,
-}
+### Step 4: Use the Hint System
+- **Stuck after 15+ minutes?** Check `hints/project-level1.md`
+- **Need deeper guidance?** Progress to `hints/project-level2.md`
+- **Want production features?** Advance to `hints/project-level3.md`
 
-#[derive(Debug)]
-enum Method {
-    Get,
-    Post,
-    Put,
-    Delete,
-}
+## 📊 Success Metrics
 
-struct Router {
-    routes: HashMap<(Method, String), Handler>,
-}
+Fix the server to achieve:
 
-type Handler = Box<dyn Fn(Request) -> Response + Send + Sync>;
-```
+**Level 1 (Basic Fix)**:
+- ✅ Handles concurrent requests without blocking
+- ✅ Basic HTTP parsing works correctly
+- ✅ Integration tests pass
 
-### Phase 3: Performance Optimization (Days 5-6)
-Add zero-copy file serving and caching:
+**Level 2 (Advanced Fix)**:
+- ✅ Supports large requests (>1KB)
+- ✅ Path parameters work (`/users/:id`)
+- ✅ Load tester shows true concurrency
 
-```rust
-use memmap2::MmapOptions;
-use std::fs::File;
+**Level 3 (Production Ready)**:
+- ✅ Keep-alive connections
+- ✅ Static file serving
+- ✅ Rate limiting and connection limits
+- ✅ 1,000+ concurrent connections
+- ✅ < 50ms p99 latency
 
-async fn serve_file(path: &Path) -> Result<Response, Error> {
-    let file = File::open(path)?;
-    let mmap = unsafe { MmapOptions::new().map(&file)? };
-    
-    // Zero-copy response using memory-mapped file
-    Ok(Response::new()
-        .body(Body::from_mmap(mmap))
-        .header("Content-Type", mime_guess::from_path(path)))
-}
-```
-
-### Phase 4: Benchmarking and Comparison (Day 7)
-
-Create comprehensive benchmarks comparing your server with a C# implementation:
-
-```rust
-// Benchmark with criterion
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-
-fn benchmark_requests(c: &mut Criterion) {
-    c.bench_function("concurrent_requests", |b| {
-        b.iter(|| {
-            // Simulate 10,000 concurrent requests
-            black_box(load_test(10_000));
-        });
-    });
-}
-```
-
-## 📊 Performance Targets
-
-Your server should achieve:
-
-- **Throughput**: 100,000+ requests/second for small responses
-- **Latency**: p99 < 10ms under normal load
-- **Concurrency**: Handle 10,000+ concurrent connections
-- **Memory**: < 100MB RSS for 1,000 idle connections
-- **CPU**: Linear scaling with core count
-
-Compare these metrics with an equivalent ASP.NET Core implementation to demonstrate Rust's advantages in systems programming.
-
-## 🧪 Testing Strategy
+## 🧪 Testing Your Progress
 
 ### Unit Tests
-Test individual components in isolation:
-
-```rust
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-    #[test]
-    fn test_http_parsing() {
-        let raw = b"GET / HTTP/1.1\r\nHost: example.com\r\n\r\n";
-        let request = parse_request(raw).unwrap();
-        assert_eq!(request.method, Method::Get);
-        assert_eq!(request.path, "/");
-    }
-    
-    #[tokio::test]
-    async fn test_concurrent_connections() {
-        let server = TestServer::new().await;
-        let handles: Vec<_> = (0..100)
-            .map(|_| {
-                tokio::spawn(async {
-                    make_request("http://localhost:8080").await
-                })
-            })
-            .collect();
-        
-        for handle in handles {
-            assert!(handle.await.unwrap().is_ok());
-        }
-    }
-}
+```bash
+cargo test
 ```
 
 ### Integration Tests
-Test the full server behavior:
-
-```rust
-// tests/integration_test.rs
-use your_server::Server;
-
-#[tokio::test]
-async fn test_file_serving() {
-    let server = Server::new(Config::default());
-    let handle = tokio::spawn(server.run());
-    
-    // Test various scenarios
-    test_static_files().await;
-    test_404_handling().await;
-    test_keep_alive().await;
-    test_websocket_upgrade().await;
-    
-    handle.abort();
-}
+```bash
+cargo test --test integration
 ```
 
 ### Load Testing
-Use tools like wrk or create custom load tests:
-
 ```bash
-# Basic load test
-wrk -t12 -c400 -d30s --latency http://localhost:8080/
-
-# Custom Rust load tester
-cargo run --bin loadtest -- --connections 10000 --duration 60s
+cargo run --bin loadtest
 ```
 
-## 🚀 Deployment
-
-### Containerization
-Create an optimized container image:
-
-```dockerfile
-# Multi-stage build for minimal image size
-FROM rust:1.70 as builder
-WORKDIR /app
-COPY Cargo.toml Cargo.lock ./
-COPY src ./src
-RUN cargo build --release
-
-FROM debian:bookworm-slim
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /app/target/release/rust-web-server /usr/local/bin/
-EXPOSE 8080
-CMD ["rust-web-server"]
+### Benchmarks
+```bash
+cargo bench
 ```
 
-### Configuration
-Support both file and environment-based configuration:
+## 🔍 Debugging Tools
 
-```rust
-#[derive(Debug, Deserialize)]
-struct Config {
-    #[serde(default = "default_port")]
-    port: u16,
-    
-    #[serde(default = "default_workers")]
-    worker_threads: usize,
-    
-    #[serde(default)]
-    tls: Option<TlsConfig>,
-    
-    #[serde(default)]
-    rate_limit: RateLimitConfig,
-}
+### Rust Compiler
+Your best friend - read compiler errors carefully!
 
-impl Config {
-    fn from_env() -> Result<Self, Error> {
-        envy::from_env()
-    }
-    
-    fn from_file(path: &Path) -> Result<Self, Error> {
-        let content = std::fs::read_to_string(path)?;
-        toml::from_str(&content)
-    }
-}
+### Logging
+```bash
+RUST_LOG=debug cargo run --bin server
 ```
 
-## 📈 Extension Ideas
+### Performance Profiling
+```bash
+# Install if needed
+cargo install flamegraph
+# Profile the server
+FLAMEGRAPH=1 cargo run --bin server
+```
 
-Once the core server is complete, consider these advanced features:
+## 📁 Project Structure
 
-1. **HTTP/2 Support**: Add h2 library integration
-2. **GraphQL Endpoint**: Implement a GraphQL resolver
-3. **Middleware System**: Create a composable middleware stack
-4. **Hot Reload**: Implement configuration hot-reloading
-5. **Distributed Tracing**: Add OpenTelemetry support
-6. **Plugin System**: Dynamic library loading for extensions
+```
+final-project/
+├── src/
+│   ├── main.rs           # Main server (has bugs!)
+│   └── bin/
+│       └── loadtest.rs   # Load tester (also broken!)
+├── tests/
+│   └── integration.rs    # Integration tests (currently failing)
+├── benches/
+│   └── server_benchmarks.rs # Performance benchmarks
+├── hints/
+│   ├── project-level1.md # Getting started hints
+│   ├── project-level2.md # Advanced debugging hints
+│   └── project-level3.md # Production features hints
+└── README.md            # This file
+```
 
-## 🎯 Success Criteria
+## 🎯 Learning Objectives
 
-Your project is complete when:
+By completing this project, you'll demonstrate:
 
-1. All core requirements are implemented and tested
-2. Performance targets are met or exceeded
-3. Documentation includes setup, usage, and architecture guides
-4. Benchmarks show favorable comparison with C# implementation
-5. Code passes clippy lints and is well-documented
-6. Container image is under 50MB and starts in < 1 second
+1. **Debugging Skills**: Finding and fixing complex bugs in async Rust code
+2. **Concurrency Mastery**: Proper use of `tokio::spawn` and async patterns
+3. **Performance Optimization**: Reducing allocations and improving throughput
+4. **Testing Proficiency**: Writing and fixing integration tests
+5. **Real-world Application**: Building production-ready server features
 
-## 💡 Learning Outcomes
+## 🚀 Hint System Usage
 
-Through this project, you'll gain deep understanding of:
+**Progressive Disclosure Learning**:
+- Try fixing issues independently first (15+ minutes)
+- Use Level 1 hints for conceptual guidance
+- Use Level 2 hints for specific technical direction
+- Use Level 3 hints for complete solutions
 
-- Async programming at scale with Tokio
-- Zero-copy I/O and memory-mapped files
-- Lock-free concurrent data structures
-- Systems programming best practices
-- Performance profiling and optimization
-- Real-world Rust application architecture
+**C# Developer Notes**:
+- Hints include comparisons to ASP.NET Core concepts
+- Focus on Rust-specific patterns and ownership
+- Performance comparisons with .NET equivalents
 
-This server could serve as a foundation for your future Rust projects, demonstrating that you can build production-quality systems that rival or exceed the performance of established solutions.
+## 📈 Extension Ideas (After Completion)
 
-Remember: The goal isn't just to make it work—it's to make it fast, reliable, and maintainable. Use this opportunity to explore Rust's unique capabilities and push the boundaries of what you thought was possible in systems programming!
+1. **HTTP/2 Support**: Add h2 crate integration
+2. **WebSocket Support**: Real-time bidirectional communication
+3. **TLS/SSL**: Add rustls for HTTPS
+4. **Middleware System**: Composable request/response processing
+5. **GraphQL Endpoint**: Add juniper or async-graphql
+6. **Distributed Tracing**: OpenTelemetry integration
+
+## 🎉 Completion Criteria
+
+Your capstone is complete when:
+
+- [ ] All integration tests pass
+- [ ] Server handles 100+ concurrent connections
+- [ ] Load tester shows realistic performance metrics
+- [ ] Code is properly documented and follows Rust conventions
+- [ ] You understand every fix you made and why it was necessary
+
+---
+
+**Remember**: This is a **debugging challenge**, not a design challenge. The architecture is provided - your job is to make it work efficiently!
+
+**Start with Level 1 hints** if you need guidance. Good luck! 🦀
