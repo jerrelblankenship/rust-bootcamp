@@ -1,0 +1,30 @@
+[package]
+name = "advanced-macros"
+version = "0.1.0"
+edition = "2021"
+authors = ["Student <student@example.com>"]
+description = "Advanced Rust patterns integration project - Learning Module"
+
+[workspace]
+
+[features]
+default = ["async", "macros"]
+async = ["tokio"]
+macros = ["advanced-macros-proc"]
+unsafe-optimizations = []
+
+[dependencies]
+tokio = { version = "1.0", features = ["macros", "rt", "time"], optional = true }
+advanced-macros-proc = { path = "macros", optional = true }
+
+[dev-dependencies]
+criterion = "0.5"
+tokio-test = "0.4"
+
+[[bench]]
+name = "performance"
+harness = false
+
+[[example]]
+name = "integration_demo"
+required-features = ["macros", "async"]
