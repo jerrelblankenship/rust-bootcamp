@@ -51,8 +51,7 @@ venv/
 .env.local
 
 # Container files
-.devcontainer/
-!/.devcontainer/devcontainer.json
+# .devcontainer/ is tracked in git for development environment consistency
 
 # Build artifacts
 /build/

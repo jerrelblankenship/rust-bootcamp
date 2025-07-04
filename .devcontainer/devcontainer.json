@@ -1,0 +1,32 @@
+{
+    "name": "Rust Bootcamp Dev Container",
+    "dockerComposeFile": [
+        "../containers/podman-compose.yml"
+    ],
+    "service": "rust-dev",
+    "workspaceFolder": "/workspace",
+    
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "rust-lang.rust-analyzer",
+                "vadimcn.vscode-lldb",
+                "serayuzgur.crates",
+                "tamasfe.even-better-toml",
+                "usernamehw.errorlens"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "rust-analyzer.server.path": "/home/rustdev/.cargo/bin/rust-analyzer"
+            }
+        }
+    },
+    
+    "remoteUser": "rustdev",
+    "postCreateCommand": "cargo --version",
+    
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    }
+}
